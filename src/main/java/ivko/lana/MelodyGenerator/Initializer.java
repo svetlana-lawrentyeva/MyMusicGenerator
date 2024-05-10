@@ -3,6 +3,8 @@ package ivko.lana.MelodyGenerator;
 import ivko.lana.entities.RhythmPattern;
 import ivko.lana.util.RhythmLoader;
 
+import java.util.List;
+
 /**
  * @author Lana Ivko
  */
@@ -21,9 +23,10 @@ public class Initializer
 
     private RhythmPattern initializeRhythmPattern()
     {
-        int length = RhythmLoader.ALL_RHYTHMS.length;
-        int rhythmIndex = (int) Math.random() * length;
-        RhythmPattern rhythmPattern = RhythmLoader.loadRhythm(RhythmLoader.ALL_RHYTHMS[rhythmIndex]);
+        List<RhythmPattern> rhythmPatterns = RhythmLoader.loadAllPatterns();
+        int length = rhythmPatterns.size();
+        int rhythmIndex = (int) (Math.random() * length);
+        RhythmPattern rhythmPattern = rhythmPatterns.get(rhythmIndex);
         return rhythmPattern;
     }
 
