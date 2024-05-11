@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class Note implements ISound
 {
+    private boolean shouldDebug_ = false;
     private final int tone_;
     private final int duration_;
     private final int accent_;
@@ -18,6 +19,11 @@ public class Note implements ISound
         tone_ = tone;
         duration_ = duration;
         accent_ = accent;
+    }
+
+    public void setShouldDebug(boolean shouldDebug)
+    {
+        shouldDebug_ = shouldDebug;
     }
 
     public int getTone()
@@ -37,6 +43,10 @@ public class Note implements ISound
 
     public void play(MidiChannel channel) throws InterruptedException
     {
+        if (shouldDebug_)
+        {
+            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this));
+        }
         channel.noteOn(tone_, accent_);
         Thread.sleep(duration_);   // Hold the note for the duration
         channel.noteOff(tone_, accent_);

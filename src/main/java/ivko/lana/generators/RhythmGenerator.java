@@ -1,7 +1,9 @@
 package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.musicentities.*;
+import ivko.lana.musicentities.ISound;
+import ivko.lana.musicentities.Pause;
+import ivko.lana.musicentities.Rhythm;
 import ivko.lana.yaml.DurationProbability;
 import ivko.lana.yaml.RhythmPattern;
 
@@ -14,23 +16,24 @@ import java.util.Random;
  */
 public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
 {
-    private static final Random random = new Random();
+    protected static final Random Random = new Random();
 
     protected Initializer initializer_;
     private RhythmPattern rhythmPattern_;
     private int measureLength_;
-    private int[] scales_;
-    private List<Integer> accents_;
+    protected int[] scales_;
+    protected List<Integer> accents_;
 
     public RhythmGenerator(Initializer initializer)
     {
         initializer_ = initializer;
-        rhythmPattern_ = initializer_.getRhythmPattern();
+        rhythmPattern_ = getRhythmPattern();
         accents_ = rhythmPattern_.getAccents();
         measureLength_ = rhythmPattern_.getBaseDuration() * accents_.size(); // Length of one measure
         scales_ = initializer_.getScale().getScales();
     }
 
+    protected abstract RhythmPattern getRhythmPattern();
     public Rhythm generate() throws InterruptedException
     {
         List<ISound> sounds = new ArrayList<>();
@@ -40,15 +43,24 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
 
         while (availableMeasure != 0)
         {
-            tone = IScale.BASE_NOTE + scales_[random.nextInt(scales_.length)];
+            tone = IScale.BASE_NOTE + scales_[getNextToneIndex()] + getCorrection();
             int duration = generateDuration();
             duration = Math.min(duration, availableMeasure);
             availableMeasure -= duration;
             Integer accent = accents_.get(accentIndex);
-            sounds.add(createNewSound(tone, duration, accent));
+            ISound newSound;
+            if (availableMeasure == 0)
+            {
+                newSound = createLastSound(tone, duration, accent);
+            }
+            else
+            {
+                newSound = createNewSound(tone, duration, accent);
+            }
+            sounds.add(newSound);
 
-            boolean needPause = random.nextInt(5) == 2;
-            if (needPause && availableMeasure > 0)
+            boolean needPause = Random.nextInt(5) == 2 || availableMeasure != 0;
+            if (needPause)
             {
                 duration = generateDuration();
                 duration = Math.min(duration, availableMeasure);
@@ -65,11 +77,26 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
         return rhythm;
     }
 
-    protected abstract ISound createNewSound(int tone, int duration, Integer accent);
+    protected ISound createLastSound(int tone, int duration, Integer accent)
+    {
+        return createNewSound(tone, duration, accent);
+    }
+
+    protected int getCorrection()
+    {
+        return 0;
+    }
+
+    protected int getNextToneIndex()
+    {
+        return Random.nextInt(scales_.length);
+    }
+
+    protected abstract ISound createNewSound(int tone, int duration, int accentIndex);
 
     private int generateDuration()
     {
-        double randomValue = random.nextDouble(); // Случайное число от 0.0 до 1.0
+        double randomValue = Random.nextDouble(); // Случайное число от 0.0 до 1.0
         double cumulativeProbability = 0.0;
 
         List<DurationProbability> durations = rhythmPattern_.getDurations();

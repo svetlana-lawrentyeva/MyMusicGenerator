@@ -15,12 +15,19 @@ public class DrumChannel extends Channel
 {
     public DrumChannel(List<Part> phrases, int instrumentCode)
     {
-        super(phrases, instrumentCode);
+        super(phrases, -1);
     }
 
     @Override
     protected int getChannelNumber()
     {
         return 9;
+    }
+
+    protected Synthesizer prepareSynthesizer()
+    {
+        Synthesizer synthesizer = MusicUtil.getInstance().getSynthesizer();
+        LOGGER.info(String.format("channel %s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
+        return synthesizer;
     }
 }

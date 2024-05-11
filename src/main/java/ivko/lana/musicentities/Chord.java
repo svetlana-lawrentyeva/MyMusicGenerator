@@ -23,7 +23,11 @@ public class Chord implements ISound
     @Override
     public int getDuration()
     {
-        return sounds_.stream()
+        return isSequenced_
+                ? sounds_.stream()
+                .mapToInt(ISound::getDuration)
+                .sum()
+                : sounds_.stream()
                 .mapToInt(ISound::getDuration) // Преобразуем Stream<Note> в Stream<Integer>
                 .max()
                 .orElse(0);
@@ -42,8 +46,7 @@ public class Chord implements ISound
         if (!isSequenced_)
         {
             playRealChord(channel);
-        }
-        else
+        } else
         {
             ISound.super.play(channel);
         }

@@ -26,7 +26,7 @@ public interface IScale
         }
         for (int i = 0; i < result.length; ++i)
         {
-            result[i] += (BASE_NOTE - 12);
+            result[i] += (BASE_NOTE);
         }
         return result;
     }

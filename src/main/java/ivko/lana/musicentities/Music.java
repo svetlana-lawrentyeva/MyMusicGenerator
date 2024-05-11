@@ -18,26 +18,35 @@ public class Music implements IPlayable
 
     public void play() throws InterruptedException
     {
-        List<Thread> threads = new ArrayList<>();
-        for (Channel channel : channels_)
+        try
         {
-            Thread thread = new Thread(() ->
+            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
+            List<Thread> threads = new ArrayList<>();
+            for (Channel channel : channels_)
             {
-                try
+                Thread thread = new Thread(() ->
                 {
-                    channel.play();
-                } catch (InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-            });
-            thread.start(); // Запускаем поток
-            threads.add(thread); // Добавляем поток в список
+                    try
+                    {
+                        channel.play();
+                    } catch (InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                });
+                thread.start(); // Запускаем поток
+                threads.add(thread); // Добавляем поток в список
+            }
+            // Ожидание завершения всех потоков
+            for (Thread thread : threads)
+            {
+                thread.join(); // Ожидаем завершения потока
+            }
         }
-        // Ожидание завершения всех потоков
-        for (Thread thread : threads)
+        catch (Throwable t)
         {
-            thread.join(); // Ожидаем завершения потока
+            LOGGER.severe(t.getLocalizedMessage());
+            throw t;
         }
     }
 

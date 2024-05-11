@@ -1,8 +1,9 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.MusicType;
-import ivko.lana.musicentities.Part;
+import ivko.lana.entities.IScale;
+import ivko.lana.musicentities.ChannelType;
 import ivko.lana.musicentities.Phrase;
+import ivko.lana.musicentities.PhraseType;
 import ivko.lana.musicentities.Rhythm;
 
 import java.util.ArrayList;
@@ -14,16 +15,21 @@ import java.util.List;
 public class PhraseGenerator implements IMusicGenerator<Phrase>
 {
     private List<RhythmGenerator> generators_ = new ArrayList<>();
-    private MusicType musicType_;
+    private ChannelType channelType_;
+    private PhraseType phraseType_;
 
-    public PhraseGenerator(Initializer initializer, MusicType musicType)
+    public PhraseGenerator(Initializer initializer, ChannelType channelType, PhraseType phraseType)
     {
-        musicType_ = musicType;
-        for (int i = 0; i < initializer.getRhythmsCount() + 2; ++i)
+        channelType_ = channelType;
+        phraseType_ = phraseType;
+        int rhythmsCount = initializer.getRhythmsCount() + 2;
+        for (int i = 0; i < rhythmsCount; ++i)
         {
             generators_.add(
-                    musicType == MusicType.MELODY
-                            ? new MelodyRhythmGenerator(initializer)
+                    channelType == ChannelType.MELODY
+                            ? new MelodyRhythmGenerator(initializer, phraseType_)
+                            : channelType == ChannelType.DRUM
+                            ? new DrumRhythmGenerator(initializer)
                             : new ChordRhythmGenerator(initializer));
         }
     }
@@ -32,9 +38,23 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
     public Phrase generate() throws InterruptedException
     {
         List<Rhythm> rhythms = new ArrayList<>();
-        for (RhythmGenerator generator : generators_)
+        int previousTone = -1;
+        for (int i = 0; i < generators_.size(); ++i)
         {
+            RhythmGenerator generator = generators_.get(i);
+            if (channelType_ == ChannelType.MELODY)
+            {
+                ((MelodyRhythmGenerator) generator).setPreviousTone(previousTone);
+                if (i == generators_.size() - 1)
+                {
+                    ((MelodyRhythmGenerator) generator).setTargetTone(IScale.BASE_NOTE);
+                }
+            }
             rhythms.add(generator.generate());
+            if (channelType_ == ChannelType.MELODY)
+            {
+                previousTone = ((MelodyRhythmGenerator) generator).getPreviousTone();
+            }
         }
         return new Phrase(rhythms);
     }

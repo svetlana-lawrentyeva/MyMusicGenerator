@@ -1,5 +1,7 @@
 package ivko.lana.musicentities;
 
+import java.util.logging.Logger;
+
 /**
  * @author Lana Ivko
  */

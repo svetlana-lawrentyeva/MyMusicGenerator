@@ -3,8 +3,9 @@ package ivko.lana.musicentities;
 /**
  * @author Lana Ivko
  */
-public enum MusicType
+public enum ChannelType
 {
-    RELAX,
-    EPIC
+    MELODY,
+    DRUM,
+    CHORD
 }

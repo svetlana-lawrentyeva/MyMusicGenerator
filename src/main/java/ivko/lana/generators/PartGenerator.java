@@ -1,10 +1,6 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.Channel;
-import ivko.lana.musicentities.MusicType;
-import ivko.lana.musicentities.Part;
-import ivko.lana.musicentities.Phrase;
-import ivko.lana.util.MusicUtil;
+import ivko.lana.musicentities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,25 +10,30 @@ import java.util.List;
  */
 public class PartGenerator implements IMusicGenerator<Part>
 {
-    private List<PhraseGenerator> generators_ = new ArrayList<>();
-    private MusicType musicType_;
+    private PhraseGenerator generatorQuestion_;
+    private PhraseGenerator generatorAnswer_;
 
-    public PartGenerator(Initializer initializer, MusicType musicType)
+    private int phraseCount_;
+    private ChannelType channelType_;
+
+    public PartGenerator(Initializer initializer, ChannelType channelType)
     {
-        musicType_ = musicType;
-        for (int i = 0; i < initializer.getPartsCount() + 2; ++i)
-        {
-            generators_.add(new PhraseGenerator(initializer, musicType));
-        }
+        channelType_ = channelType;
+        phraseCount_ = initializer.getPhraseCount();
+        generatorQuestion_ = new PhraseGenerator(initializer, channelType, PhraseType.QUESTION);
+        generatorAnswer_ = new PhraseGenerator(initializer, channelType, PhraseType.ANSWER);
     }
 
     @Override
     public Part generate() throws InterruptedException
     {
         List<Phrase> phrases = new ArrayList<>();
-        for (PhraseGenerator generator : generators_)
+        Phrase question = generatorQuestion_.generate();
+        Phrase answer = generatorAnswer_.generate();
+        for (int i = 0; i < phraseCount_; i++)
         {
-            phrases.add(generator.generate());
+            phrases.add(question);
+            phrases.add(answer);
         }
         return new Part(phrases);
     }

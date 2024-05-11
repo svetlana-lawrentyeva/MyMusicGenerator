@@ -1,0 +1,19 @@
+baseDuration: 200
+durations:
+  - duration: 200
+    probability: 0.8
+  - duration: 400
+    probability: 0.8
+  - duration: 600
+    probability: 0.6
+  - duration: 800
+    probability: 0.6
+  - duration: 1200
+    probability: 0.3
+accents:
+  - 100
+  - 50
+  - 50
+  - 80
+  - 50
+  - 50

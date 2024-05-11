@@ -1,8 +1,7 @@
 package ivko.lana.yaml;
 
 
-import ivko.lana.yaml.RhythmPattern;
-import ivko.lana.yaml.YamlToJava;
+import ivko.lana.musicentities.ChannelType;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,18 +13,38 @@ import java.util.List;
 /**
  * @author Lana Ivko
  */
-public class RhythmLoader
+public abstract class RhythmLoader
 {
-    public static final String RHYTHM_DIRECTORY = "rhythms";
-//    public static final String RHYTHM_DIRECTORY = "rhythmsTest";
+    private static List<RhythmPattern> loadMelodyPatterns()
+    {
+        return new MelodyRhythmLoader().loadPatterns();
+    }
+    private static List<RhythmPattern> loadChordPatterns()
+    {
+        return new ChordRhythmLoader().loadPatterns();
+    }
 
-    public static List<RhythmPattern> loadAllPatterns()
+    public static List<RhythmPattern> loadAllPatterns(ChannelType channelType)
+    {
+        switch (channelType)
+        {
+            case MELODY:
+                return loadMelodyPatterns();
+            case CHORD:
+                return loadChordPatterns();
+            default:
+                throw new UnsupportedOperationException(String.format("rhythm pattern is not supported for type: %s", channelType));
+        }
+    }
+
+    protected List<RhythmPattern> loadPatterns()
     {
         List<RhythmPattern> results = new ArrayList<>();
 
         try
         {
-            URL url = RhythmPattern.class.getClassLoader().getResource(RHYTHM_DIRECTORY);
+            String rhythmDirectory = getRhythmDirectory();
+            URL url = RhythmPattern.class.getClassLoader().getResource(rhythmDirectory);
             if (url.getProtocol().equals("file"))
             {
                 java.nio.file.Path dir = java.nio.file.Paths.get(url.toURI());
@@ -34,7 +53,7 @@ public class RhythmLoader
                     for (java.nio.file.Path entry : stream)
                     {
                         String fileName = entry.getFileName().toString();
-                        RhythmPattern rhythmPattern = YamlToJava.extract(RHYTHM_DIRECTORY + File.separator + fileName, RhythmPattern.class);
+                        RhythmPattern rhythmPattern = YamlToJava.extract(rhythmDirectory + File.separator + fileName, RhythmPattern.class);
                         results.add(rhythmPattern);
                     }
                 }
@@ -45,4 +64,6 @@ public class RhythmLoader
         }
         return results;
     }
+
+    protected abstract String getRhythmDirectory();
 }

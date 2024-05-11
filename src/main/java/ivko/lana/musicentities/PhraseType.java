@@ -3,8 +3,8 @@ package ivko.lana.musicentities;
 /**
  * @author Lana Ivko
  */
-public enum MusicType
+public enum PhraseType
 {
-    RELAX,
-    EPIC
+    QUESTION,
+    ANSWER
 }
