@@ -40,8 +40,8 @@ public class Initializer
     private int initializeInstrumentCode()
     {
 
-//    int instrumentCode = random.nextInt(100);
-        int instrumentCode = 0;
+//    int instrumentCode = (int) (Math.random() * 100);
+        int instrumentCode = 40;
         return instrumentCode;
     }
 
