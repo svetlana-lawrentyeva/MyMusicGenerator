@@ -1,4 +1,4 @@
-package ivko.lana.util;
+package ivko.lana.yaml;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

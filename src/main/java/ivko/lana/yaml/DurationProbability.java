@@ -1,4 +1,4 @@
-package ivko.lana.entities;
+package ivko.lana.yaml;
 
 /**
  * @author Lana Ivko
@@ -31,5 +31,14 @@ public class DurationProbability {
 
     public void setProbability(double probability) {
         this.probability = probability;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DurationProbability{" +
+                "duration=" + duration +
+                ", probability=" + probability +
+                '}';
     }
 }

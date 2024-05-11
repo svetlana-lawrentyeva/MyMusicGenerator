@@ -1,7 +1,8 @@
-package ivko.lana.util;
+package ivko.lana.yaml;
 
 
-import ivko.lana.entities.RhythmPattern;
+import ivko.lana.yaml.RhythmPattern;
+import ivko.lana.yaml.YamlToJava;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.List;
 public class RhythmLoader
 {
     public static final String RHYTHM_DIRECTORY = "rhythms";
-    public static final String RHYTHM_3_4 = "rhythms/3-4.yaml";
+//    public static final String RHYTHM_DIRECTORY = "rhythmsTest";
 
     public static List<RhythmPattern> loadAllPatterns()
     {
