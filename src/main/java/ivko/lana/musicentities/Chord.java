@@ -2,7 +2,9 @@ package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -41,18 +43,18 @@ public class Chord implements ISound
                 .collect(Collectors.toList());
     }
 
-    public void play(MidiChannel channel) throws InterruptedException
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         if (!isSequenced_)
         {
-            playRealChord(channel);
+            playRealChord(channel, metronom);
         } else
         {
-            ISound.super.play(channel);
+            ISound.super.play(channel, metronom);
         }
     }
 
-    private void playRealChord(MidiChannel channel) throws InterruptedException
+    private void playRealChord(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         List<Thread> threads = new ArrayList<>();
         for (ISound note : sounds_)
@@ -61,7 +63,7 @@ public class Chord implements ISound
             {
                 try
                 {
-                    note.play(channel);
+                    note.play(channel, metronom);
                 } catch (InterruptedException e)
                 {
                     throw new RuntimeException(e);
@@ -81,6 +83,12 @@ public class Chord implements ISound
     public boolean isSilent()
     {
         return false;
+    }
+
+    @Override
+    public List<Integer> getAllNotes()
+    {
+        return Collections.singletonList(getTone());
     }
 
     @Override

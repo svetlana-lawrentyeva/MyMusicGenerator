@@ -19,7 +19,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
     protected static final Random Random = new Random();
 
     protected Initializer initializer_;
-    private RhythmPattern rhythmPattern_;
+    protected RhythmPattern rhythmPattern_;
     private int measureLength_;
     protected int[] scales_;
     protected List<Integer> accents_;
@@ -30,7 +30,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
         rhythmPattern_ = getRhythmPattern();
         accents_ = rhythmPattern_.getAccents();
         measureLength_ = rhythmPattern_.getBaseDuration() * accents_.size(); // Length of one measure
-        scales_ = initializer_.getScale().getScales();
+        scales_ = initializer_.getScale().getScale();
     }
 
     protected abstract RhythmPattern getRhythmPattern();
@@ -43,19 +43,18 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
 
         while (availableMeasure != 0)
         {
-            tone = IScale.BASE_NOTE + scales_[getNextToneIndex()] + getCorrection();
+            tone = scales_[getNextToneIndex()] + getCorrection();
             int duration = generateDuration();
             duration = Math.min(duration, availableMeasure);
             availableMeasure -= duration;
-            Integer accent = accents_.get(accentIndex);
             ISound newSound;
             if (availableMeasure == 0)
             {
-                newSound = createLastSound(tone, duration, accent);
+                newSound = createLastSound(tone, duration, accentIndex);
             }
             else
             {
-                newSound = createNewSound(tone, duration, accent);
+                newSound = createNewSound(tone, duration, accentIndex);
             }
             sounds.add(newSound);
 
@@ -100,6 +99,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
         double cumulativeProbability = 0.0;
 
         List<DurationProbability> durations = rhythmPattern_.getDurations();
+        int durationResult = 0;
         for (int i = 0; i < durations.size(); i++)
         {
             DurationProbability durationProbability = durations.get(i);
@@ -107,9 +107,14 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
             cumulativeProbability += durationProbability.getProbability();
             if (randomValue < cumulativeProbability)
             {
-                return duration;
+                durationResult = duration;
+                break;
             }
         }
-        return durations.get(durations.size() - 1).getDuration(); // На случай числовых ошибок, возвращаем последний элемент
+        if (durationResult == 0)
+        {
+            durationResult = durations.get(durations.size() - 1).getDuration(); // На случай числовых ошибок, возвращаем последний элемент
+        }
+        return durationResult * getRhythmPattern().getBaseDurationMultiplier();
     }
 }

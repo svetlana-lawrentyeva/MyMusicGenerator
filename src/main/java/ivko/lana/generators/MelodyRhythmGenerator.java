@@ -99,9 +99,9 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected ISound createNewSound(int tone, int duration, Integer accent)
+    protected ISound createNewSound(int tone, int duration, int accentIndex)
     {
-        Note note = new Note(tone, duration, accent + 10);
+        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10);
 //        note.setShouldDebug(true);
         return note;
     }

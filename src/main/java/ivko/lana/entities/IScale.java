@@ -9,25 +9,25 @@ import java.util.List;
 public interface IScale
 {
     int BASE_NOTE = 60; // Middle C
-    int[] getScales();
+    int[] getScale();
 
-    List<Integer[]> getChords();
+    int getBaseNote();
+
+    String getRhythmSize();
+
+    int getSoloInstrument();
+
+    List<Integer[]> getChords(int tone);
 
     // Метод для поиска аккорда, содержащего данную ноту
-    default int[] findChord(int note, List<Integer[]> chords)
+    default Integer[] findChord(int note, List<Integer[]> chords)
     {
-        int[] result = Arrays.stream(chords.get(0)).mapToInt(Integer::intValue).toArray();
-        for (Integer[] chord : chords)
-        {
-            if (Arrays.asList(chord).contains(note))
-            {
-                result = Arrays.stream(chord).mapToInt(Integer::intValue).toArray();
-            }
-        }
-        for (int i = 0; i < result.length; ++i)
-        {
-            result[i] += (BASE_NOTE);
-        }
+        int index = (int) (Math.random() * chords.size());
+        Integer[] result = chords.get(index);
+//        for (int i = 0; i < result.length; ++i)
+//        {
+//            result[i] += (getBaseNote());
+//        }
         return result;
     }
 }

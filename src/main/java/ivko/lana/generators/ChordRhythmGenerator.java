@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author Lana Ivko
@@ -31,7 +32,7 @@ public class ChordRhythmGenerator extends RhythmGenerator
     protected ISound createNewSound(int tone, int duration, int accentIndex)
     {
         IScale scale = initializer_.getScale();
-        int[] chordNotes = scale.findChord(tone - IScale.BASE_NOTE - 12, scale.getChords());
+        Integer[] chordNotes = scale.findChord(tone, scale.getChords(tone));
         boolean isChordSequeced = initializer_.isChordSequeced();
         List<Note> chordNodes;
         if (isChordSequeced)
@@ -48,8 +49,8 @@ public class ChordRhythmGenerator extends RhythmGenerator
         }
         else
         {
-            chordNodes = IntStream.of(chordNotes)
-                    .mapToObj(note -> new Note(note, duration, accents_.get(accentIndex)))
+            chordNodes = Stream.of(chordNotes)
+                    .map(note -> new Note(note, duration, accents_.get(accentIndex)))
                     .collect(Collectors.toList());
 
         }

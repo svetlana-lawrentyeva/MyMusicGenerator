@@ -2,7 +2,6 @@ package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
 import ivko.lana.entities.MajorScale;
-import ivko.lana.entities.MinorScale;
 import ivko.lana.musicentities.ChannelType;
 import ivko.lana.musicentities.MusicType;
 import ivko.lana.yaml.*;
@@ -20,7 +19,8 @@ public class Initializer
     private RhythmPattern chordRhythmPattern_;
     private NextNoteProbabilities nextNoteProbabilities_;
     private ChordInstrumentsByMelody chordInstrumentsByMelody_;
-    private int melodyInstrumentCode_;
+    private int soloInstrumentCode_;
+    private DrumCombinations drumCombinations_;
     private IScale scale_;
 
     private int partsCount_;
@@ -28,13 +28,18 @@ public class Initializer
     private boolean isChordSequenced_;
     private MusicType musicType_;
 
+    private int testChannelCount_ = 3;
+    private boolean isTest_ = true;
+
     public Initializer()
     {
         scale_ = initializeScale();
         melodyRhythmPattern_ = initializeRhythmPattern(ChannelType.MELODY);
         chordRhythmPattern_ = initializeRhythmPattern(ChannelType.CHORD);
         nextNoteProbabilities_ = initializeNextNoteProbabilities();
-        melodyInstrumentCode_ = initializeMelodyInstrumentCode();
+        soloInstrumentCode_ = initializeMelodyInstrumentCode();
+        chordInstrumentsByMelody_ = ChordInstrumentsByMelodyLoader.load();
+        drumCombinations_ = initializeDrumCombinations();
         partsCount_ = initializePartsCount();
         channelCount_ = initializeChannelCount();
         isChordSequenced_ = initializeIsChordSequenced();
@@ -43,9 +48,26 @@ public class Initializer
                 musicType_, scale_.getClass().getSimpleName(), partsCount_, channelCount_, isChordSequenced_));
     }
 
+    private DrumCombinations initializeDrumCombinations()
+    {
+        return DrumCombinationsLoader.load();
+    }
+
+    public List<Integer> getDrumCombinations()
+    {
+        List<List<Integer>> combinations = drumCombinations_.getCombinations();
+        return combinations.get((int) Math.random() * combinations.size());
+    }
+
     private MusicType initializeMusicType()
     {
-        return (int) (Math.random() * 2) == 1 ? MusicType.RELAX : MusicType.EPIC;
+//        return (int) (Math.random() * 2) == 1 ? MusicType.RELAX : MusicType.EPIC;
+        return  MusicType.RELAX;
+    }
+
+    public MusicType getMusicType()
+    {
+        return musicType_;
     }
 
     private Integer[] getMelodyInstrumentCodes()
@@ -63,11 +85,7 @@ public class Initializer
 
     private RhythmPattern initializeRhythmPattern(ChannelType channelType)
     {
-        List<RhythmPattern> rhythmPatterns = RhythmLoader.loadAllPatterns(channelType);
-        int length = rhythmPatterns.size();
-        int rhythmIndex = (int) (Math.random() * length);
-        RhythmPattern rhythmPattern = rhythmPatterns.get(rhythmIndex);
-        return rhythmPattern;
+        return RhythmLoader.loadAllPatterns(scale_.getRhythmSize(), channelType);
     }
 
     private NextNoteProbabilities initializeNextNoteProbabilities()
@@ -77,44 +95,43 @@ public class Initializer
 
     private IScale initializeScale()
     {
-        int scaleChoice = (int) (Math.random() * 2);
-        boolean isMajor = scaleChoice == 0;
-        return isMajor ? new MajorScale() : new MinorScale();
+        MusicScalesConfig musicScalesConfig = MusicScaleConfigLoader.load();
+        List<MusicScalesConfig.ScaleConfig> scales = musicScalesConfig.getScales();
+        int index = (int) (Math.random() * scales.size());
+        MusicScalesConfig.ScaleConfig scaleConfig = scales.get(index);
+        LOGGER.info(String.format("Playing: %s", scaleConfig.getName()));
+        return scaleConfig;
     }
 
     private int initializeMelodyInstrumentCode()
     {
-        Integer[] melodyInstrumentCodes = getMelodyInstrumentCodes();
-        int instrumentIndex = (int) (Math.random() * melodyInstrumentCodes.length);
+//        Integer[] melodyInstrumentCodes = getMelodyInstrumentCodes();
+//        int instrumentIndex = (int) (Math.random() * melodyInstrumentCodes.length);
 //        int instrumentIndex = 0;
-        return melodyInstrumentCodes[instrumentIndex];
+        return scale_.getSoloInstrument();
     }
 
     private int initializePartsCount()
     {
-        int partsCount = (int) (Math.random() * 10) + 2;
-//        int partsCount = 2;
+        int partsCount = isTest_ ? 2 : (int) (Math.random() * 10) + 2;
         return partsCount;
     }
 
     public int getPhraseCount()
     {
-        int phraseCount = (int) (Math.random() * 4) + 4;
-//        int phraseCount = 10;
+        int phraseCount = isTest_ ? 2 : (int) (Math.random() * 4) + 4;
         return phraseCount;
     }
 
     public int getRhythmsCount()
     {
-        int rhythmsCount = (int) (Math.random() * 4) + 4;
-//        int phraseCount = 10;
+        int rhythmsCount = isTest_ ? 2 : (int) (Math.random() * 4) + 4;
         return rhythmsCount;
     }
 
     private int initializeChannelCount()
     {
-    int channelCount = (int) (Math.random() * 7) + 3;
-//        int channelCount = 3;
+    int channelCount = isTest_ ? testChannelCount_ : (int) (Math.random() * 7);
         return channelCount;
     }
 
@@ -135,7 +152,7 @@ public class Initializer
 
     public int getMelodyInstrumentCode()
     {
-        return melodyInstrumentCode_;
+        return soloInstrumentCode_;
     }
 
     public IScale getScale()
@@ -160,6 +177,6 @@ public class Initializer
 
     public List<Integer> getChordInstrumentCodes()
     {
-        return chordInstrumentsByMelody_.getChordInstruments(melodyInstrumentCode_);
+        return chordInstrumentsByMelody_.getChordInstruments(soloInstrumentCode_);
     }
 }

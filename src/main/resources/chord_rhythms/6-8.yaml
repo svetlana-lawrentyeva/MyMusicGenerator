@@ -1,14 +1,14 @@
-baseDuration: 200
+baseDuration: 1
 durations:
-  - duration: 200
+  - duration: 1
     probability: 0.8
-  - duration: 400
+  - duration: 2
     probability: 0.8
-  - duration: 600
+  - duration: 3
     probability: 0.6
-  - duration: 800
+  - duration: 4
     probability: 0.6
-  - duration: 1200
+  - duration: 6
     probability: 0.3
 accents:
   - 100
@@ -17,3 +17,17 @@ accents:
   - 80
   - 50
   - 50
+relaxDrum:
+  - 36
+  - -1
+  - -1
+  - 38
+  - -1
+  - -1
+epicDrum:
+  - 36
+  - 38
+  - 45
+  - 36
+  - 38
+  - 45

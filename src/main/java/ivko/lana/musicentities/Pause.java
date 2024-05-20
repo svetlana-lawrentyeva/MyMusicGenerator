@@ -2,7 +2,9 @@ package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Lana Ivko
@@ -21,9 +23,15 @@ public class Pause implements ISound
         return duration_;
     }
 
-    public void play(MidiChannel channel) throws InterruptedException
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         Thread.sleep(duration_);   // Hold the note for the duration
+    }
+
+    @Override
+    public List<Integer> getAllNotes()
+    {
+        return Collections.singletonList(-1);
     }
 
     @Override

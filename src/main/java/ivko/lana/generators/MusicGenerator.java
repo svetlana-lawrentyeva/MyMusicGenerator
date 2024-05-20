@@ -23,8 +23,8 @@ public class MusicGenerator implements IMusicGenerator<Music>
                     i == 0
                         ? ChannelType.MELODY
                         : i == 1
-                            ? ChannelType.CHORD
-                            : ChannelType.DRUM
+                            ? ChannelType.DRUM
+                            : ChannelType.CHORD
             );
             generators_.add(channelGenerator);
         }

@@ -2,9 +2,11 @@ package ivko.lana.musicentities;
 
 import ivko.lana.util.MusicUtil;
 
-import javax.sound.midi.*;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.Synthesizer;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -14,12 +16,24 @@ public class Channel implements IPlayable
 {
     private final List<Part> parts_;
     private final int instrumentCode_;
+    private boolean isMelody_ = false;
 
     public Channel(List<Part> phrases, int instrumentCode)
     {
         parts_ = phrases;
         instrumentCode_ = instrumentCode;
     }
+
+    public void setIsMelody(boolean isMelody)
+    {
+        isMelody_ = isMelody;
+    }
+
+    public boolean isMelody()
+    {
+        return isMelody_;
+    }
+
 
     public int getInstrumentCode()
     {
@@ -34,7 +48,15 @@ public class Channel implements IPlayable
                 .collect(Collectors.toList());
     }
 
-    public void play() throws InterruptedException
+    @Override
+    public List<Integer> getAllNotes()
+    {
+        return parts_.stream()
+                .flatMap(part -> part.getAllNotes().stream())
+                .collect(Collectors.toList());
+    }
+
+    public void play(CountDownLatch metronom) throws InterruptedException
     {
 //        if (instrumentCode_ == 0)
 //            return;
@@ -42,14 +64,14 @@ public class Channel implements IPlayable
 
         int channelNumber = getChannelNumber();
         MidiChannel channel = synthesizer.getChannels()[channelNumber];
-        if (instrumentCode_ >=0)
+        if (instrumentCode_ >= 0)
         {
             channel.programChange(instrumentCode_);
         }
 
         for (Part part : parts_)
         {
-            part.play(channel);
+            part.play(channel, metronom);
         }
         synthesizer.close();
     }
@@ -69,7 +91,7 @@ public class Channel implements IPlayable
     }
 
     @Override
-    public void play(MidiChannel channel) throws InterruptedException
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         throw new UnsupportedOperationException();
     }

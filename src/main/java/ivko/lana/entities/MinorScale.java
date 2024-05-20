@@ -13,15 +13,39 @@ public class MinorScale implements IScale
     private static final List<Integer[]> CHORDS = initializeChords();
 
     @Override
-    public int[] getScales()
+    public int[] getScale()
     {
         return MINOR_SCALE  ;
     }
 
     @Override
-    public List<Integer[]> getChords()
+    public int getBaseNote()
+    {
+        return 0;
+    }
+
+    @Override
+    public String getRhythmSize()
+    {
+        return null;
+    }
+
+    @Override
+    public int getSoloInstrument()
+    {
+        return 0;
+    }
+
+    @Override
+    public List<Integer[]> getChords(int tone)
     {
         return CHORDS;
+    }
+
+    @Override
+    public Integer[] findChord(int note, List<Integer[]> chords)
+    {
+        return IScale.super.findChord(note, chords);
     }
 
     // Метод для инициализации словаря аккордов

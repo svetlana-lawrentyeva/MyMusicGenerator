@@ -4,65 +4,41 @@ package ivko.lana.yaml;
 import ivko.lana.musicentities.ChannelType;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Lana Ivko
  */
 public abstract class RhythmLoader
 {
-    private static List<RhythmPattern> loadMelodyPatterns()
+    private static RhythmPattern loadMelodyPatterns(String rhythmSize)
     {
-        return new MelodyRhythmLoader().loadPatterns();
+        return new MelodyRhythmLoader().loadPattern(rhythmSize);
     }
-    private static List<RhythmPattern> loadChordPatterns()
+    private static RhythmPattern loadChordPatterns(String rhythmSize)
     {
-        return new ChordRhythmLoader().loadPatterns();
+        return new ChordRhythmLoader().loadPattern(rhythmSize);
     }
 
-    public static List<RhythmPattern> loadAllPatterns(ChannelType channelType)
+    public static RhythmPattern loadAllPatterns(String rhythmSize, ChannelType channelType)
     {
         switch (channelType)
         {
             case MELODY:
-                return loadMelodyPatterns();
+                return loadMelodyPatterns(rhythmSize);
             case CHORD:
-                return loadChordPatterns();
+                return loadChordPatterns(rhythmSize);
             default:
                 throw new UnsupportedOperationException(String.format("rhythm pattern is not supported for type: %s", channelType));
         }
     }
 
-    protected List<RhythmPattern> loadPatterns()
+    protected RhythmPattern loadPattern(String rhythmSize)
     {
-        List<RhythmPattern> results = new ArrayList<>();
-
-        try
-        {
-            String rhythmDirectory = getRhythmDirectory();
-            URL url = RhythmPattern.class.getClassLoader().getResource(rhythmDirectory);
-            if (url.getProtocol().equals("file"))
-            {
-                java.nio.file.Path dir = java.nio.file.Paths.get(url.toURI());
-                try (java.nio.file.DirectoryStream<java.nio.file.Path> stream = java.nio.file.Files.newDirectoryStream(dir))
-                {
-                    for (java.nio.file.Path entry : stream)
-                    {
-                        String fileName = entry.getFileName().toString();
-                        RhythmPattern rhythmPattern = YamlToJava.extract(rhythmDirectory + File.separator + fileName, RhythmPattern.class);
-                        results.add(rhythmPattern);
-                    }
-                }
-            }
-        } catch (URISyntaxException | IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return results;
+        String rhythmDirectory = getRhythmDirectory();
+        RhythmPattern rhythmPattern = YamlToJava.extract(rhythmDirectory + File.separator + rhythmSize + ".yaml", RhythmPattern.class);
+        Setup setup = YamlToJava.extract(rhythmDirectory + File.separator +"setup.yaml", Setup.class);
+        rhythmPattern.setBaseDurationMultiplier(setup.getBaseDurationMultiplier());
+        return rhythmPattern;
     }
 
     protected abstract String getRhythmDirectory();

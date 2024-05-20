@@ -24,4 +24,12 @@ public class Part implements IPlayable
                 .map(sound -> (IPlayable) sound)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Integer> getAllNotes()
+    {
+        return phrases_.stream()
+                .flatMap(phrase -> phrase.getAllNotes().stream())
+                .collect(Collectors.toList());
+    }
 }

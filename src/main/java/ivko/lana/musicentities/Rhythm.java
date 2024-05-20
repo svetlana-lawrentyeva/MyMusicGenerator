@@ -1,6 +1,9 @@
 package ivko.lana.musicentities;
 
+import javax.sound.midi.MidiChannel;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -23,11 +26,35 @@ public class Rhythm implements ISound
     }
 
     @Override
+    public List<Integer> getAllNotes()
+    {
+        return sounds_.stream()
+                .flatMap(sound -> sound.getAllNotes().stream())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<IPlayable> getPlayables()
     {
         return sounds_.stream()
                 .map(sound -> (IPlayable) sound)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    {
+//        simplifyIfNeeded();
+        ISound.super.play(channel, metronom);
+    }
+
+    private void simplifyIfNeeded()
+    {
+        ISound firstNote = sounds_.get(0);
+        if (firstNote instanceof Note)
+        {
+            sounds_ = Collections.singletonList(new Note(firstNote.getTone(), getDuration(), firstNote.getAccent()));
+        }
     }
 
     @Override

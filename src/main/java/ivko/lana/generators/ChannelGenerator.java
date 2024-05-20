@@ -53,6 +53,10 @@ public class ChannelGenerator implements IMusicGenerator<Channel>
         Channel channel = channelType_ == ChannelType.DRUM
                 ? new DrumChannel(parts, 0)
                 : new Channel(parts, nextInstrumentCode);
+        if (channelType_ == ChannelType.MELODY)
+        {
+            channel.setIsMelody(true);
+        }
 
         LOGGER.info(String.format("channel %s '%s' for type '%s' with InstrumentCode '%s' is created", channel.getClass().getSimpleName(), channel.hashCode(), channelType_, channel.getInstrumentCode()));
         return channel;

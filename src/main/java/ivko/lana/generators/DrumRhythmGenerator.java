@@ -1,25 +1,26 @@
 package ivko.lana.generators;
 
 import ivko.lana.musicentities.ISound;
+import ivko.lana.musicentities.MusicType;
 import ivko.lana.musicentities.Note;
-import ivko.lana.musicentities.PhraseType;
 import ivko.lana.yaml.RhythmPattern;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Lana Ivko
  */
 public class DrumRhythmGenerator extends RhythmGenerator
 {
-    private int targetTone_ = -1;
-    private int previousTone_;
-    private int correction_ = 0;
+    protected List<Integer> drums_;
 
 
     public DrumRhythmGenerator(Initializer initializer)
     {
         super(initializer);
+        drums_ = initializer.getMusicType() == MusicType.EPIC
+                ? rhythmPattern_.getDrums(initializer.getMusicType())
+                : initializer_.getDrumCombinations();
     }
 
     @Override
@@ -28,46 +29,11 @@ public class DrumRhythmGenerator extends RhythmGenerator
         return initializer_.getMelodyRhythmPattern();
     }
 
-    protected ISound createLastSound(int tone, int duration, Integer accent)
-    {
-        ISound lastSound;
-        if (targetTone_ != -1)
-        {
-            lastSound = createNewSound(targetTone_, duration, accent);
-        }
-        else
-        {
-            lastSound = createNewSound(tone, duration, accent);
-        }
-        return lastSound;
-    }
-
-    @Override
-    protected int getNextToneIndex()
-    {
-        correction_ = 0;
-        if (previousTone_ == -1)
-        {
-            return super.getNextToneIndex();
-        }
-        Map<Integer, Double> nextNoteProbabilities = initializer_.getNextNoteProbabilities().getProbabilitiesByPreviousNote(previousTone_);
-        double p = Random.nextDouble();
-        double cumulativeProbability = 0.0;
-        for (int note : scales_) {
-            cumulativeProbability += nextNoteProbabilities.getOrDefault(note, 0.0);
-            if (p <= cumulativeProbability) {
-                return note;
-            }
-        }
-        int currentTone = scales_[scales_.length - 1];
-        previousTone_ = currentTone;
-        return currentTone;
-    }
-
     @Override
     protected ISound createNewSound(int tone, int duration, int accentIndex)
     {
-        Note note = new Note(tone, duration, accents_.get(accentIndex));
+        int drumsIndex = (int) (Math.random() * drums_.size());
+        Note note = new Note(drums_.get(drumsIndex), duration, accents_.get(accentIndex));
 //        note.setShouldDebug(true);
         return note;
     }

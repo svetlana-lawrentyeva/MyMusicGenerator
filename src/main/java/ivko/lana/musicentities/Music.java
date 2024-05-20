@@ -2,7 +2,10 @@ package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * @author Lana Ivko
@@ -22,13 +25,14 @@ public class Music implements IPlayable
         {
             LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
             List<Thread> threads = new ArrayList<>();
+            CountDownLatch metronom = new CountDownLatch(channels_.size());
             for (Channel channel : channels_)
             {
                 Thread thread = new Thread(() ->
                 {
                     try
                     {
-                        channel.play();
+                        channel.play(metronom);
                     } catch (InterruptedException e)
                     {
                         throw new RuntimeException(e);
@@ -51,7 +55,7 @@ public class Music implements IPlayable
     }
 
     @Override
-    public void play(MidiChannel channel) throws InterruptedException
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         throw new UnsupportedOperationException();
     }
@@ -59,6 +63,26 @@ public class Music implements IPlayable
     @Override
     public List<IPlayable> getPlayables()
     {
-        return null;
+        return channels_.stream()
+                .map(channel -> (IPlayable) channel)
+                .collect(Collectors.toList());
+    }
+
+    public List<Integer> getAllNotes()
+    {
+        Channel melodyChannel = channels_.stream()
+                .filter(channel -> channel.isMelody())
+                .findFirst()
+                .orElse(null);
+        List<Integer> result;
+        if (melodyChannel != null)
+        {
+            result = melodyChannel.getAllNotes();
+        }
+        else
+        {
+            result = Collections.EMPTY_LIST;
+        }
+        return result;
     }
 }

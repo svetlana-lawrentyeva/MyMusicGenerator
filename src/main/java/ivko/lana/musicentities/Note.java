@@ -1,8 +1,12 @@
 package ivko.lana.musicentities;
 
+import ivko.lana.entities.IScale;
+
 import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Lana Ivko
@@ -41,21 +45,27 @@ public class Note implements ISound
         return accent_;
     }
 
-    public void play(MidiChannel channel) throws InterruptedException
+    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
     {
         if (shouldDebug_)
         {
             LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this));
         }
-        channel.noteOn(tone_, accent_);
+        channel.noteOn(IScale.BASE_NOTE + tone_, accent_);
         Thread.sleep(duration_);   // Hold the note for the duration
-        channel.noteOff(tone_, accent_);
+        channel.noteOff(IScale.BASE_NOTE + tone_, accent_);
     }
 
     @Override
     public List<IPlayable> getPlayables()
     {
         return Arrays.asList(this);
+    }
+
+    @Override
+    public List<Integer> getAllNotes()
+    {
+        return Collections.singletonList(tone_);
     }
 
     @Override
