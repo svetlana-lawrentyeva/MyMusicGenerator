@@ -43,7 +43,7 @@ public class Chord implements ISound
                 .collect(Collectors.toList());
     }
 
-    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         if (!isSequenced_)
         {
@@ -54,7 +54,7 @@ public class Chord implements ISound
         }
     }
 
-    private void playRealChord(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    private void playRealChord(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         List<Thread> threads = new ArrayList<>();
         for (ISound note : sounds_)

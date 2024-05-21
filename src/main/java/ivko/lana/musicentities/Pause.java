@@ -23,7 +23,7 @@ public class Pause implements ISound
         return duration_;
     }
 
-    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         Thread.sleep(duration_);   // Hold the note for the duration
     }

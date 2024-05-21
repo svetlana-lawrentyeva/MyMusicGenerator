@@ -2,7 +2,6 @@ package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 /**
@@ -12,8 +11,7 @@ public interface IPlayable
 {
     Logger LOGGER = Logger.getLogger(IPlayable.class.getName());
 
-    default
-    void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    default void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         for (IPlayable sound : getPlayables())
         {
@@ -24,7 +22,14 @@ public interface IPlayable
             }
             else
             {
-                sound.play(channel, metronom);
+                if (!metronom.shouldStop())
+                {
+                    sound.play(channel, metronom);
+                }
+                else
+                {
+                    channel.allNotesOff();
+                }
             }
         }
     }

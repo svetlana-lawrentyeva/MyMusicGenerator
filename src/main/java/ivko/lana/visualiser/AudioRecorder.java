@@ -42,8 +42,12 @@ public class AudioRecorder
 
     public void stopRecording()
     {
-        targetDataLine.stop();
-        recordingThread.interrupt();
+        if (targetDataLine != null && targetDataLine.isOpen()) {
+            targetDataLine.stop();
+            targetDataLine.close();
+            System.out.println("Recording stopped.");
+            recordingThread.interrupt();
+        }
     }
 
     public byte[] getAudioData() throws IOException, InterruptedException

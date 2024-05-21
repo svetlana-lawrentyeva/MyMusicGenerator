@@ -42,7 +42,7 @@ public class Rhythm implements ISound
     }
 
     @Override
-    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
 //        simplifyIfNeeded();
         ISound.super.play(channel, metronom);

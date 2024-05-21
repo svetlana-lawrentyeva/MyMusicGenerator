@@ -8,11 +8,8 @@ import ivko.lana.util.MusicUtil;
 import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Lana Ivko
@@ -25,10 +22,14 @@ public class VisualPanel extends JPanel
     private Synthesizer synthesizer_;
     private AudioRecorder audioRecorder_;
 
+    private Music music_;
+    private Initializer initializer_;
+
     public VisualPanel()
     {
         super(new GridBagLayout());
         synthesizer_ = MusicUtil.getInstance().getSynthesizer();
+        initializer_ = new Initializer();
         prepare();
     }
 
@@ -49,10 +50,9 @@ public class VisualPanel extends JPanel
                 ex.printStackTrace();
             }
         }));
-        playButton_.addActionListener(new ActionListener()
+        playButton_.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            if (playButton_.getText().equals("Play"))
             {
                 SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>()
                 {
@@ -63,7 +63,7 @@ public class VisualPanel extends JPanel
                         {
                             audioRecorder_ = new AudioRecorder();
                             audioRecorder_.startRecording();
-                            playMusic(); // Ваш метод для воспроизведения музыки
+                            playMusic(initializer_); // Ваш метод для воспроизведения музыки
                         } catch (Exception ex)
                         {
                             ex.printStackTrace();
@@ -74,11 +74,26 @@ public class VisualPanel extends JPanel
                     @Override
                     protected void done()
                     {
-                        playButton_.setEnabled(true);
+                        playButton_.setText("Play");
                     }
                 };
-                playButton_.setEnabled(false);
+                playButton_.setText("Stop");
+                if (audioRecorder_ != null)
+                {
+                    audioRecorder_.stopRecording();
+                }
                 swingWorker.execute();
+            }
+            else
+            {
+                audioRecorder_.startRecording();
+                try
+                {
+                    stopMusic();
+                } catch (InterruptedException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -98,17 +113,15 @@ public class VisualPanel extends JPanel
         return SAVE_DIRECTORY + dateFormat.format(now) + ".mp3";
     }
 
-    private void playMusic() throws InterruptedException
+    private void playMusic(Initializer initializer) throws InterruptedException
     {
-
-        Initializer initializer = new Initializer();
         MusicGenerator musicGenerator = new MusicGenerator(initializer);
-        Music music = musicGenerator.generate();
-        music.play();
+        music_ = musicGenerator.generate();
+        music_.play();
     }
 
-    public void setData(List<Integer> data)
+    private void stopMusic() throws InterruptedException
     {
-
+        music_.stop();
     }
 }

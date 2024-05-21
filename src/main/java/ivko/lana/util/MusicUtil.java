@@ -32,9 +32,6 @@ public class MusicUtil
         try
         {
             synthesizer_ = MidiSystem.getSynthesizer();
-            synthesizer_.open();
-            isInitialized_ = true;
-            channelsNumber_.add(9);
         }
         catch (MidiUnavailableException e)
         {
@@ -80,6 +77,18 @@ public class MusicUtil
     public boolean isInitialized()
     {
         return isInitialized_;
+    }
+
+    public void resetFreeCanalNumbers()
+    {
+        channelsNumber_.clear();
+    }
+
+    public void prepareSynthesizer() throws MidiUnavailableException
+    {
+        synthesizer_.open();
+        isInitialized_ = true;
+        channelsNumber_.add(9);
     }
 
 //    public int getNextInstrumentCode(boolean isMelody)

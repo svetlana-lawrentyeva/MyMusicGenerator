@@ -45,7 +45,7 @@ public class Note implements ISound
         return accent_;
     }
 
-    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         if (shouldDebug_)
         {

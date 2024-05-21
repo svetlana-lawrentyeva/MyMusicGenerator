@@ -1,10 +1,12 @@
 package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiUnavailableException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public class Music implements IPlayable
 {
     private List<Channel> channels_;
+    private Metronom metronom_;
 
     public Music(List<Channel> channels)
     {
@@ -25,15 +28,15 @@ public class Music implements IPlayable
         {
             LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
             List<Thread> threads = new ArrayList<>();
-            CountDownLatch metronom = new CountDownLatch(channels_.size());
+            metronom_ = new Metronom(channels_.size());
             for (Channel channel : channels_)
             {
                 Thread thread = new Thread(() ->
                 {
                     try
                     {
-                        channel.play(metronom);
-                    } catch (InterruptedException e)
+                        channel.play(metronom_);
+                    } catch (InterruptedException | MidiUnavailableException e)
                     {
                         throw new RuntimeException(e);
                     }
@@ -46,16 +49,25 @@ public class Music implements IPlayable
             {
                 thread.join(); // Ожидаем завершения потока
             }
-        }
-        catch (Throwable t)
+        } catch (Throwable t)
         {
             LOGGER.severe(t.getLocalizedMessage());
             throw t;
         }
     }
 
+    public void stop() throws InterruptedException
+    {
+        metronom_.stop();
+        metronom_.await();
+        for (Channel channel : channels_)
+        {
+            channel.stop();
+        }
+    }
+
     @Override
-    public void play(MidiChannel channel, CountDownLatch metronom) throws InterruptedException
+    public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         throw new UnsupportedOperationException();
     }
@@ -78,8 +90,7 @@ public class Music implements IPlayable
         if (melodyChannel != null)
         {
             result = melodyChannel.getAllNotes();
-        }
-        else
+        } else
         {
             result = Collections.EMPTY_LIST;
         }

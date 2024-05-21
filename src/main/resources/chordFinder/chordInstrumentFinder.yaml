@@ -1,81 +1,180 @@
 chordInstrumentsByMelody:
   74:
-    - 0
-    - 46
-    - 25
-    - 48
-    - 72
-    - 68
-    - 60
+    - 0   # Acoustic Grand Piano
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 48  # String Ensemble 1
+    - 72  # Clarinet
+    - 68  # Oboe
+    - 60  # French Horn
 
   76:
-    - 25
-    - 46
-    - 48
-    - 70
-    - 68
-    - 72
-    - 12
+    - 25  # Acoustic Guitar (Nylon)
+    - 46  # Harp
+    - 48  # String Ensemble 1
+    - 70  # English Horn
+    - 68  # Oboe
+    - 72  # Clarinet
+    - 12  # Marimba
 
   79:
-    - 48
-    - 46
-    - 25
-    - 0
-    - 70
-    - 68
-    - 74
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
 
   72:
-    - 48
-    - 46
-    - 25
-    - 0
-    - 68
-    - 60
-    - 70
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 68  # Oboe
+    - 60  # French Horn
+    - 70  # English Horn
 
   69:
-    - 48
-    - 46
-    - 25
-    - 72
-    - 70
-    - 68
-    - 60
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 72  # Clarinet
+    - 70  # English Horn
+    - 68  # Oboe
+    - 60  # French Horn
 
   70:
-    - 48
-    - 46
-    - 25
-    - 72
-    - 68
-    - 60
-    - 0
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 72  # Clarinet
+    - 68  # Oboe
+    - 60  # French Horn
+    - 0   # Acoustic Grand Piano
 
   106:
-    - 25
-    - 22
-    - 40
-    - 24
-    - 0
-    - 12
-    - 48
+    - 25  # Acoustic Guitar (Nylon)
+    - 22  # Harmonica
+    - 40  # Synth Strings 1
+    - 24  # Acoustic Guitar (Steel)
+    - 0   # Acoustic Grand Piano
+    - 12  # Marimba
+    - 48  # String Ensemble 1
 
   107:
-    - 108
-    - 77
-    - 112
-    - 109
-    - 25
-    - 0
-    - 48
+    - 108 # Koto
+    - 77  # Tenor Sax
+    - 112 # Shamisen
+    - 109 # Kalimba
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 48  # String Ensemble 1
 
   108:
-    - 107
-    - 77
-    - 112
-    - 109
-    - 25
-    - 0
-    - 48
+    - 107 # Shamisen
+    - 77  # Tenor Sax
+    - 112 # Koto
+    - 109 # Kalimba
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 48  # String Ensemble 1
+
+  71:
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  73:
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  105:
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  109:
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  111:
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  56: # Trumpet
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  57: # Trombone
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  58: # Tuba
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  59: # Muted Trumpet
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  60: # French Horn
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
+
+  61: # Brass Section
+    - 48  # String Ensemble 1
+    - 46  # Harp
+    - 25  # Acoustic Guitar (Nylon)
+    - 0   # Acoustic Grand Piano
+    - 70  # English Horn
+    - 68  # Oboe
+    - 74  # Flute
