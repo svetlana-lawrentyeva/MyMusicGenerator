@@ -2,11 +2,17 @@ package ivko.lana.visualiser;
 
 import javazoom.jl.converter.Converter;
 
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+
+
+
 
 public class AudioRecorder
 {
@@ -57,8 +63,14 @@ public class AudioRecorder
         return byteArrayOutputStream.toByteArray();
     }
 
-    public void saveToMp3(String filePath) throws Exception
+    public void saveToFile(String filePath) throws Exception
     {
+        Sequence sequence = new Sequence(Sequence.PPQ, 24);
+        Track track = sequence.createTrack();
+//        writeToTrack(music_);
+//        MidiSystem.write()
+
+
         byte[] audioData = getAudioData();
         File wavFile = new File("temp.wav");
         AudioInputStream audioStream = new AudioInputStream(

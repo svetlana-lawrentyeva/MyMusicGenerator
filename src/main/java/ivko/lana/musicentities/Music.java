@@ -22,6 +22,11 @@ public class Music implements IPlayable
         channels_ = channels;
     }
 
+    public List<Channel> getChannels()
+    {
+        return channels_;
+    }
+
     public void play() throws InterruptedException
     {
         try

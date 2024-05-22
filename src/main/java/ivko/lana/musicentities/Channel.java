@@ -7,7 +7,6 @@ import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +17,7 @@ public class Channel implements IPlayable
     private final List<Part> parts_;
     private final int instrumentCode_;
     private boolean isMelody_ = false;
+    private int channelNumber_;
     private MidiChannel channel_;
 
     public Channel(List<Part> phrases, int instrumentCode)
@@ -50,6 +50,11 @@ public class Channel implements IPlayable
                 .collect(Collectors.toList());
     }
 
+    public int getChannelNumber()
+    {
+        return channelNumber_;
+    }
+
     @Override
     public List<Integer> getAllNotes()
     {
@@ -64,8 +69,8 @@ public class Channel implements IPlayable
 //            return;
         Synthesizer synthesizer = prepareSynthesizer();
 
-        int channelNumber = getChannelNumber();
-        channel_ = synthesizer.getChannels()[channelNumber];
+        channelNumber_ = MusicUtil.getInstance().getFreeChannelNumber();
+        channel_ = synthesizer.getChannels()[channelNumber_];
         if (instrumentCode_ >= 0)
         {
             channel_.programChange(instrumentCode_);
@@ -99,11 +104,6 @@ public class Channel implements IPlayable
     private static Synthesizer getSynthesizer()
     {
         return MusicUtil.getInstance().getSynthesizer();
-    }
-
-    protected int getChannelNumber()
-    {
-        return MusicUtil.getInstance().getFreeChannelNumber();
     }
 
     @Override

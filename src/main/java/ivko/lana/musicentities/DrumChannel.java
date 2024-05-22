@@ -19,7 +19,7 @@ public class DrumChannel extends Channel
     }
 
     @Override
-    protected int getChannelNumber()
+    public int getChannelNumber()
     {
         return 9;
     }
