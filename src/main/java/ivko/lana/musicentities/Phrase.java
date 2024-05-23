@@ -1,6 +1,6 @@
 package ivko.lana.musicentities;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +22,17 @@ public class Phrase implements IPlayable
         return rhythms_.stream()
                 .flatMap(rhythm -> rhythm.getAllNotes().stream())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ISound> getAllSounds()
+    {
+        List<ISound> sounds = new ArrayList<>();
+        for (Rhythm rhythm : rhythms_)
+        {
+            sounds.addAll(rhythm.getAllSounds());
+        }
+        return sounds;
     }
 
     @Override

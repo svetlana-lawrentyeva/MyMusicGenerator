@@ -29,4 +29,10 @@ public class RhythmSeparator extends Rhythm
     {
         return Collections.EMPTY_LIST;
     }
+
+    @Override
+    public List<ISound> getAllSounds()
+    {
+        return Collections.EMPTY_LIST;
+    }
 }

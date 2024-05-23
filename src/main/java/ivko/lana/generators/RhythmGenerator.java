@@ -1,6 +1,5 @@
 package ivko.lana.generators;
 
-import ivko.lana.entities.IScale;
 import ivko.lana.musicentities.ISound;
 import ivko.lana.musicentities.Pause;
 import ivko.lana.musicentities.Rhythm;
@@ -23,14 +22,21 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
     private int measureLength_;
     protected int[] scales_;
     protected List<Integer> accents_;
+    private int channel_;
 
-    public RhythmGenerator(Initializer initializer)
+    public RhythmGenerator(Initializer initializer, int channel)
     {
         initializer_ = initializer;
         rhythmPattern_ = getRhythmPattern();
         accents_ = rhythmPattern_.getAccents();
         measureLength_ = rhythmPattern_.getBaseDuration() * accents_.size(); // Length of one measure
         scales_ = initializer_.getScale().getScale();
+        channel_ = channel;
+    }
+
+    protected int getChannel()
+    {
+        return channel_;
     }
 
     protected abstract RhythmPattern getRhythmPattern();
@@ -54,7 +60,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
             }
             else
             {
-                newSound = createNewSound(tone, duration, accentIndex);
+                newSound = createNewSound(tone, duration, accentIndex, channel_);
             }
             sounds.add(newSound);
 
@@ -78,7 +84,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
 
     protected ISound createLastSound(int tone, int duration, Integer accent)
     {
-        return createNewSound(tone, duration, accent);
+        return createNewSound(tone, duration, accent, channel_);
     }
 
     protected int getCorrection()
@@ -91,7 +97,7 @@ public abstract class RhythmGenerator implements IMusicGenerator<Rhythm>
         return Random.nextInt(scales_.length);
     }
 
-    protected abstract ISound createNewSound(int tone, int duration, int accentIndex);
+    protected abstract ISound createNewSound(int tone, int duration, int accentIndex, int channel_);
 
     private int generateDuration()
     {

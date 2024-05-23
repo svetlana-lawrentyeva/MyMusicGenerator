@@ -34,6 +34,14 @@ public class Rhythm implements ISound
     }
 
     @Override
+    public List<ISound> getAllSounds()
+    {
+        return sounds_.stream()
+                .flatMap(sound -> sound.getAllSounds().stream())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<IPlayable> getPlayables()
     {
         return sounds_.stream()
@@ -53,7 +61,7 @@ public class Rhythm implements ISound
         ISound firstNote = sounds_.get(0);
         if (firstNote instanceof Note)
         {
-            sounds_ = Collections.singletonList(new Note(firstNote.getTone(), getDuration(), firstNote.getAccent()));
+            sounds_ = Collections.singletonList(new Note(firstNote.getTone(), getDuration(), firstNote.getAccent(), ((Note) firstNote).getChannel()));
         }
     }
 

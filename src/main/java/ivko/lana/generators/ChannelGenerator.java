@@ -18,17 +18,19 @@ public class ChannelGenerator implements IMusicGenerator<Channel>
     private List<PartGenerator> generators_ = new ArrayList<>();
     private ChannelType channelType_;
     private Initializer initializer_;
+    private int channelNumber_;
 
-    public ChannelGenerator(Initializer initializer, ChannelType channelType)
+    public ChannelGenerator(Initializer initializer, ChannelType channelType, int channelNumber)
     {
         initializer_ = initializer;
         channelType_ = channelType;
-        generators_.add(new PartGenerator(initializer, channelType));
+        channelNumber_ = channelNumber;
+        generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
         for (int i = 0; i < initializer.getPartsCount() + 2; ++i)
         {
-            generators_.add(new PartGenerator(initializer, channelType));
+            generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
         }
-        generators_.add(new PartGenerator(initializer, channelType));
+        generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
     }
 
     @Override
@@ -51,8 +53,8 @@ public class ChannelGenerator implements IMusicGenerator<Channel>
             nextInstrumentCode = chordInstrumentCodes.get(chordInstrumentIndex);
         }
         Channel channel = channelType_ == ChannelType.DRUM
-                ? new DrumChannel(parts, 0)
-                : new Channel(parts, nextInstrumentCode);
+                ? new DrumChannel(parts, 0, channelNumber_)
+                : new Channel(parts, nextInstrumentCode, channelNumber_);
         if (channelType_ == ChannelType.MELODY)
         {
             channel.setIsMelody(true);

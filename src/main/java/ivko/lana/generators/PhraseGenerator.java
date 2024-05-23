@@ -17,7 +17,7 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
 
     private IScale scale_;
 
-    public PhraseGenerator(Initializer initializer, ChannelType channelType, PhraseType phraseType)
+    public PhraseGenerator(Initializer initializer, ChannelType channelType, PhraseType phraseType, int channel)
     {
         channelType_ = channelType;
         phraseType_ = phraseType;
@@ -27,10 +27,10 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
         {
             generators_.add(
                     channelType == ChannelType.MELODY
-                            ? new MelodyRhythmGenerator(initializer, phraseType_)
+                            ? new MelodyRhythmGenerator(initializer, phraseType_, channel)
                             : channelType == ChannelType.DRUM
-                            ? new DrumRhythmGenerator(initializer)
-                            : new ChordRhythmGenerator(initializer));
+                            ? new DrumRhythmGenerator(initializer, channel)
+                            : new ChordRhythmGenerator(initializer, channel));
         }
     }
 

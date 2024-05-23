@@ -31,11 +31,15 @@ public class Music implements IPlayable
     {
         try
         {
-            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
+//            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
             List<Thread> threads = new ArrayList<>();
             metronom_ = new Metronom(channels_.size());
             for (Channel channel : channels_)
             {
+//                if (channel.getChannelNumber() != 9)
+//                {
+//                    continue;
+//                }
                 Thread thread = new Thread(() ->
                 {
                     try
@@ -100,5 +104,16 @@ public class Music implements IPlayable
             result = Collections.EMPTY_LIST;
         }
         return result;
+    }
+
+    @Override
+    public List<ISound> getAllSounds()
+    {
+        List<ISound> sounds = new ArrayList<>();
+        for (Channel channel : channels_)
+        {
+            sounds.addAll(channel.getAllSounds());
+        }
+        return sounds;
     }
 }

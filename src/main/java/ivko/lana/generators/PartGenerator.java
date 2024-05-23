@@ -14,14 +14,12 @@ public class PartGenerator implements IMusicGenerator<Part>
     private PhraseGenerator generatorAnswer_;
 
     private int phraseCount_;
-    private ChannelType channelType_;
 
-    public PartGenerator(Initializer initializer, ChannelType channelType)
+    public PartGenerator(Initializer initializer, ChannelType channelType, int channel)
     {
-        channelType_ = channelType;
         phraseCount_ = initializer.getPhraseCount();
-        generatorQuestion_ = new PhraseGenerator(initializer, channelType, PhraseType.QUESTION);
-        generatorAnswer_ = new PhraseGenerator(initializer, channelType, PhraseType.ANSWER);
+        generatorQuestion_ = new PhraseGenerator(initializer, channelType, PhraseType.QUESTION, channel);
+        generatorAnswer_ = new PhraseGenerator(initializer, channelType, PhraseType.ANSWER, channel);
     }
 
     @Override

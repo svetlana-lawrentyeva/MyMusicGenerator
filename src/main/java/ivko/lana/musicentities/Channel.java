@@ -6,6 +6,7 @@ import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,10 +21,11 @@ public class Channel implements IPlayable
     private int channelNumber_;
     private MidiChannel channel_;
 
-    public Channel(List<Part> phrases, int instrumentCode)
+    public Channel(List<Part> phrases, int instrumentCode, int channelNumber)
     {
         parts_ = phrases;
         instrumentCode_ = instrumentCode;
+        channelNumber_ = channelNumber;
     }
 
     public void setIsMelody(boolean isMelody)
@@ -63,16 +65,29 @@ public class Channel implements IPlayable
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ISound> getAllSounds()
+    {
+        List<ISound> sounds = new ArrayList<>();
+        for (Part part : parts_)
+        {
+            sounds.addAll(part.getAllSounds());
+        }
+        return sounds;
+    }
+
     public void play(Metronom metronom) throws InterruptedException, MidiUnavailableException
     {
 //        if (instrumentCode_ == 0)
 //            return;
         Synthesizer synthesizer = prepareSynthesizer();
 
-        channelNumber_ = MusicUtil.getInstance().getFreeChannelNumber();
+        LOGGER.info(String.format("%s (%s) number %s will be used", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber_));
         channel_ = synthesizer.getChannels()[channelNumber_];
-        if (instrumentCode_ >= 0)
+        if (instrumentCode_ >= 0 && channelNumber_ != 9)
         {
+            Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
+            synthesizer.loadInstrument(instruments[instrumentCode_]);
             channel_.programChange(instrumentCode_);
         }
 
@@ -80,7 +95,7 @@ public class Channel implements IPlayable
         {
             part.play(channel_, metronom);
         }
-        synthesizer.close();
+        stop();
     }
 
     public void stop()
@@ -94,10 +109,8 @@ public class Channel implements IPlayable
     protected Synthesizer prepareSynthesizer() throws MidiUnavailableException
     {
         Synthesizer synthesizer = getSynthesizer();
-        MusicUtil.getInstance().prepareSynthesizer();
-        Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
-        synthesizer.loadInstrument(instruments[instrumentCode_]);
-        LOGGER.info(String.format("channel %s '%s' with Instrument '%s' is playing", this.getClass().getSimpleName(), this.hashCode(), instruments[instrumentCode_]));
+        MusicUtil.getInstance().prepareSynthesizerIfNeeded();
+//        LOGGER.info(String.format("channel %s '%s' with Instrument '%s' is playing", this.getClass().getSimpleName(), this.hashCode(), instruments[instrumentCode_]));
         return synthesizer;
     }
 

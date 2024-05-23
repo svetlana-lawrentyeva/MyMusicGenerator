@@ -6,7 +6,6 @@ import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Lana Ivko
@@ -17,12 +16,19 @@ public class Note implements ISound
     private final int tone_;
     private final int duration_;
     private final int accent_;
+    private final int channel_;
 
-    public Note(int tone, int duration, int accent)
+    public Note(int tone, int duration, int accent, int channel)
     {
         tone_ = tone;
         duration_ = duration;
         accent_ = accent;
+        channel_ = channel;
+    }
+
+    public int getChannel()
+    {
+        return channel_;
     }
 
     public void setShouldDebug(boolean shouldDebug)
@@ -32,7 +38,7 @@ public class Note implements ISound
 
     public int getTone()
     {
-        return tone_;
+        return (channel_ != 9 ? IScale.BASE_NOTE : 0) + tone_;
     }
 
     public int getDuration()
@@ -51,9 +57,9 @@ public class Note implements ISound
         {
             LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this));
         }
-        channel.noteOn(IScale.BASE_NOTE + tone_, accent_);
+        channel.noteOn(getTone(), accent_);
         Thread.sleep(duration_);   // Hold the note for the duration
-        channel.noteOff(IScale.BASE_NOTE + tone_, accent_);
+        channel.noteOff(getTone(), accent_);
     }
 
     @Override
@@ -69,6 +75,12 @@ public class Note implements ISound
     }
 
     @Override
+    public List<ISound> getAllSounds()
+    {
+        return Collections.singletonList(this);
+    }
+
+    @Override
     public boolean isSilent()
     {
         return false;
@@ -78,9 +90,11 @@ public class Note implements ISound
     public String toString()
     {
         return "Note{" +
-                "tone_=" + tone_ +
+                "shouldDebug_=" + shouldDebug_ +
+                ", tone_=" + tone_ +
                 ", duration_=" + duration_ +
                 ", accent_=" + accent_ +
+                ", channel_=" + channel_ +
                 '}';
     }
 }

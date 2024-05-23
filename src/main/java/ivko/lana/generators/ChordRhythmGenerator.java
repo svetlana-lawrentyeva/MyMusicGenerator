@@ -9,7 +9,6 @@ import ivko.lana.yaml.RhythmPattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -17,9 +16,9 @@ import java.util.stream.Stream;
  */
 public class ChordRhythmGenerator extends RhythmGenerator
 {
-    public ChordRhythmGenerator(Initializer initializer)
+    public ChordRhythmGenerator(Initializer initializer, int channel)
     {
-        super(initializer);
+        super(initializer, channel);
     }
 
     @Override
@@ -29,7 +28,7 @@ public class ChordRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected ISound createNewSound(int tone, int duration, int accentIndex)
+    protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
     {
         IScale scale = initializer_.getScale();
         Integer[] chordNotes = scale.findChord(tone, scale.getChords(tone));
@@ -43,14 +42,14 @@ public class ChordRhythmGenerator extends RhythmGenerator
             for (int i = 0; i < chordNotes.length; ++i)
             {
                 int currentDuration = i < chordNotes.length - 1 ? roughDuration : availableDuration;
-                chordNodes.add(new Note(chordNotes[i], currentDuration, accents_.get(accentIndex)));
+                chordNodes.add(new Note(chordNotes[i], currentDuration, accents_.get(accentIndex), getChannel()));
                 availableDuration -= currentDuration;
             }
         }
         else
         {
             chordNodes = Stream.of(chordNotes)
-                    .map(note -> new Note(note, duration, accents_.get(accentIndex)))
+                    .map(note -> new Note(note, duration, accents_.get(accentIndex), getChannel()))
                     .collect(Collectors.toList());
 
         }

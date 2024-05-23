@@ -6,7 +6,6 @@ import ivko.lana.musicentities.PhraseType;
 import ivko.lana.yaml.RhythmPattern;
 
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @author Lana Ivko
@@ -18,11 +17,13 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     private PhraseType phraseType_;
     private int correction_ = 0;
 
+    private int channel_;
 
-    public MelodyRhythmGenerator(Initializer initializer, PhraseType phraseType)
+    public MelodyRhythmGenerator(Initializer initializer, PhraseType phraseType, int channel)
     {
-        super(initializer);
+        super(initializer, channel);
         phraseType_ = phraseType;
+        channel_ = channel;
     }
 
     @Override
@@ -36,11 +37,11 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
         ISound lastSound;
         if (targetTone_ != -1)
         {
-            lastSound = createNewSound(targetTone_, duration, accents_.get(accentIndex));
+            lastSound = createNewSound(targetTone_, duration, accents_.get(accentIndex), channel_);
         }
         else
         {
-            lastSound = createNewSound(tone, duration, accents_.get(accentIndex));
+            lastSound = createNewSound(tone, duration, accents_.get(accentIndex), channel_);
         }
         return lastSound;
     }
@@ -99,9 +100,9 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected ISound createNewSound(int tone, int duration, int accentIndex)
+    protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
     {
-        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10);
+        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10, this.channel_);
 //        note.setShouldDebug(true);
         return note;
     }

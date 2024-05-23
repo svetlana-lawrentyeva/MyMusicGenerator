@@ -14,10 +14,9 @@ public class DrumRhythmGenerator extends RhythmGenerator
 {
     protected List<Integer> drums_;
 
-
-    public DrumRhythmGenerator(Initializer initializer)
+    public DrumRhythmGenerator(Initializer initializer, int channel)
     {
-        super(initializer);
+        super(initializer, channel);
         drums_ = initializer.getMusicType() == MusicType.EPIC
                 ? rhythmPattern_.getDrums(initializer.getMusicType())
                 : initializer_.getDrumCombinations();
@@ -30,11 +29,11 @@ public class DrumRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected ISound createNewSound(int tone, int duration, int accentIndex)
+    protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
     {
         int drumsIndex = (int) (Math.random() * drums_.size());
-        Note note = new Note(drums_.get(drumsIndex), duration, accents_.get(accentIndex));
-//        note.setShouldDebug(true);
+        Note note = new Note(drums_.get(drumsIndex), duration, accents_.get(accentIndex), getChannel());
+        note.setShouldDebug(false);
         return note;
     }
 }

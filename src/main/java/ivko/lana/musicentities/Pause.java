@@ -4,7 +4,6 @@ import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Lana Ivko
@@ -35,6 +34,12 @@ public class Pause implements ISound
     }
 
     @Override
+    public List<ISound> getAllSounds()
+    {
+        return Collections.singletonList(this);
+    }
+
+    @Override
     public List<IPlayable> getPlayables()
     {
         return Arrays.asList(this);
@@ -49,13 +54,13 @@ public class Pause implements ISound
     @Override
     public int getTone()
     {
-        return -1;
+        return 0;
     }
 
     @Override
     public int getAccent()
     {
-        return -1;
+        return 0;
     }
 
     @Override

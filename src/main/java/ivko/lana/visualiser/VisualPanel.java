@@ -3,21 +3,18 @@ package ivko.lana.visualiser;
 import ivko.lana.generators.Initializer;
 import ivko.lana.generators.MusicGenerator;
 import ivko.lana.musicentities.Channel;
-import ivko.lana.musicentities.IPlayable;
 import ivko.lana.musicentities.ISound;
 import ivko.lana.musicentities.Music;
 import ivko.lana.util.MusicUtil;
 
 import javax.sound.midi.*;
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Synthesizer;
-import javax.sound.midi.Track;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +28,6 @@ public class VisualPanel extends JPanel
     private JButton saveButton_;
     private JButton playButton_;
     private Synthesizer synthesizer_;
-    private AudioRecorder audioRecorder_;
 
     private Music music_;
     private Initializer initializer_;
@@ -52,10 +48,8 @@ public class VisualPanel extends JPanel
         {
             try
             {
-//                audioRecorder_.stopRecording();
                 String fileName = generateNewName();
                 save(fileName);
-//                audioRecorder_.saveToFile(fileName);
                 JOptionPane.showMessageDialog(null, String.format("Audio saved to %s", fileName));
             } catch (Exception ex)
             {
@@ -73,8 +67,6 @@ public class VisualPanel extends JPanel
                     {
                         try
                         {
-//                            audioRecorder_ = new AudioRecorder();
-//                            audioRecorder_.startRecording();
                             playMusic(initializer_); // Ваш метод для воспроизведения музыки
                         } catch (Exception ex)
                         {
@@ -90,15 +82,10 @@ public class VisualPanel extends JPanel
                     }
                 };
                 playButton_.setText("Stop");
-//                if (audioRecorder_ != null)
-//                {
-//                    audioRecorder_.stopRecording();
-//                }
                 swingWorker.execute();
             }
             else
             {
-//                audioRecorder_.startRecording();
                 try
                 {
                     stopMusic();
@@ -122,7 +109,7 @@ public class VisualPanel extends JPanel
             Track track = sequence.createTrack();
             writeToTrack(music_, track);
             MidiSystem.write(sequence, 1, new File(fileName + ".mid"));
-            convertMidiToWav( fileName + ".mid", fileName + ".wav");
+//            convertMidiToWav( fileName + ".mid", fileName + ".wav");
         } catch (Exception e)
         {
             throw new RuntimeException(e);
@@ -135,70 +122,101 @@ public class VisualPanel extends JPanel
         for (Channel channel : channels)
         {
             float currentBeat = 0;
-            List<IPlayable> playables = channel.getPlayables();
-            for (IPlayable playable : playables)
+            List<ISound> sounds = channel.getAllSounds();
+            for (ISound sound : sounds)
             {
-                if (playable instanceof ISound)
-                {
-                    ISound sound = (ISound) playable;
-                    addNoteToTrack(track, currentBeat++, sound.getTone(), sound.getAccent(), sound.getDuration(), channel.getChannelNumber());
-                }
+                addNoteToTrack(track, currentBeat++, sound.getTone(), sound.getAccent(), sound.getDuration(), channel.getChannelNumber());
             }
         }
     }
 
-    private static void addNoteToTrack(Track track, float startBeat, int note, int velocity, float duration, int channel) throws InvalidMidiDataException {
-        long startTick = (long)(startBeat * 24); // Преобразование битов в тики
-        long endTick = (long)((startBeat + duration) * 24);
+    private static void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
+    {
+        long startTick = (long) (startBeat * 24); // Преобразование битов в тики
+        long endTick = (long) ((startBeat + duration) * 24);
 
         ShortMessage onMessage = new ShortMessage();
-        onMessage.setMessage(ShortMessage.NOTE_ON, channel, note, velocity);
+        onMessage.setMessage(ShortMessage.NOTE_ON, channel, tone, accent);
         MidiEvent noteOn = new MidiEvent(onMessage, startTick);
         track.add(noteOn);
 
         ShortMessage offMessage = new ShortMessage();
-        offMessage.setMessage(ShortMessage.NOTE_OFF, 0, note, 0);
+        offMessage.setMessage(ShortMessage.NOTE_OFF, channel, tone, 0);
         MidiEvent noteOff = new MidiEvent(offMessage, endTick);
         track.add(noteOff);
     }
 
-    public static void convertMidiToWav(String midiFilePath, String wavFilePath) throws Exception {
+    public static void convertMidiToWav(String midiFilePath, String wavFilePath) throws Exception
+    {
         Sequence sequence = MidiSystem.getSequence(new File(midiFilePath));
 
         Synthesizer synthesizer = MidiSystem.getSynthesizer();
         synthesizer.open();
 
+        // Убедитесь, что у вас есть первый доступный Sequencer
+        Sequencer sequencer = MidiSystem.getSequencer(false);
+        sequencer.open();
+        sequencer.setSequence(sequence);
+
+        // Устанавливаем синтезатор как приемник для sequencer
+        Transmitter transmitter = sequencer.getTransmitter();
         Receiver receiver = synthesizer.getReceiver();
-        Transmitter transmitter = MidiSystem.getTransmitter();
         transmitter.setReceiver(receiver);
 
-        AudioFormat format = new AudioFormat(44100, 16, 2, true, false);
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+        // Настройка AudioFormat и DataLine.Info
+        AudioFormat format = new AudioFormat(44100, 16, 3, true, false);
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
         line.open(format);
         line.start();
 
-        AudioInputStream ais = new AudioInputStream(line);
+        // Используем PipedOutputStream и PipedInputStream для захвата аудио данных
+        PipedOutputStream pos = new PipedOutputStream();
+        PipedInputStream pis = new PipedInputStream(pos);
+        AudioInputStream ais = new AudioInputStream(pis, format, AudioSystem.NOT_SPECIFIED);
 
-        Thread midiThread = new Thread(() -> {
-            try {
-                Sequencer sequencer = MidiSystem.getSequencer(false);
-                sequencer.setSequence(sequence);
-                sequencer.open();
+        Thread midiThread = new Thread(() ->
+        {
+            try
+            {
                 sequencer.start();
-                while (sequencer.isRunning()) {
+                while (sequencer.isRunning())
+                {
                     Thread.sleep(100);
                 }
                 sequencer.stop();
                 sequencer.close();
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 e.printStackTrace();
             }
         });
         midiThread.start();
 
+        // Пишем данные в PipedOutputStream
+        Thread writerThread = new Thread(() ->
+        {
+            try
+            {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = line.read(buffer, 0, buffer.length)) != -1)
+                {
+                    pos.write(buffer, 0, bytesRead);
+                }
+                pos.close();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        });
+        writerThread.start();
+
+        // Запись в WAV файл
         AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(wavFilePath));
+
         midiThread.join();
+        writerThread.join();
 
         line.stop();
         line.close();
@@ -210,7 +228,7 @@ public class VisualPanel extends JPanel
         Date now = new Date();
 
         // Определение формата
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HHmmss-ddMMyyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy-HHmmss");
 
         // Форматирование даты
         return SAVE_DIRECTORY + dateFormat.format(now);

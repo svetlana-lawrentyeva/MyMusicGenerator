@@ -92,6 +92,12 @@ public class Chord implements ISound
     }
 
     @Override
+    public List<ISound> getAllSounds()
+    {
+        return new ArrayList<>(sounds_);
+    }
+
+    @Override
     public int getTone()
     {
         return sounds_.stream()

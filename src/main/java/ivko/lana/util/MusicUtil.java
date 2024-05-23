@@ -1,8 +1,5 @@
 package ivko.lana.util;
 
-import ivko.lana.yaml.ChordInstrumentsByMelody;
-import ivko.lana.yaml.ChordInstrumentsByMelodyLoader;
-
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
@@ -50,15 +47,11 @@ public class MusicUtil
 
     public int getFreeChannelNumber()
     {
-        int suggestedNumber = 0;
+        int suggestedNumber = -1;
         boolean found = true;
         while (found)
         {
-            found = channelsNumber_.contains(suggestedNumber);
-            if (found)
-            {
-                suggestedNumber++;
-            }
+            found = channelsNumber_.contains(++suggestedNumber);
         }
         channelsNumber_.add(suggestedNumber);
         return suggestedNumber;
@@ -81,14 +74,18 @@ public class MusicUtil
 
     public void resetFreeCanalNumbers()
     {
+        isInitialized_ = false;
         channelsNumber_.clear();
     }
 
-    public void prepareSynthesizer() throws MidiUnavailableException
+    public void prepareSynthesizerIfNeeded() throws MidiUnavailableException
     {
-        synthesizer_.open();
-        isInitialized_ = true;
-        channelsNumber_.add(9);
+        if (!isInitialized_)
+        {
+            synthesizer_.open();
+            channelsNumber_.add(9);
+            isInitialized_ = true;
+        }
     }
 
 //    public int getNextInstrumentCode(boolean isMelody)

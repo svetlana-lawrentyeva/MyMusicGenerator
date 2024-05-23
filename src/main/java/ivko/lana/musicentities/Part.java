@@ -32,4 +32,15 @@ public class Part implements IPlayable
                 .flatMap(phrase -> phrase.getAllNotes().stream())
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ISound> getAllSounds()
+    {
+        List<ISound> sounds = new ArrayList<>();
+        for (Phrase phrase : phrases_)
+        {
+            sounds.addAll(phrase.getAllSounds());
+        }
+        return sounds;
+    }
 }
