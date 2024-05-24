@@ -1,16 +1,20 @@
 package ivko.lana.util;
 
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Lana Ivko
  */
 public class MusicUtil
 {
-//    private static final int[] CHORDS_INSTRUMENT_CODES = {0};
+    public static final int DRUMS_CHANNEL_NUMBER = 9;
+    public static final int HERTZ_CHANNEL_NUMBER = 15;
+    //    private static final int[] CHORDS_INSTRUMENT_CODES = {0};
 //    private static final int[] MELODY_INSTRUMENT_CODES = {0};
 
 
@@ -21,7 +25,7 @@ public class MusicUtil
 
     private SortedSet<Integer> channelsNumber_ = new TreeSet<>();
 
-    private boolean isInitialized_ = false;
+    private volatile AtomicBoolean isInitialized_ = new AtomicBoolean(false);
     private int usedInstrumentCounter_ = 0;
 
     private MusicUtil()
@@ -39,7 +43,7 @@ public class MusicUtil
 
     public void uninitialize()
     {
-        if (isInitialized_)
+        if (isInitialized_.get())
         {
             synthesizer_.close();
         }
@@ -69,22 +73,23 @@ public class MusicUtil
 
     public boolean isInitialized()
     {
-        return isInitialized_;
+        return isInitialized_.get();
     }
 
     public void resetFreeCanalNumbers()
     {
-        isInitialized_ = false;
+        isInitialized_.set(false);
         channelsNumber_.clear();
     }
 
     public void prepareSynthesizerIfNeeded() throws MidiUnavailableException
     {
-        if (!isInitialized_)
+        if (!isInitialized_.get())
         {
             synthesizer_.open();
-            channelsNumber_.add(9);
-            isInitialized_ = true;
+            channelsNumber_.add(DRUMS_CHANNEL_NUMBER);
+            channelsNumber_.add(HERTZ_CHANNEL_NUMBER);
+            isInitialized_.set(true);
         }
     }
 

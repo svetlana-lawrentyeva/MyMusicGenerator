@@ -13,20 +13,41 @@ import java.util.List;
  */
 public class MusicGenerator implements IMusicGenerator<Music>
 {
-    private List<ChannelGenerator> generators_ = new ArrayList<>();
+    private List<IChannelGenerator> generators_ = new ArrayList<>();
 
     public MusicGenerator(Initializer initializer)
     {
         for (int i = 0; i < initializer.getChannelCount(); ++i)
         {
-            ChannelType channelType = i == 0
-                    ? ChannelType.MELODY
-                    : i == 1
-                    ? ChannelType.DRUM
-                    : ChannelType.CHORD;
-            int channelNumber = channelType == ChannelType.DRUM ? 9 : findChannelNumber();
+            ChannelType channelType = defineChannelType(i, initializer);
+            int channelNumber = channelType == ChannelType.DRUM ? MusicUtil.DRUMS_CHANNEL_NUMBER : findChannelNumber();
             ChannelGenerator channelGenerator = new ChannelGenerator(initializer, channelType, channelNumber);
             generators_.add(channelGenerator);
+        }
+        if (initializer.getHertz() > 0)
+        {
+            generators_.add(new HertzChannelGenerator(initializer));
+        }
+    }
+
+    private static ChannelType defineChannelType(int iteration, Initializer initializer)
+    {
+        switch (iteration)
+        {
+            case 0:
+                return ChannelType.MELODY;
+            case 1:
+                if (initializer.useDrums())
+                {
+                    return ChannelType.DRUM;
+                }
+            case 2:
+                if (initializer.getHertz() > 0)
+                {
+                    return ChannelType.HERTZ;
+                }
+            default:
+                return ChannelType.CHORD;
         }
     }
 
@@ -39,9 +60,10 @@ public class MusicGenerator implements IMusicGenerator<Music>
     public Music generate() throws InterruptedException
     {
         List<Channel> channels = new ArrayList<>();
-        for (ChannelGenerator generator : generators_)
+        for (IChannelGenerator generator : generators_)
         {
-            channels.add(generator.generate());
+            Channel channel = generator.generate();
+            channels.add(channel);
         }
         return new Music(channels);
     }

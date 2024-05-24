@@ -1,6 +1,7 @@
 package ivko.lana.musicentities;
 
 import ivko.lana.entities.IScale;
+import ivko.lana.util.MusicUtil;
 
 import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class Note implements ISound
 
     public int getTone()
     {
-        return (channel_ != 9 ? IScale.BASE_NOTE : 0) + tone_;
+        return (channel_ != MusicUtil.DRUMS_CHANNEL_NUMBER && channel_ != MusicUtil.HERTZ_CHANNEL_NUMBER ? IScale.BASE_NOTE : 0) + tone_;
     }
 
     public int getDuration()

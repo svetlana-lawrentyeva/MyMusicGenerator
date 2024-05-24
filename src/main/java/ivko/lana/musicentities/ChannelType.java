@@ -7,5 +7,6 @@ public enum ChannelType
 {
     MELODY,
     DRUM,
-    CHORD
+    CHORD,
+    HERTZ
 }

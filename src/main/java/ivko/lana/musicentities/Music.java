@@ -1,7 +1,10 @@
 package ivko.lana.musicentities;
 
+import ivko.lana.util.MusicUtil;
+
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,13 +36,9 @@ public class Music implements IPlayable
         {
 //            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
             List<Thread> threads = new ArrayList<>();
-            metronom_ = new Metronom(channels_.size());
+            metronom_ = new Metronom(channels_.size() - 1);
             for (Channel channel : channels_)
             {
-//                if (channel.getChannelNumber() != 9)
-//                {
-//                    continue;
-//                }
                 Thread thread = new Thread(() ->
                 {
                     try
@@ -58,6 +57,9 @@ public class Music implements IPlayable
             {
                 thread.join(); // Ожидаем завершения потока
             }
+            Synthesizer synthesizer = MusicUtil.getInstance().getSynthesizer();
+            synthesizer.close();
+            MusicUtil.getInstance().resetFreeCanalNumbers();
         } catch (Throwable t)
         {
             LOGGER.severe(t.getLocalizedMessage());

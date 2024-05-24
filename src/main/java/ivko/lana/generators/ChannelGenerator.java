@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * @author Lana Ivko
  */
-public class ChannelGenerator implements IMusicGenerator<Channel>
+public class ChannelGenerator implements IChannelGenerator
 {
     private static final Logger LOGGER = Logger.getLogger(ChannelGenerator.class.getName());
     private List<PartGenerator> generators_ = new ArrayList<>();
@@ -25,12 +25,11 @@ public class ChannelGenerator implements IMusicGenerator<Channel>
         initializer_ = initializer;
         channelType_ = channelType;
         channelNumber_ = channelNumber;
-        generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
-        for (int i = 0; i < initializer.getPartsCount() + 2; ++i)
+
+        for (int i = 0; i < initializer.getPartsCount(); ++i)
         {
             generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
         }
-        generators_.add(new PartGenerator(initializer, channelType, channelNumber_));
     }
 
     @Override

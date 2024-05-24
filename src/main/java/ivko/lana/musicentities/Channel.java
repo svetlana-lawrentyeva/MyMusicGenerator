@@ -19,13 +19,29 @@ public class Channel implements IPlayable
     private final int instrumentCode_;
     private boolean isMelody_ = false;
     private int channelNumber_;
-    private MidiChannel channel_;
+    protected MidiChannel channel_;
+    private Synthesizer synthesizer_;
 
-    public Channel(List<Part> phrases, int instrumentCode, int channelNumber)
+    public Channel(List<Part> parts, int instrumentCode, int channelNumber)
     {
-        parts_ = phrases;
+        parts_ = parts;
         instrumentCode_ = instrumentCode;
         channelNumber_ = channelNumber;
+        try
+        {
+            synthesizer_ = prepareSynthesizer();
+
+            LOGGER.info(String.format("%s (%s) number %s will be used", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber_));
+            channel_ = synthesizer_.getChannels()[channelNumber_];
+        } catch (MidiUnavailableException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public MidiChannel getChannel()
+    {
+        return channel_;
     }
 
     public void setIsMelody(boolean isMelody)
@@ -78,32 +94,32 @@ public class Channel implements IPlayable
 
     public void play(Metronom metronom) throws InterruptedException, MidiUnavailableException
     {
-//        if (instrumentCode_ == 0)
-//            return;
-        Synthesizer synthesizer = prepareSynthesizer();
+        initInstrument();
+        playParts(metronom);
+        stop();
+    }
 
-        LOGGER.info(String.format("%s (%s) number %s will be used", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber_));
-        channel_ = synthesizer.getChannels()[channelNumber_];
-        if (instrumentCode_ >= 0 && channelNumber_ != 9)
-        {
-            Instrument[] instruments = synthesizer.getDefaultSoundbank().getInstruments();
-            synthesizer.loadInstrument(instruments[instrumentCode_]);
-            channel_.programChange(instrumentCode_);
-        }
-
+    protected void playParts(Metronom metronom) throws InterruptedException
+    {
         for (Part part : parts_)
         {
             part.play(channel_, metronom);
         }
-        stop();
+    }
+
+    protected void initInstrument()
+    {
+        if (instrumentCode_ >= 0 && channelNumber_ != MusicUtil.DRUMS_CHANNEL_NUMBER)
+        {
+            Instrument[] instruments = synthesizer_.getDefaultSoundbank().getInstruments();
+            synthesizer_.loadInstrument(instruments[instrumentCode_]);
+            channel_.programChange(instrumentCode_);
+        }
     }
 
     public void stop()
     {
         channel_.allNotesOff();
-        Synthesizer synthesizer = getSynthesizer();
-        synthesizer.close();
-        MusicUtil.getInstance().resetFreeCanalNumbers();
     }
 
     protected Synthesizer prepareSynthesizer() throws MidiUnavailableException
