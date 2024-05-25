@@ -1,9 +1,7 @@
 package ivko.lana.musicentities;
 
 import javax.sound.midi.MidiChannel;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -12,10 +10,12 @@ import java.util.stream.Collectors;
 public class Rhythm implements ISound
 {
     private List<ISound> sounds_;
+    private int channel_;
 
-    public Rhythm(List<ISound> sounds)
+    public Rhythm(List<ISound> sounds, int channel)
     {
         sounds_ = sounds;
+        channel_ = channel;
     }
     @Override
     public int getDuration()
@@ -23,6 +23,17 @@ public class Rhythm implements ISound
         return sounds_.stream()
                 .mapToInt(ISound::getDuration) // Преобразуем Stream<Note> в Stream<Integer>
                 .sum();
+    }
+
+    @Override
+    public int getChannelNumber()
+    {
+        return channel_;
+    }
+
+    public List<ISound> getSounds()
+    {
+        return sounds_;
     }
 
     @Override
@@ -56,14 +67,15 @@ public class Rhythm implements ISound
         ISound.super.play(channel, metronom);
     }
 
-    private void simplifyIfNeeded()
-    {
-        ISound firstNote = sounds_.get(0);
-        if (firstNote instanceof Note)
-        {
-            sounds_ = Collections.singletonList(new Note(firstNote.getTone(), getDuration(), firstNote.getAccent(), ((Note) firstNote).getChannel()));
-        }
-    }
+//    private void simplifyIfNeeded()
+//    {
+//        ISound firstNote = sounds_.get(0);
+//        if (firstNote instanceof Note)
+//        {
+//            sounds_ = Collections.singletonList(new Note(firstNote.getTone(), getDuration(), firstNote.getAccent(),
+//                    ((Note) firstNote).getChannel(), initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+//        }
+//    }
 
     @Override
     public boolean isSilent()

@@ -68,6 +68,11 @@ public class Channel implements IPlayable
                 .collect(Collectors.toList());
     }
 
+    public List<Part> getParts()
+    {
+        return parts_;
+    }
+
     public int getChannelNumber()
     {
         return channelNumber_;

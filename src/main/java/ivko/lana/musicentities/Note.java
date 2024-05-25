@@ -1,7 +1,6 @@
 package ivko.lana.musicentities;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.util.MusicUtil;
 
 import javax.sound.midi.MidiChannel;
 import java.util.Arrays;
@@ -18,13 +17,15 @@ public class Note implements ISound
     private final int duration_;
     private final int accent_;
     private final int channel_;
+    private final int baseDurationMultiplier_;
 
-    public Note(int tone, int duration, int accent, int channel)
+    public Note(int tone, int duration, int accent, int channel, int baseDurationMultiplier)
     {
         tone_ = tone;
         duration_ = duration;
         accent_ = accent;
         channel_ = channel;
+        baseDurationMultiplier_ = baseDurationMultiplier;
     }
 
     public int getChannel()
@@ -39,7 +40,8 @@ public class Note implements ISound
 
     public int getTone()
     {
-        return (channel_ != MusicUtil.DRUMS_CHANNEL_NUMBER && channel_ != MusicUtil.HERTZ_CHANNEL_NUMBER ? IScale.BASE_NOTE : 0) + tone_;
+//        return (channel_ != MusicUtil.DRUMS_CHANNEL_NUMBER && channel_ != MusicUtil.HERTZ_CHANNEL_NUMBER ? IScale.BASE_NOTE : 0) + tone_;
+        return tone_;
     }
 
     public int getDuration()
@@ -56,11 +58,15 @@ public class Note implements ISound
     {
         if (shouldDebug_)
         {
-            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this));
+            LOGGER.info(String.format("%s '%s' is playing", System.identityHashCode(this), this));
         }
-        channel.noteOn(getTone(), accent_);
-        Thread.sleep(duration_);   // Hold the note for the duration
-        channel.noteOff(getTone(), accent_);
+        channel.noteOn(getTone() + IScale.BASE_NOTE, accent_);
+        Thread.sleep((long) duration_ * baseDurationMultiplier_);   // Hold the note for the duration
+        if (shouldDebug_)
+        {
+            LOGGER.info(String.format("%s '%s' stop playing", System.identityHashCode(this), this));
+        }
+        channel.noteOff(getTone() + IScale.BASE_NOTE, accent_);
     }
 
     @Override
@@ -88,10 +94,15 @@ public class Note implements ISound
     }
 
     @Override
+    public int getChannelNumber()
+    {
+        return channel_;
+    }
+
+    @Override
     public String toString()
     {
         return "Note{" +
-                "shouldDebug_=" + shouldDebug_ +
                 ", tone_=" + tone_ +
                 ", duration_=" + duration_ +
                 ", accent_=" + accent_ +

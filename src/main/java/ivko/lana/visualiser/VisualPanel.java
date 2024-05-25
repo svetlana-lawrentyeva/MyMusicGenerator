@@ -1,11 +1,12 @@
 package ivko.lana.visualiser;
 
+import ivko.lana.generators.ChordChannelGenerator;
+import ivko.lana.generators.DrumsChannelGenerator;
 import ivko.lana.generators.Initializer;
 import ivko.lana.generators.MusicGenerator;
-import ivko.lana.musicentities.Channel;
-import ivko.lana.musicentities.ISound;
-import ivko.lana.musicentities.Music;
+import ivko.lana.musicentities.*;
 import ivko.lana.util.MusicUtil;
+import ivko.lana.yaml.RhythmPattern;
 
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 public class VisualPanel extends JPanel
 {
     private static final String SAVE_DIRECTORY = "D:\\music\\generated\\";
+    public static final int TICK_RESOLUTION = 6;
     private JButton saveButton_;
     private JButton playButton_;
     private Synthesizer synthesizer_;
@@ -32,12 +35,138 @@ public class VisualPanel extends JPanel
     private Music music_;
     private Initializer initializer_;
 
+    private boolean isTest_ = true;
+
     public VisualPanel()
     {
         super(new GridBagLayout());
         synthesizer_ = MusicUtil.getInstance().getSynthesizer();
         initializer_ = new Initializer();
         prepare();
+        if (isTest_)
+        {
+            playTestMusic();
+        }
+    }
+
+    private void playTestMusic()
+    {
+        try
+        {
+            int channelNumber = 0;
+            List<Rhythm> rhythms = new ArrayList<>();
+            List<ISound> sounds = new ArrayList<>();
+            sounds.add(new Note(5, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(7, 8, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 8, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(5, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(7, 8, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 8, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(5, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(4, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(2, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(0, 8, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 8, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(5, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(4, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(2, 4, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 4, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            sounds = new ArrayList<>();
+            sounds.add(new Note(0, 8, 100, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 8, 85, channelNumber, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
+            rhythms.add(new Rhythm(sounds, channelNumber));
+            rhythms.add(RhythmSeparator.SEPARATOR);
+
+            List<Phrase> phrases = new ArrayList<>();
+            phrases.add(new Phrase(rhythms, channelNumber));
+            List<Part> parts = new ArrayList<>();
+            parts.add(new Part(phrases, channelNumber));
+            List<Channel> channels = new ArrayList<>();
+            Channel melodyChannel = new Channel(parts, 0, channelNumber);
+            channels.add(melodyChannel);
+
+            melodyChannel.setIsMelody(true);
+
+            ChordChannelGenerator chordChannelGenerator = new ChordChannelGenerator(initializer_, 1);
+            chordChannelGenerator.setMelodyChannel(melodyChannel);
+            channels.add(chordChannelGenerator.generate());
+//
+            DrumsChannelGenerator drumsChannelGenerator = new DrumsChannelGenerator(initializer_);
+            drumsChannelGenerator.setMelodyChannel(melodyChannel);
+            channels.add(drumsChannelGenerator.generate());
+
+            music_ = new Music(channels);
+            music_.play();
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private void prepare()
@@ -56,6 +185,10 @@ public class VisualPanel extends JPanel
                 ex.printStackTrace();
             }
         }));
+        if (isTest_)
+        {
+            playButton_.setEnabled(false);
+        }
         playButton_.addActionListener(e ->
         {
             if (playButton_.getText().equals("Play"))
@@ -105,7 +238,7 @@ public class VisualPanel extends JPanel
     {
         try
         {
-            Sequence sequence = new Sequence(Sequence.PPQ, 24);
+            Sequence sequence = new Sequence(Sequence.PPQ, TICK_RESOLUTION);
             Track track = sequence.createTrack();
             writeToTrack(music_, track);
             MidiSystem.write(sequence, 1, new File(fileName + ".mid"));
@@ -121,19 +254,35 @@ public class VisualPanel extends JPanel
         List<Channel> channels = music.getChannels();
         for (Channel channel : channels)
         {
+            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
+            {
+                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
+            }
             float currentBeat = 0;
             List<ISound> sounds = channel.getAllSounds();
             for (ISound sound : sounds)
             {
-                addNoteToTrack(track, currentBeat++, sound.getTone(), sound.getAccent(), sound.getDuration(), channel.getChannelNumber());
+                RhythmPattern rhythmPattern = initializer_.getMelodyRhythmPattern();
+                int tickDivider = rhythmPattern.getBaseDurationMultiplier();
+                addNoteToTrack(track, currentBeat, sound.getTone(), sound.getAccent(), sound.getDuration() / tickDivider, channel.getChannelNumber());
+                currentBeat += sound.getDuration() / tickDivider;
             }
         }
     }
 
+    private static void setInstrument(Track track, int instrument, int channel) throws InvalidMidiDataException
+    {
+        ShortMessage programChange = new ShortMessage();
+        programChange.setMessage(ShortMessage.PROGRAM_CHANGE, channel, instrument, 0);
+        MidiEvent changeInstrument = new MidiEvent(programChange, 0);
+        track.add(changeInstrument);
+    }
+
+
     private static void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
     {
-        long startTick = (long) (startBeat * 24); // Преобразование битов в тики
-        long endTick = (long) ((startBeat + duration) * 24);
+        long startTick = (long) (startBeat * TICK_RESOLUTION); // Преобразование битов в тики
+        long endTick = (long) ((startBeat + duration) * TICK_RESOLUTION);
 
         ShortMessage onMessage = new ShortMessage();
         onMessage.setMessage(ShortMessage.NOTE_ON, channel, tone, accent);

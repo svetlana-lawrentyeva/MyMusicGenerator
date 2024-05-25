@@ -1,8 +1,9 @@
 package ivko.lana.generators;
 
 import ivko.lana.musicentities.Channel;
-import ivko.lana.musicentities.Music;
 import ivko.lana.musicentities.ChannelType;
+import ivko.lana.musicentities.Music;
+import ivko.lana.musicentities.Part;
 import ivko.lana.util.MusicUtil;
 
 import java.util.ArrayList;
@@ -13,20 +14,28 @@ import java.util.List;
  */
 public class MusicGenerator implements IMusicGenerator<Music>
 {
-    private List<IChannelGenerator> generators_ = new ArrayList<>();
+    private MelodyChannelGenerator melodyChannelGenerator_ = null;
+    private DrumsChannelGenerator drumsChannelGenerator_ = null;
+    private HertzChannelGenerator hertzChannelGenerator_ = null;
+    private List<ChordChannelGenerator> chordsChannelGenerators_ = new ArrayList<>();
 
     public MusicGenerator(Initializer initializer)
     {
-        for (int i = 0; i < initializer.getChannelCount(); ++i)
+        melodyChannelGenerator_ = new MelodyChannelGenerator(initializer, 0);
+        if (initializer.useDrums())
         {
-            ChannelType channelType = defineChannelType(i, initializer);
-            int channelNumber = channelType == ChannelType.DRUM ? MusicUtil.DRUMS_CHANNEL_NUMBER : findChannelNumber();
-            ChannelGenerator channelGenerator = new ChannelGenerator(initializer, channelType, channelNumber);
-            generators_.add(channelGenerator);
+            drumsChannelGenerator_ = new DrumsChannelGenerator(initializer);
         }
         if (initializer.getHertz() > 0)
         {
-            generators_.add(new HertzChannelGenerator(initializer));
+            hertzChannelGenerator_ = new HertzChannelGenerator(initializer);
+        }
+        for (int i = 0; i < initializer.getChannelCount(); ++i)
+        {
+//            ChannelType channelType = defineChannelType(i, initializer);
+            int channelNumber = findChannelNumber();
+            ChordChannelGenerator channelGenerator = new ChordChannelGenerator(initializer, channelNumber);
+            chordsChannelGenerators_.add(channelGenerator);
         }
     }
 
@@ -60,10 +69,22 @@ public class MusicGenerator implements IMusicGenerator<Music>
     public Music generate() throws InterruptedException
     {
         List<Channel> channels = new ArrayList<>();
-        for (IChannelGenerator generator : generators_)
+        Channel melodyChannel = melodyChannelGenerator_.generate();
+        channels.add((melodyChannel));
+        if (drumsChannelGenerator_ != null)
         {
-            Channel channel = generator.generate();
-            channels.add(channel);
+            drumsChannelGenerator_.setMelodyChannel(melodyChannel);
+            channels.add(drumsChannelGenerator_.generate());
+        }
+        if (hertzChannelGenerator_ != null)
+        {
+            hertzChannelGenerator_.setMelodyChannel(melodyChannel);
+            channels.add(hertzChannelGenerator_.generate());
+        }
+        for (ChordChannelGenerator generator : chordsChannelGenerators_)
+        {
+            generator.setMelodyChannel(melodyChannel);
+            channels.add(generator.generate());
         }
         return new Music(channels);
     }

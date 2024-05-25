@@ -102,7 +102,8 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     @Override
     protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
     {
-        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10, this.channel_);
+        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10, this.channel_,
+                initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier());
 //        note.setShouldDebug(true);
         return note;
     }

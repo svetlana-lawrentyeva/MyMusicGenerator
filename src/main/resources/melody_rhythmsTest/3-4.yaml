@@ -1,10 +1,10 @@
-baseDuration: 200
+baseDuration: 1
 durations:
-  - duration: 200
+  - duration: 1
     probability: 0.8
-  - duration: 400
+  - duration: 2
     probability: 0.6
-  - duration: 600
+  - duration: 3
     probability: 0.3
 accents:
   - 100

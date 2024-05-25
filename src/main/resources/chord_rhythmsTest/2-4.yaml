@@ -1,9 +1,0 @@
-baseDuration: 200
-durations:
-  - duration: 200
-    probability: 0.1
-  - duration: 400
-    probability: 0.9
-accents:
-  - 100
-  - 50

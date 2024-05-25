@@ -1,6 +1,5 @@
 package ivko.lana.musicentities;
 
-import javax.sound.midi.MidiChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +10,18 @@ import java.util.stream.Collectors;
 public class Part implements IPlayable
 {
     private List<Phrase> phrases_;
+    private int channel_;
 
-    public Part(List<Phrase> phrases)
+    public Part(List<Phrase> phrases, int channel)
     {
         phrases_ = phrases;
+        channel_ = channel;
+    }
+
+    @Override
+    public int getChannelNumber()
+    {
+        return channel_;
     }
 
     @Override
@@ -23,6 +30,11 @@ public class Part implements IPlayable
         return phrases_.stream()
                 .map(sound -> (IPlayable) sound)
                 .collect(Collectors.toList());
+    }
+
+    public List<Phrase> getPhrases()
+    {
+        return phrases_;
     }
 
     @Override

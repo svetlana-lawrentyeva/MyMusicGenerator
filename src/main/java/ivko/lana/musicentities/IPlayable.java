@@ -13,15 +13,15 @@ public interface IPlayable
 
     default void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
-//        LOGGER.info(String.format("%s (%s) starts playing", this.getClass().getSimpleName(), System.identityHashCode(this)));
+        int channelNumber = getChannelNumber();
+//        LOGGER.info(String.format("%s (%s) - number: %s - starts playing", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber));
         for (IPlayable sound : getPlayables())
         {
             if (sound.equals(RhythmSeparator.SEPARATOR))
             {
-//                LOGGER.info(String.format("%s (%s) found separator", this.getClass().getSimpleName(), System.identityHashCode(this)));
-
+//                LOGGER.info(String.format("%s (%s) - number: %s - found separator", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber));
                 metronom.countDown();
-//                LOGGER.info(String.format("%s (%s) after countDown: %s", this.getClass().getSimpleName(), System.identityHashCode(this), metronom.getCount()));
+//                LOGGER.info(String.format("%s (%s) - number: %s - after countDown: %s", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber, metronom.getCount()));
                 metronom.await();
             }
             else
@@ -44,4 +44,6 @@ public interface IPlayable
     List<Integer> getAllNotes();
 
     List<ISound> getAllSounds();
+
+    int getChannelNumber();
 }

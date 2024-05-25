@@ -29,7 +29,7 @@ public class RhythmPattern {
     }
 
     public int getBaseDuration() {
-        return baseDuration * baseDurationMultiplier;
+        return baseDuration;
     }
 
     public void setBaseDuration(int baseDuration) {

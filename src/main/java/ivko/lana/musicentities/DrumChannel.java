@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
  */
 public class DrumChannel extends Channel
 {
-    public DrumChannel(List<Part> phrases, int instrumentCode, int channelNumber)
+    public DrumChannel(List<Part> parts)
     {
-        super(phrases, -1, channelNumber);
+        super(parts, -1, MusicUtil.DRUMS_CHANNEL_NUMBER);
     }
 
     protected Synthesizer prepareSynthesizer()

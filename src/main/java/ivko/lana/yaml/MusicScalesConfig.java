@@ -2,6 +2,8 @@ package ivko.lana.yaml;
 
 import ivko.lana.entities.IScale;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +39,17 @@ public class MusicScalesConfig
             this.soloInstrument = soloInstrument;
         }
 
+        @Override
+        public String toString()
+        {
+            return "ScaleConfig{" +
+                    "name='" + name + '\'' +
+                    ", rhythmSize='" + rhythmSize + '\'' +
+                    ", soloInstrument=" + soloInstrument +
+                    ", notes=" + notes +
+                    '}';
+        }
+
         public String getName()
         {
             return name;
@@ -58,15 +71,6 @@ public class MusicScalesConfig
         }
 
         @Override
-        public String toString()
-        {
-            return "ScaleConfig{" +
-                    "rhythmSize='" + rhythmSize + '\'' +
-                    ", notes=" + notes +
-                    '}';
-        }
-
-        @Override
         public int[] getScale()
         {
             return notes.keySet().stream()
@@ -85,6 +89,12 @@ public class MusicScalesConfig
         public List<Integer[]> getChords(int tone)
         {
             List<List<Integer>> chords = notes.get(tone);
+            if (chords == null)
+            {
+                ArrayList<Integer> allNotes = new ArrayList<>(notes.keySet());
+                Collections.sort(allNotes);
+                chords = notes.get(allNotes.get(0));
+            }
             return chords.stream()
                     .map(list -> list.toArray(new Integer[0]))
                     .collect(Collectors.toList());

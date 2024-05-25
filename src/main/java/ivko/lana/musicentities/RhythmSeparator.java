@@ -11,11 +11,11 @@ public class RhythmSeparator extends Rhythm
     public static final RhythmSeparator SEPARATOR = new RhythmSeparator();
     private RhythmSeparator(List<ISound> sounds)
     {
-        super(sounds);
+        super(sounds, -1);
     }
 
     private RhythmSeparator(){
-        super(null);
+        super(null, -1);
     }
 
     @Override

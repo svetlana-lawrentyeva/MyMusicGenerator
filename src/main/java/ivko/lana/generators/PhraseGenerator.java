@@ -14,7 +14,7 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
     private List<RhythmGenerator> generators_ = new ArrayList<>();
     private ChannelType channelType_;
     private PhraseType phraseType_;
-
+    private int channel_;
     private IScale scale_;
 
     public PhraseGenerator(Initializer initializer, ChannelType channelType, PhraseType phraseType, int channel)
@@ -22,6 +22,7 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
         channelType_ = channelType;
         phraseType_ = phraseType;
         scale_ = initializer.getScale();
+        channel_ = channel;
         int rhythmsCount = initializer.getRhythmsCount() + 2;
         for (int i = 0; i < rhythmsCount; ++i)
         {
@@ -57,6 +58,6 @@ public class PhraseGenerator implements IMusicGenerator<Phrase>
                 previousTone = ((MelodyRhythmGenerator) generator).getPreviousTone();
             }
         }
-        return new Phrase(rhythms);
+        return new Phrase(rhythms, channel_);
     }
 }

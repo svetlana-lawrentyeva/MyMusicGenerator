@@ -1,10 +1,10 @@
 package ivko.lana.util;
 
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
-import java.util.*;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -14,12 +14,6 @@ public class MusicUtil
 {
     public static final int DRUMS_CHANNEL_NUMBER = 9;
     public static final int HERTZ_CHANNEL_NUMBER = 15;
-    //    private static final int[] CHORDS_INSTRUMENT_CODES = {0};
-//    private static final int[] MELODY_INSTRUMENT_CODES = {0};
-
-
-//    private static int[] ChordsInstrumentCodes = {28, 30, 31, 33, 34, 0, 24, 25, 26, 32, 33, 34, 48, 49, 52};
-//    private static int[] MelodyInstrumentCodes = {24, 0, 46, 73, 40, 42, 60, 118, 52, 80};
 
     private final Synthesizer synthesizer_;
 
@@ -51,7 +45,7 @@ public class MusicUtil
 
     public int getFreeChannelNumber()
     {
-        int suggestedNumber = -1;
+        int suggestedNumber = 0;
         boolean found = true;
         while (found)
         {

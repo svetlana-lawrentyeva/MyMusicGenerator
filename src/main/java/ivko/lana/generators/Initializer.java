@@ -25,9 +25,9 @@ public class Initializer
     private DrumCombinations drumCombinations_;
     private IScale scale_;
 
-    private boolean useDrums_ = false;
+    private boolean useDrums_ = true;
 
-    private int hertz_ = 285;
+    private int hertz_ = HertzChannelGenerator.PINEAL_GLAND;
 
     private int rhythmsCount_;
     private int partsCount_;
@@ -35,7 +35,7 @@ public class Initializer
     private boolean isChordSequenced_;
     private MusicType musicType_;
 
-    private int testChannelCount_ = 1;
+    private int testChannelCount_ = 3;
     private boolean isTest_ = true;
     private int minutes_ = 60;
 
@@ -54,7 +54,7 @@ public class Initializer
         musicType_ = initializeMusicType();
         rhythmsCount_ = initializeRhythmsCount();
         LOGGER.info(String.format("The system is initialized:\n\tmusicType_: %s\n\tscale: %s\n\tpartsCount: %s\n\tchannelCount: %s\n\tisChordSequenced: %s",
-                musicType_, scale_.getClass().getSimpleName(), partsCount_, channelCount_, isChordSequenced_));
+                musicType_, scale_.toString(), partsCount_, channelCount_, isChordSequenced_));
     }
 
     private int initializeRhythmsCount()
@@ -117,7 +117,7 @@ public class Initializer
     private boolean initializeIsChordSequenced()
     {
 //        return (int) (Math.random() * 2) == 1;
-        return false;
+        return true;
     }
 
     private RhythmPattern initializeRhythmPattern(ChannelType channelType)

@@ -5,28 +5,17 @@ durations:
   - duration: 2 # 1/16
     probability: 0.06
   - duration: 4 # 1/8
-    probability: 0.25
+    probability: 0.3
   - duration: 8 # 1/4
     probability: 0.35
   - duration: 16 # 1/2
     probability: 0.25
-  - duration: 32 # 1
-    probability: 0.05
 accents:
   - 100
   - 50
-  - 50
-  - 80
-  - 50
 relaxDrum:
   - 36
-  - -1
   - 38
-  - -1
-  - -1
 epicDrum:
   - 36
-  - 38
-  - 36
-  - 38
   - 38

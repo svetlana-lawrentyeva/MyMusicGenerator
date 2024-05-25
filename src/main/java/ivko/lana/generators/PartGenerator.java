@@ -12,11 +12,13 @@ public class PartGenerator implements IMusicGenerator<Part>
 {
     private PhraseGenerator generatorQuestion_;
     private PhraseGenerator generatorAnswer_;
+    private int channel_;
 
     private int phraseCount_;
 
     public PartGenerator(Initializer initializer, ChannelType channelType, int channel)
     {
+        channel_ = channel;
         phraseCount_ = initializer.getPhraseCount();
         generatorQuestion_ = new PhraseGenerator(initializer, channelType, PhraseType.QUESTION, channel);
         generatorAnswer_ = new PhraseGenerator(initializer, channelType, PhraseType.ANSWER, channel);
@@ -33,6 +35,6 @@ public class PartGenerator implements IMusicGenerator<Part>
             phrases.add(question);
             phrases.add(answer);
         }
-        return new Part(phrases);
+        return new Part(phrases, channel_);
     }
 }

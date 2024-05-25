@@ -4,7 +4,6 @@ import javax.sound.midi.MidiChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -15,24 +14,39 @@ public class Chord implements ISound
     private boolean isSequenced_;
 
     private final List<Note> sounds_;
+    private final int channelNumber_;
 
-    public Chord(List<Note> notes, boolean isSequenced)
+    public Chord(List<Note> notes, boolean isSequenced, int channel)
     {
         sounds_ = notes;
         isSequenced_ = isSequenced;
+        channelNumber_ = channel;
+    }
+
+    @Override
+    public int getChannelNumber()
+    {
+        return channelNumber_;
     }
 
     @Override
     public int getDuration()
     {
         return isSequenced_
-                ? sounds_.stream()
-                .mapToInt(ISound::getDuration)
-                .sum()
+                ? getSequencedDuration()
                 : sounds_.stream()
                 .mapToInt(ISound::getDuration) // Преобразуем Stream<Note> в Stream<Integer>
                 .max()
                 .orElse(0);
+    }
+
+    private int getSequencedDuration()
+    {
+        if (sounds_.size() > 1)
+        {
+            return sounds_.get(0).getDuration() + sounds_.get(1).getDuration();
+        }
+        return sounds_.get(0).getDuration();
     }
 
     @Override
@@ -50,8 +64,36 @@ public class Chord implements ISound
             playRealChord(channel, metronom);
         } else
         {
-            ISound.super.play(channel, metronom);
+            if (sounds_.size() > 1)
+            {
+                playSequencedChord(channel, metronom);
+            }
+            else
+            {
+                ISound.super.play(channel, metronom);
+            }
         }
+    }
+
+    private void playSequencedChord(MidiChannel channel, Metronom metronom) throws InterruptedException
+    {
+        List<Thread> threads = new ArrayList<>();
+        sounds_.get(0).play(channel, metronom);
+        Thread thread = new Thread(() ->
+        {
+            for (int i = 1; i < sounds_.size(); ++i)
+            {
+                try
+                {
+                    sounds_.get(i).play(channel, metronom);
+                } catch (InterruptedException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        thread.start(); // Запускаем поток
+        threads.add(thread); // Добавляем поток в список
     }
 
     private void playRealChord(MidiChannel channel, Metronom metronom) throws InterruptedException

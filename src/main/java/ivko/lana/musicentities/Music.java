@@ -30,13 +30,19 @@ public class Music implements IPlayable
         return channels_;
     }
 
+    @Override
+    public int getChannelNumber()
+    {
+        return -1;
+    }
+
     public void play() throws InterruptedException
     {
         try
         {
 //            LOGGER.info(String.format("%s '%s' is playing", this.getClass().getSimpleName(), this.hashCode()));
             List<Thread> threads = new ArrayList<>();
-            metronom_ = new Metronom(channels_.size() - 1);
+            metronom_ = new Metronom(channels_.size());
             for (Channel channel : channels_)
             {
                 Thread thread = new Thread(() ->

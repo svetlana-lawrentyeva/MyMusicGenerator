@@ -1,12 +1,11 @@
 package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.musicentities.Chord;
-import ivko.lana.musicentities.Note;
-import ivko.lana.musicentities.ISound;
+import ivko.lana.musicentities.*;
 import ivko.lana.yaml.RhythmPattern;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,8 +13,9 @@ import java.util.stream.Stream;
 /**
  * @author Lana Ivko
  */
-public class ChordRhythmGenerator extends RhythmGenerator
+public class ChordRhythmGenerator extends AccompanimentRhythmGenerator
 {
+
     public ChordRhythmGenerator(Initializer initializer, int channel)
     {
         super(initializer, channel);
@@ -28,7 +28,21 @@ public class ChordRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
+
+    protected int getNextTone(int accentIndex)
+    {
+        int bitPerAccent = melodyBits_.length / accents_.size();
+        return melodyBits_[bitPerAccent * accentIndex];
+    }
+
+    @Override
+    protected int generateDuration()
+    {
+        return initializer_.getChordRhythmPattern().getBaseDuration();
+    }
+
+    @Override
+    protected ISound createNewSound(int tone, int duration, int accentIndex, int channel)
     {
         IScale scale = initializer_.getScale();
         Integer[] chordNotes = scale.findChord(tone, scale.getChords(tone));
@@ -36,23 +50,20 @@ public class ChordRhythmGenerator extends RhythmGenerator
         List<Note> chordNodes;
         if (isChordSequeced)
         {
-            int availableDuration = duration;
-            int roughDuration = duration / chordNotes.length;
+            int sequencedDuration = duration / 2;
             chordNodes = new ArrayList<>();
-            for (int i = 0; i < chordNotes.length; ++i)
+            for (Integer chordNote : chordNotes)
             {
-                int currentDuration = i < chordNotes.length - 1 ? roughDuration : availableDuration;
-                chordNodes.add(new Note(chordNotes[i], currentDuration, accents_.get(accentIndex), getChannel()));
-                availableDuration -= currentDuration;
+                chordNodes.add(new Note(chordNote, sequencedDuration, accents_.get(accentIndex) - 50, getChannel(), initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
             }
         }
         else
         {
             chordNodes = Stream.of(chordNotes)
-                    .map(note -> new Note(note, duration, accents_.get(accentIndex), getChannel()))
+                    .map(note -> new Note(note, duration, accents_.get(accentIndex) - 50, getChannel(), initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()))
                     .collect(Collectors.toList());
 
         }
-        return new Chord(chordNodes, isChordSequeced);
+        return new Chord(chordNodes, isChordSequeced, channel);
     }
 }

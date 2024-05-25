@@ -11,10 +11,20 @@ import java.util.List;
 public class Pause implements ISound
 {
     private final int duration_;
+    private final int baseDurationMultiplier_;
+    private final int channel_;
 
-    public Pause(int duration_)
+    public Pause(int duration, int baseDurationMultiplier, int channel)
     {
-        this.duration_ = duration_;
+        duration_ = duration;
+        baseDurationMultiplier_ = baseDurationMultiplier;
+        channel_ = channel;
+    }
+
+    @Override
+    public int getChannelNumber()
+    {
+        return channel_;
     }
 
     public int getDuration()
@@ -24,7 +34,7 @@ public class Pause implements ISound
 
     public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
-        Thread.sleep(duration_);   // Hold the note for the duration
+        Thread.sleep(duration_ * baseDurationMultiplier_);   // Hold the note for the duration
     }
 
     @Override
