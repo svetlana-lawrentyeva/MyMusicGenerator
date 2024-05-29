@@ -43,7 +43,7 @@ public class Initializer
     private MusicType musicType_;
 
     private int testChannelCount_ = 0;
-    private int minutes_ = 2;
+    private int minutes_ = 5;
 
     public Initializer()
     {

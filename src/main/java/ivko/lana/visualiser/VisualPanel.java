@@ -1,5 +1,6 @@
 package ivko.lana.visualiser;
 
+import ivko.lana.converter.MidiToAudioConverter;
 import ivko.lana.entities.IScale;
 import ivko.lana.generators.ChordChannelGenerator;
 import ivko.lana.generators.DrumsChannelGenerator;
@@ -28,7 +29,7 @@ import java.util.List;
 public class VisualPanel extends JPanel
 {
     private static final String SAVE_DIRECTORY = "D:\\music\\generated\\";
-    public static final int TICK_RESOLUTION = 6;
+    public static final int TICK_RESOLUTION = 24;
     private JButton saveButton_;
     private JButton playButton_;
     private JSpinner minutesSpinner_;
@@ -90,7 +91,8 @@ public class VisualPanel extends JPanel
 
             music_ = new Music(channels);
             music_.play();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             throw new RuntimeException(e);
         }
@@ -147,7 +149,8 @@ public class VisualPanel extends JPanel
 
             music_ = new Music(channels);
             music_.play();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             throw new RuntimeException(e);
         }
@@ -507,7 +510,8 @@ public class VisualPanel extends JPanel
 
             music_ = new Music(channels);
             music_.play();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             throw new RuntimeException(e);
         }
@@ -612,7 +616,7 @@ public class VisualPanel extends JPanel
             List<Part> parts = new ArrayList<>();
             parts.add(new Part(phrases, channelNumber));
             List<Channel> channels = new ArrayList<>();
-            int partMultiplier = 60;
+            int partMultiplier = 1;
             List<Part> multiplesParts = new ArrayList<>();
             for (int i = 0; i < partMultiplier; ++i)
             {
@@ -629,11 +633,12 @@ public class VisualPanel extends JPanel
 //
             DrumsChannelGenerator drumsChannelGenerator = new DrumsChannelGenerator(initializer_);
             drumsChannelGenerator.setMelodyChannel(melodyChannel);
-            channels.add(drumsChannelGenerator.generate());
+//            channels.add(drumsChannelGenerator.generate());
 
             music_ = new Music(channels);
             music_.play();
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             throw new RuntimeException(e);
         }
@@ -679,7 +684,8 @@ public class VisualPanel extends JPanel
             String fileName = generateNewName();
             save(fileName);
             JOptionPane.showMessageDialog(null, String.format("Audio saved to %s", fileName));
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             ex.printStackTrace();
         }
@@ -696,8 +702,10 @@ public class VisualPanel extends JPanel
                 {
                     try
                     {
+//                        playTestMusic();
                         playMusic(initializer_); // Ваш метод для воспроизведения музыки
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         ex.printStackTrace();
                     }
@@ -718,7 +726,8 @@ public class VisualPanel extends JPanel
             try
             {
                 stopMusic();
-            } catch (InterruptedException ex)
+            }
+            catch (InterruptedException ex)
             {
                 throw new RuntimeException(ex);
             }
@@ -812,8 +821,9 @@ public class VisualPanel extends JPanel
             Track track = sequence.createTrack();
             writeToTrack(music_, track);
             MidiSystem.write(sequence, 1, new File(fileName + ".mid"));
-//            convertMidiToWav( fileName + ".mid", fileName + ".wav");
-        } catch (Exception e)
+            MidiToAudioConverter.convert(fileName + ".mid", fileName + ".wav");
+        }
+        catch (Exception e)
         {
             throw new RuntimeException(e);
         }
@@ -824,10 +834,10 @@ public class VisualPanel extends JPanel
         List<Channel> channels = music.getChannels();
         for (Channel channel : channels)
         {
-            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
-            {
-                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
-            }
+//            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
+//            {
+//                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
+//            }
             float currentBeat = 0;
             List<ISound> sounds = channel.getAllSounds();
             for (ISound sound : sounds)
@@ -905,7 +915,8 @@ public class VisualPanel extends JPanel
                 }
                 sequencer.stop();
                 sequencer.close();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -924,7 +935,8 @@ public class VisualPanel extends JPanel
                     pos.write(buffer, 0, bytesRead);
                 }
                 pos.close();
-            } catch (IOException e)
+            }
+            catch (IOException e)
             {
                 e.printStackTrace();
             }

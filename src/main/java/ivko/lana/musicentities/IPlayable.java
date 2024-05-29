@@ -14,7 +14,7 @@ public interface IPlayable
     default void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         int channelNumber = getChannelNumber();
-        LOGGER.info(String.format("%s (%s) - number: %s - starts playing", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber));
+//        LOGGER.info(String.format("%s (%s) - number: %s - starts playing", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber));
         for (IPlayable sound : getPlayables())
         {
             if (sound.equals(RhythmSeparator.SEPARATOR))
