@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class ChordChannelGenerator extends AccompanimentChannelGenerator
 {
-    protected Initializer initializer_;
     protected int channelNumber_;
 
     private ChordRhythmGenerator rhythmGenerator_;
@@ -40,9 +39,9 @@ public class ChordChannelGenerator extends AccompanimentChannelGenerator
 
     private int getInstrumentCode()
     {
-        return 0;
-//        List<Integer> chordInstrumentCodes = initializer_.getChordInstrumentCodes();
-//        int chordInstrumentIndex = (int) (Math.random() * chordInstrumentCodes.size());
-//        return chordInstrumentCodes.get(chordInstrumentIndex);
+//        return 0;
+        List<Integer> chordInstrumentCodes = initializer_.getChordInstrumentCodes();
+        int chordInstrumentIndex = (int) (Math.random() * chordInstrumentCodes.size());
+        return chordInstrumentCodes.get(chordInstrumentIndex);
     }
 }

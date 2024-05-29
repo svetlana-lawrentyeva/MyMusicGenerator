@@ -6,7 +6,7 @@ import ivko.lana.musicentities.Note;
 import ivko.lana.musicentities.Part;
 import ivko.lana.util.MusicUtil;
 import ivko.lana.util.PitchBendCalculator;
-import ivko.lana.yaml.RhythmPattern;
+import ivko.lana.yaml.RhythmDetails;
 
 import javax.sound.midi.InvalidMidiDataException;
 import java.util.List;
@@ -35,11 +35,11 @@ public class HertzChannelGenerator extends AccompanimentChannelGenerator
     {
         super(initializer);
         midiNote_ = PitchBendCalculator.findClosestMidiNote(initializer.getHertz());
-        RhythmPattern rhythmPattern = initializer.getMelodyRhythmPattern();
-        int totalLength = initializer.getMinutes() * 60 * rhythmPattern.getBaseDurationMultiplier();
-        int noteDuration = rhythmPattern.getBaseDuration() * rhythmPattern.getAccents().size();
+        RhythmDetails rhythmDetails = initializer.getMelodyPrimaryRhythmDetails();
+        int totalLength = initializer.getMinutes() * 60 * rhythmDetails.getBaseDurationMultiplier();
+        int noteDuration = rhythmDetails.getBaseDuration() * rhythmDetails.getAccents().size();
         noteCounter_ = totalLength / noteDuration;
-        hertzNote_ = new Note(midiNote_, noteDuration, ACCENT, MusicUtil.HERTZ_CHANNEL_NUMBER, initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier());
+        hertzNote_ = new Note(midiNote_, noteDuration, ACCENT, MusicUtil.HERTZ_CHANNEL_NUMBER, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier());
     }
 
     @Override
@@ -68,13 +68,19 @@ public class HertzChannelGenerator extends AccompanimentChannelGenerator
         }
 
         @Override
-        protected RhythmPattern getRhythmPattern()
+        protected RhythmDetails getRhythmDetails()
         {
-            return initializer_.getMelodyRhythmPattern();
+            return initializer_.getMelodyPrimaryRhythmDetails();
         }
 
         @Override
-        protected int generateDuration()
+        protected int generateLastDuration(int availableMeasure)
+        {
+            return hertzNote_.getDuration();
+        }
+
+        @Override
+        protected int generateSimpleDuration()
         {
             return hertzNote_.getDuration();
         }

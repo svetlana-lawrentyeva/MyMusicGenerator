@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 /**
  * @author Lana Ivko
  */
-public class Chord implements ISound
+public class SoundChord implements ISound
 {
     private boolean isSequenced_;
 
     private final List<Note> sounds_;
     private final int channelNumber_;
 
-    public Chord(List<Note> notes, boolean isSequenced, int channel)
+    public SoundChord(List<Note> notes, boolean isSequenced, int channel)
     {
         sounds_ = notes;
         isSequenced_ = isSequenced;

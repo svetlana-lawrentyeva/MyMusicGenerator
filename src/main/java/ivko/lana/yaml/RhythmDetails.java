@@ -7,20 +7,21 @@ import java.util.List;
 /**
  * @author Lana Ivko
  */
-public class RhythmPattern {
-
+public class RhythmDetails
+{
     private int baseDuration;
     private List<DurationProbability> durations;
     private List<Integer> accents;
     private List<Integer> relaxDrum;
     private List<Integer> epicDrum;
     private int baseDurationMultiplier;
+    private String name_;
 
 
-    public RhythmPattern() {
+    public RhythmDetails() {
     }
 
-    public RhythmPattern(int baseDuration, List<DurationProbability> durations, List<Integer> accents, List<Integer> relaxDrum, List<Integer> epicDrum) {
+    public RhythmDetails(int baseDuration, List<DurationProbability> durations, List<Integer> accents, List<Integer> relaxDrum, List<Integer> epicDrum) {
         this.baseDuration = baseDuration;
         this.durations = durations;
         this.accents = accents;
@@ -75,5 +76,25 @@ public class RhythmPattern {
     public int getBaseDurationMultiplier()
     {
         return baseDurationMultiplier;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "RhythmDetails{" +
+                "name=" + name_ +
+                ", baseDuration=" + baseDuration +
+                ", baseDurationMultiplier=" + baseDurationMultiplier +
+                '}';
+    }
+
+    public void setName(String name)
+    {
+        name_ = name;
+    }
+
+    public String getName()
+    {
+        return name_;
     }
 }

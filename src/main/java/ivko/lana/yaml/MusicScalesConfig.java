@@ -11,12 +11,16 @@ import java.util.stream.Collectors;
 public class MusicScalesConfig
 {
 
+    public MusicScalesConfig(){}
+
     public static class ScaleConfig implements IScale
     {
         private  String name;
-        private String rhythmSize;
+        private String rhythmSize = null;
         private int soloInstrument;
         private Map<Integer, List<List<Integer>>> notes;
+
+        public ScaleConfig(){}
 
         // Getters and Setters
         public String getRhythmSize()
@@ -50,6 +54,7 @@ public class MusicScalesConfig
                     '}';
         }
 
+        @Override
         public String getName()
         {
             return name;

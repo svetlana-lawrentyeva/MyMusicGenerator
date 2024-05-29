@@ -99,7 +99,9 @@ public class Channel implements IPlayable
 
     public void play(Metronom metronom) throws InterruptedException, MidiUnavailableException
     {
+        LOGGER.info(String.format("Started CHANNEL %s", channelNumber_));
         initInstrument();
+        LOGGER.info(String.format("Initialized instrument for CHANNEL %s", channelNumber_));
         playParts(metronom);
         stop();
     }

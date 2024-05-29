@@ -10,6 +10,14 @@ public class MajorScale implements IScale
     private static final int[] MAJOR_SCALE = {0, 2, 4, 5, 7, 9, 11}; // C major scale intervals
 
     private static final List<Integer[]> CHORDS = initializeChords();
+    public static final String SCALE_NAME = "Simple major scale";
+
+    @Override
+    public String getName()
+    {
+        return SCALE_NAME;
+    }
+
     @Override
     public int[] getScale()
     {

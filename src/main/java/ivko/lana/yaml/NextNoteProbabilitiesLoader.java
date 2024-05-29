@@ -11,11 +11,11 @@ import java.net.URL;
 public class NextNoteProbabilitiesLoader
 {
     public static final String NEXT_NOTE_PROBABILITY_DIRECTORY = "predictions";
-    public static final String MAJOR_FILE_NAME = "majorPredictions.yaml";
+    public static final String MAJOR_FILE_NAME = "predictions.yaml";
     public static final String MINOR_FILE_NAME = "minorPredictions.yaml";
-    public static NextNoteProbabilities loadNoteProbabilities(boolean isMajor)
+    public static NextNoteProbabilities loadNoteProbabilities()
     {
-        String fileName = isMajor ? MAJOR_FILE_NAME : MINOR_FILE_NAME;
+        String fileName = MAJOR_FILE_NAME;
         return YamlToJava.extract(NEXT_NOTE_PROBABILITY_DIRECTORY + File.separator + fileName, NextNoteProbabilities.class);
     }
 }

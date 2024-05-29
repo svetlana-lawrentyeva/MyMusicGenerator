@@ -2,6 +2,7 @@ package ivko.lana.generators;
 
 import ivko.lana.musicentities.Channel;
 import ivko.lana.musicentities.ChannelType;
+import ivko.lana.musicentities.ISound;
 import ivko.lana.musicentities.Part;
 
 import java.util.ArrayList;
@@ -47,12 +48,35 @@ public class MelodyChannelGenerator implements IChannelGenerator
 
     private List<Part> generateParts() throws InterruptedException
     {
+        int totalLength = initializer_.getMinutes() * 60 * 1000;
+
         List<Part> parts = new ArrayList<>();
         for (PartGenerator generator : generators_)
         {
             parts.add(generator.generate());
         }
-        return parts;
+        List<Part> createdParts = new ArrayList<>(parts);
+        int partsDuration = getPartsDuration(parts);
+        int repetetions = totalLength / partsDuration;
+        for (int i = 0; i < repetetions; ++i)
+        {
+            createdParts.addAll(parts);
+        }
+        return createdParts;
+    }
+
+    public int getPartsDuration(List<Part> parts)
+    {
+        return parts.stream()
+                .mapToInt(this::getPartDuration)
+                .sum();
+    }
+
+    public int getPartDuration(Part part)
+    {
+        return part.getAllSounds().stream()
+                .mapToInt(ISound::getDuration)
+                .sum();
     }
 
     private int getInstrumentCode()

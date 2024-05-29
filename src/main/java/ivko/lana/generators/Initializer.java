@@ -1,7 +1,6 @@
 package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.entities.MajorScale;
 import ivko.lana.musicentities.ChannelType;
 import ivko.lana.musicentities.MusicType;
 import ivko.lana.util.MusicUtil;
@@ -10,42 +9,46 @@ import ivko.lana.yaml.*;
 import javax.sound.midi.Synthesizer;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Lana Ivko
  */
 public class Initializer
 {
+    private static final boolean IS_TEST = false;
+
+
     Logger LOGGER = Logger.getLogger(Initializer.class.getName());
-    private RhythmPattern melodyRhythmPattern_;
-    private RhythmPattern chordRhythmPattern_;
+    private RhythmDetails melodyPrimaryRhythmDetails_;
+    private RhythmDetails chordPrimaryRhythmDetails_;
+    private List<RhythmDetails> melodyRhythmDetails_;
+    private List<RhythmDetails> chordRhythmDetails_;
     private NextNoteProbabilities nextNoteProbabilities_;
     private ChordInstrumentsByMelody chordInstrumentsByMelody_;
     private int soloInstrumentCode_;
     private DrumCombinations drumCombinations_;
+    private List<IScale> scales_;
     private IScale scale_;
 
     private boolean useDrums_ = true;
 
-    private int hertz_ = HertzChannelGenerator.PINEAL_GLAND;
+    //    private int hertz_ = HertzChannelGenerator.PINEAL_GLAND;
+    private int hertz_ = HertzChannelGenerator.DNA;
 
     private int rhythmsCount_;
     private int partsCount_;
-    private int channelCount_;
+    private int channelCount_ = 0;
     private boolean isChordSequenced_;
     private MusicType musicType_;
 
-    private int testChannelCount_ = 3;
-    private boolean isTest_ = true;
-    private int minutes_ = 60;
+    private int testChannelCount_ = 0;
+    private int minutes_ = 2;
 
     public Initializer()
     {
-        scale_ = initializeScale();
-        melodyRhythmPattern_ = initializeRhythmPattern(ChannelType.MELODY);
-        chordRhythmPattern_ = initializeRhythmPattern(ChannelType.CHORD);
+        scales_ = initializeScales();
         nextNoteProbabilities_ = initializeNextNoteProbabilities();
-        soloInstrumentCode_ = initializeMelodyInstrumentCode();
         chordInstrumentsByMelody_ = ChordInstrumentsByMelodyLoader.load();
         drumCombinations_ = initializeDrumCombinations();
         partsCount_ = initializePartsCount();
@@ -53,21 +56,32 @@ public class Initializer
         isChordSequenced_ = initializeIsChordSequenced();
         musicType_ = initializeMusicType();
         rhythmsCount_ = initializeRhythmsCount();
+
+        preInitialize();
         LOGGER.info(String.format("The system is initialized:\n\tmusicType_: %s\n\tscale: %s\n\tpartsCount: %s\n\tchannelCount: %s\n\tisChordSequenced: %s",
                 musicType_, scale_.toString(), partsCount_, channelCount_, isChordSequenced_));
     }
 
+    private void preInitialize()
+    {
+        int index = (int) (Math.random() * scales_.size());
+        setScale(scales_.get(index));
+        melodyPrimaryRhythmDetails_ = melodyRhythmDetails_.get(0);
+        chordPrimaryRhythmDetails_ = chordRhythmDetails_.get(0);
+    }
+
     private int initializeRhythmsCount()
     {
-        RhythmPattern rhythmPattern = getMelodyRhythmPattern();
-        List<Integer> accents = rhythmPattern.getAccents();
-        int measureLength = rhythmPattern.getBaseDuration() * accents.size();
-        int totalLength = getMinutes() * 60 * 1000;
-        int measureCount = totalLength / measureLength;
-        int partsCount = getPartsCount();
-        int measurePerPart = measureCount / partsCount;
-        int phraseCount = getPhraseCount() * 2;
-        return measurePerPart / phraseCount;
+        return (int) (Math.random() * 3 + 2);
+//        RhythmPattern rhythmPattern = getMelodyRhythmPattern();
+//        List<Integer> accents = rhythmPattern.getAccents();
+//        int measureLength = rhythmPattern.getBaseDuration() * accents.size();
+//        int totalLength = getMinutes() * 60 * 1000;
+//        int measureCount = totalLength / measureLength;
+//        int partsCount = getPartsCount();
+//        int measurePerPart = measureCount / partsCount;
+//        int phraseCount = getPhraseCount() * 2;
+//        return measurePerPart / phraseCount;
     }
 
     public int getMinutes()
@@ -89,7 +103,7 @@ public class Initializer
     private MusicType initializeMusicType()
     {
 //        return (int) (Math.random() * 2) == 1 ? MusicType.RELAX : MusicType.EPIC;
-        return  MusicType.RELAX;
+        return MusicType.RELAX;
     }
 
     public boolean useDrums()
@@ -117,46 +131,66 @@ public class Initializer
     private boolean initializeIsChordSequenced()
     {
 //        return (int) (Math.random() * 2) == 1;
-        return true;
+        return false;
     }
 
-    private RhythmPattern initializeRhythmPattern(ChannelType channelType)
+    public void setMelodyPrimaryRhythmDetails(RhythmDetails rhythmDetails)
     {
-        return RhythmLoader.loadAllPatterns(scale_.getRhythmSize(), channelType);
+        melodyPrimaryRhythmDetails_ = rhythmDetails;
+        LOGGER.info(String.format("Set melody PRIMARY rhythm details: %s", melodyRhythmDetails_));
+    }
+
+    public void setChordPrimaryRhythmDetails(RhythmDetails rhythmDetails)
+    {
+        chordPrimaryRhythmDetails_ = rhythmDetails;
+        LOGGER.info(String.format("Set chord PRIMARY rhythm details: %s", chordRhythmDetails_));
+    }
+
+    private List<RhythmDetails> initializeRhythmDetails(ChannelType channelType)
+    {
+        return RhythmLoader.loadRhythmDetails(scale_.getRhythmSize(), channelType);
     }
 
     private NextNoteProbabilities initializeNextNoteProbabilities()
     {
-        return NextNoteProbabilitiesLoader.loadNoteProbabilities(scale_ instanceof MajorScale);
+        return NextNoteProbabilitiesLoader.loadNoteProbabilities();
     }
 
-    private IScale initializeScale()
+    private List<IScale> initializeScales()
     {
         MusicScalesConfig musicScalesConfig = MusicScaleConfigLoader.load();
-        List<MusicScalesConfig.ScaleConfig> scales = musicScalesConfig.getScales();
-        int index = (int) (Math.random() * scales.size());
-        MusicScalesConfig.ScaleConfig scaleConfig = scales.get(index);
-        LOGGER.info(String.format("Playing: %s", scaleConfig.getName()));
-        return scaleConfig;
+        return musicScalesConfig.getScales().stream()
+                .map(scale -> (IScale) scale)
+                .collect(Collectors.toList());
     }
 
-    private int initializeMelodyInstrumentCode()
+    public void setScale(IScale scale)
     {
-//        Integer[] melodyInstrumentCodes = getMelodyInstrumentCodes();
-//        int instrumentIndex = (int) (Math.random() * melodyInstrumentCodes.length);
-//        int instrumentIndex = 0;
-        return scale_.getSoloInstrument();
+        scale_ = scale;
+        LOGGER.info(String.format("Set scale: %s", scale.getName()));
+        soloInstrumentCode_ = scale_.getSoloInstrument();
+        LOGGER.info(String.format("Set melody instrument: %s", soloInstrumentCode_));
+        melodyRhythmDetails_ = initializeRhythmDetails(ChannelType.MELODY);
+        LOGGER.info(String.format("Set melody rhythm details: %s", melodyRhythmDetails_));
+        chordRhythmDetails_ = initializeRhythmDetails(ChannelType.CHORD);
+        LOGGER.info(String.format("Set chord rhythm details: %s", chordRhythmDetails_));
+    }
+
+    public void setMinutes(int minutes)
+    {
+        minutes_ = minutes;
+        LOGGER.info(String.format("Set minutes: %s", minutes));
     }
 
     private int initializePartsCount()
     {
-        int partsCount = isTest_ ? 2 : (int) (Math.random() * 10) + 2;
+        int partsCount = IS_TEST ? 2 : (int) (Math.random() * 4) + 2;
         return partsCount;
     }
 
     public int getPhraseCount()
     {
-        int phraseCount = isTest_ ? 2 : (int) (Math.random() * 4) + 4;
+        int phraseCount = IS_TEST ? 2 : (int) (Math.random() * 4) + 4;
         return phraseCount;
     }
 
@@ -169,10 +203,19 @@ public class Initializer
 
     private int initializeChannelCount()
     {
-    int channelCount = isTest_ ? testChannelCount_ : (int) (Math.random() * 7);
+        int channelCount = IS_TEST
+                ? testChannelCount_
+                : (int) (channelCount_ >= 0
+                ? channelCount_
+                : Math.random() * 3);
         Synthesizer synthesizer = MusicUtil.getInstance().getSynthesizer();
         int possibleChannelCount = synthesizer.getChannels().length - 1;
         return Math.min(channelCount, possibleChannelCount);
+    }
+
+    public static boolean isTest()
+    {
+        return IS_TEST;
     }
 
     public NextNoteProbabilities getNextNoteProbabilities()
@@ -180,14 +223,24 @@ public class Initializer
         return nextNoteProbabilities_;
     }
 
-    public RhythmPattern getChordRhythmPattern()
+    public List<RhythmDetails> getChordRhythmDetails()
     {
-        return chordRhythmPattern_;
+        return chordRhythmDetails_;
     }
 
-    public RhythmPattern getMelodyRhythmPattern()
+    public List<RhythmDetails> getMelodyRhythmDetails()
     {
-        return melodyRhythmPattern_;
+        return melodyRhythmDetails_;
+    }
+
+    public RhythmDetails getChordPrimaryRhythmDetails()
+    {
+        return chordPrimaryRhythmDetails_;
+    }
+
+    public RhythmDetails getMelodyPrimaryRhythmDetails()
+    {
+        return melodyPrimaryRhythmDetails_;
     }
 
     public int getMelodyInstrumentCode()
@@ -198,6 +251,11 @@ public class Initializer
     public IScale getScale()
     {
         return scale_;
+    }
+
+    public List<IScale> getScales()
+    {
+        return scales_;
     }
 
     public int getPartsCount()

@@ -1,15 +1,15 @@
 baseDuration: 8 # 1/4
 durations:
   - duration: 1 # 1/32
-    probability: 0.04
+    probability: 0.01
   - duration: 2 # 1/16
-    probability: 0.06
+    probability: 0.09
   - duration: 4 # 1/8
-    probability: 0.3
-  - duration: 8 # 1/4
     probability: 0.35
+  - duration: 8 # 1/4
+    probability: 0.4
   - duration: 16 # 1/2
-    probability: 0.25
+    probability: 0.15
 accents:
   - 100
   - 50

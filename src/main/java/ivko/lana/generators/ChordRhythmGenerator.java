@@ -1,11 +1,12 @@
 package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.musicentities.*;
-import ivko.lana.yaml.RhythmPattern;
+import ivko.lana.musicentities.SoundChord;
+import ivko.lana.musicentities.ISound;
+import ivko.lana.musicentities.Note;
+import ivko.lana.musicentities.Rhythm;
+import ivko.lana.yaml.RhythmDetails;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,30 +16,55 @@ import java.util.stream.Stream;
  */
 public class ChordRhythmGenerator extends AccompanimentRhythmGenerator
 {
+    private static int ChordChannelCounter_ = 1;
+    private int chordDuration_;
+    private int currentBitIndex_ = 0;
 
     public ChordRhythmGenerator(Initializer initializer, int channel)
     {
         super(initializer, channel);
+        chordDuration_ = (int) (initializer.getChordPrimaryRhythmDetails().getBaseDuration() / Math.pow(2, ChordChannelCounter_));
+        chordDuration_ = Math.min(chordDuration_, 2);
     }
 
     @Override
-    protected RhythmPattern getRhythmPattern()
+    protected RhythmDetails getRhythmDetails()
     {
-        return initializer_.getChordRhythmPattern();
+        return initializer_.getChordPrimaryRhythmDetails();
     }
 
     @Override
 
     protected int getNextTone(int accentIndex)
     {
-        int bitPerAccent = melodyBits_.length / accents_.size();
-        return melodyBits_[bitPerAccent * accentIndex];
+        int nextTone = melodyBits_[currentBitIndex_];
+        currentBitIndex_ += chordDuration_;
+        return nextTone;
     }
 
     @Override
-    protected int generateDuration()
+    public void setMelodyRhythm(Rhythm rhythm)
     {
-        return initializer_.getChordRhythmPattern().getBaseDuration();
+        super.setMelodyRhythm(rhythm);
+        currentBitIndex_ = 0;
+    }
+
+    @Override
+    protected int generateSimpleDuration()
+    {
+        return chordDuration_;
+    }
+
+    @Override
+    protected int generateLastDuration(int availableMeasure)
+    {
+        return chordDuration_;
+    }
+
+    @Override
+    protected boolean needPause(int availableMeasure)
+    {
+        return false;
     }
 
     @Override
@@ -48,22 +74,11 @@ public class ChordRhythmGenerator extends AccompanimentRhythmGenerator
         Integer[] chordNotes = scale.findChord(tone, scale.getChords(tone));
         boolean isChordSequeced = initializer_.isChordSequeced();
         List<Note> chordNodes;
-        if (isChordSequeced)
-        {
-            int sequencedDuration = duration / 2;
-            chordNodes = new ArrayList<>();
-            for (Integer chordNote : chordNotes)
-            {
-                chordNodes.add(new Note(chordNote, sequencedDuration, accents_.get(accentIndex) - 50, getChannel(), initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()));
-            }
-        }
-        else
-        {
-            chordNodes = Stream.of(chordNotes)
-                    .map(note -> new Note(note, duration, accents_.get(accentIndex) - 50, getChannel(), initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier()))
-                    .collect(Collectors.toList());
+        int cordDuration = isChordSequeced ? duration / 2 : duration;
+        chordNodes = Stream.of(chordNotes)
+                .map(note -> new Note(note, cordDuration, accents_.get(accentIndex) - 10 * ChordChannelCounter_, getChannel(), initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()))
+                .collect(Collectors.toList());
 
-        }
-        return new Chord(chordNodes, isChordSequeced, channel);
+        return new SoundChord(chordNodes, isChordSequeced, channel);
     }
 }

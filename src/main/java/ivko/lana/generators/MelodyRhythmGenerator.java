@@ -1,35 +1,50 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.Note;
-import ivko.lana.musicentities.ISound;
-import ivko.lana.musicentities.PhraseType;
-import ivko.lana.yaml.RhythmPattern;
+import ivko.lana.musicentities.*;
+import ivko.lana.yaml.RhythmDetails;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * @author Lana Ivko
  */
-public class    MelodyRhythmGenerator extends RhythmGenerator
+public class MelodyRhythmGenerator extends RhythmGenerator
 {
     private int targetTone_ = -1;
     private int previousTone_;
     private PhraseType phraseType_;
     private int correction_ = 0;
 
-    private int channel_;
+    private RhythmPattern rhythmPattern_;
 
-    public MelodyRhythmGenerator(Initializer initializer, PhraseType phraseType, int channel)
+    private int channel_;
+    private Iterator<Integer> rhythmPatternIterator_;
+
+    public MelodyRhythmGenerator(Initializer initializer, PhraseType phraseType, RhythmPattern rhythmPattern, int channel)
     {
         super(initializer, channel);
         phraseType_ = phraseType;
+        rhythmPattern_ = rhythmPattern;
         channel_ = channel;
+        rhythmPatternIterator_ = rhythmPattern.getPattern().iterator();
     }
 
     @Override
-    protected RhythmPattern getRhythmPattern()
+    protected int generateSimpleDuration()
     {
-        return initializer_.getMelodyRhythmPattern();
+        if (rhythmPatternIterator_.hasNext())
+        {
+            return rhythmPatternIterator_.next();
+        }
+        return super.generateSimpleDuration();
+    }
+
+    @Override
+    protected RhythmDetails getRhythmDetails()
+    {
+        return initializer_.getMelodyPrimaryRhythmDetails();
     }
 
     protected ISound createLastSound(int tone, int duration, int accentIndex)
@@ -47,19 +62,124 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     }
 
     @Override
-    protected int getNextToneIndex()
+    protected int getNextTone()
+    {
+        if (previousTone_ == -1)
+        {
+            return super.getNextTone();
+        }
+        RhythmType rhythmType = rhythmPattern_.getRhythmType();
+        int[] steps = rhythmType.getSteps(phraseType_);
+        return phraseType_ == PhraseType.QUESTION
+                ? getNextToneForQuestion(steps)
+                : getNextToneForAnswer(steps);
+    }
+
+    public int getNextToneForQuestion(int[] steps)
+    {
+        return keepSameDirection()
+                ? findNextToneIn(steps)
+                : findPreviousToneIn(steps);
+    }
+
+    public int getNextToneForAnswer(int[] steps)
+    {
+        return keepSameDirection()
+                ? findPreviousToneIn(steps)
+                : findNextToneIn(steps);
+    }
+
+    private int findNextToneIn(int[] steps)
+    {
+        int correction = 0;
+        int currentTone = previousTone_;
+        int minTone = scales_[0];
+        int maxTone = scales_[scales_.length - 1];
+        while (true)
+        {
+            if (!(currentTone < minTone)) break;
+            correction = 12;
+            currentTone += 12;
+        }
+        while (true)
+        {
+            if (!(currentTone > maxTone)) break;
+            correction = -12;
+            currentTone -= 12;
+        }
+        for (int step : steps)
+        {
+            int suggestedTone = currentTone + step;
+            int checkedTone = suggestedTone;
+            while (checkedTone < minTone)
+            {
+                checkedTone += 12;
+            }
+            while (checkedTone > maxTone)
+            {
+                checkedTone -= 12;
+            }
+            if (Arrays.binarySearch(scales_, checkedTone) >= 0)
+            {
+                return suggestedTone + correction;
+            }
+        }
+        return getNextToneOld();
+    }
+
+    private int findPreviousToneIn(int[] steps)
+    {
+        int correction = 0;
+        int currentTone = previousTone_;
+        int minTone = scales_[0];
+        int maxTone = scales_[scales_.length - 1];
+        while (true)
+        {
+            if (!(currentTone < minTone)) break;
+            correction = 12;
+            currentTone += 12;
+        }
+        while (true)
+        {
+            if (!(currentTone > maxTone)) break;
+            correction = -12;
+            currentTone -= 12;
+        }
+        for (int step : steps)
+        {
+            int suggestedTone = currentTone - step;
+            int checkedTone = suggestedTone;
+            while (checkedTone < minTone)
+            {
+                checkedTone += 12;
+            }
+            while (checkedTone > maxTone)
+            {
+                checkedTone -= 12;
+            }
+            if (Arrays.binarySearch(scales_, checkedTone) >= 0)
+            {
+                return suggestedTone + correction;
+            }
+        }
+        return getNextToneOld();
+    }
+
+    protected int getNextToneOld()
     {
         correction_ = 0;
         if (previousTone_ == -1)
         {
-            return super.getNextToneIndex();
+            return super.getNextTone();
         }
         Map<Integer, Double> nextNoteProbabilities = initializer_.getNextNoteProbabilities().getProbabilitiesByPreviousNote(previousTone_);
         double p = Random.nextDouble();
         double cumulativeProbability = 0.0;
-        for (int note : scales_) {
+        for (int note : scales_)
+        {
             cumulativeProbability += nextNoteProbabilities.getOrDefault(note, 0.0);
-            if (p <= cumulativeProbability) {
+            if (p <= cumulativeProbability)
+            {
                 return note;
             }
         }
@@ -102,10 +222,11 @@ public class    MelodyRhythmGenerator extends RhythmGenerator
     @Override
     protected ISound createNewSound(int tone, int duration, int accentIndex, int channel_)
     {
-        Note note = new Note(tone, duration, accents_.get(accentIndex) + 10, this.channel_,
-                initializer_.getMelodyRhythmPattern().getBaseDurationMultiplier());
+        int baseDurationMultiplier = initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier();
+        ISound sound = new Note(tone, duration, accents_.get(accentIndex) + 10, this.channel_, baseDurationMultiplier);
+
 //        note.setShouldDebug(true);
-        return note;
+        return sound;
     }
 
     public void setPreviousTone(int previousTone)

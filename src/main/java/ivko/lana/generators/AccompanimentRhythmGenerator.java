@@ -2,7 +2,7 @@ package ivko.lana.generators;
 
 import ivko.lana.musicentities.ISound;
 import ivko.lana.musicentities.Rhythm;
-import ivko.lana.yaml.RhythmPattern;
+import ivko.lana.yaml.RhythmDetails;
 
 import java.util.List;
 
@@ -20,9 +20,9 @@ public abstract class AccompanimentRhythmGenerator extends RhythmGenerator
 
     public void setMelodyRhythm(Rhythm rhythm)
     {
-        RhythmPattern chordRhythmPattern = initializer_.getChordRhythmPattern();
-        int baseDuration = chordRhythmPattern.getBaseDuration();
-        int accentSize = chordRhythmPattern.getAccents().size();
+        RhythmDetails chordRhythmDetails = initializer_.getChordPrimaryRhythmDetails();
+        int baseDuration = chordRhythmDetails.getBaseDuration();
+        int accentSize = chordRhythmDetails.getAccents().size();
         melodyBits_ = new int[accentSize * baseDuration];
         List<ISound> melodySounds = rhythm.getSounds();
         int currentBitIndex = 0;

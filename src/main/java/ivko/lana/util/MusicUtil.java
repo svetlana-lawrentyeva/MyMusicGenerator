@@ -1,10 +1,12 @@
 package ivko.lana.util;
 
+import ivko.lana.yaml.ChordLibraryLoader;
+import ivko.lana.yaml.DurationProbability;
+
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -12,10 +14,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MusicUtil
 {
+    protected static final Random Random = new Random();
+    public static final int MELODY_CHANNEL_NUMBER = 0;
     public static final int DRUMS_CHANNEL_NUMBER = 9;
     public static final int HERTZ_CHANNEL_NUMBER = 15;
 
     private final Synthesizer synthesizer_;
+    private ChordLibrary chordLibrary_;
 
     private SortedSet<Integer> channelsNumber_ = new TreeSet<>();
 
@@ -33,6 +38,41 @@ public class MusicUtil
             uninitialize();
             throw new RuntimeException(e);
         }
+    }
+
+    public ChordLibrary getChordLibrary()
+    {
+        if (chordLibrary_ == null)
+        {
+            chordLibrary_ = ChordLibraryLoader.load();
+        }
+        return chordLibrary_;
+    }
+
+    public int generateConsiderProbability(Map<Integer, Double> valueToProbability)
+    {
+        double randomValue = Random.nextDouble(); // Случайное число от 0.0 до 1.0
+        double cumulativeProbability = 0.0;
+
+        List<Map.Entry<Integer, Double>> entries = new ArrayList<>(valueToProbability.entrySet());
+        entries.sort(Comparator.comparingDouble(Map.Entry::getValue));
+        int durationResult = 0;
+        for (int i = 0; i < entries.size(); i++)
+        {
+            Map.Entry<Integer, Double> entry = entries.get(i);
+            int value = entry.getKey();
+            cumulativeProbability += entry.getValue();
+            if (randomValue < cumulativeProbability)
+            {
+                durationResult = value;
+                break;
+            }
+        }
+        if (durationResult == 0)
+        {
+            durationResult = entries.get(entries.size() - 1).getKey(); // На случай числовых ошибок, возвращаем последний элемент
+        }
+        return durationResult;
     }
 
     public void uninitialize()

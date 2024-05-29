@@ -11,6 +11,13 @@ public class MinorScale implements IScale
     private static final int[] MINOR_SCALE = {0, 2, 3, 5, 7, 8, 10}; // /C minor scale intervals
 
     private static final List<Integer[]> CHORDS = initializeChords();
+    public static final String SCALE_NAME = "Simple minor scale";
+
+    @Override
+    public String getName()
+    {
+        return SCALE_NAME;
+    }
 
     @Override
     public int[] getScale()
