@@ -6,6 +6,7 @@ import ivko.lana.yaml.DurationProbability;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MusicUtil
 {
+    private static final String SAVE_DIRECTORY = "D:\\music\\generated\\";
     protected static final Random Random = new Random();
     public static final int MELODY_CHANNEL_NUMBER = 0;
     public static final int DRUMS_CHANNEL_NUMBER = 9;
@@ -38,6 +40,17 @@ public class MusicUtil
             uninitialize();
             throw new RuntimeException(e);
         }
+    }
+
+    public static String generateNewName()
+    {
+        Date now = new Date();
+
+        // Определение формата
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy-HHmmss");
+
+        // Форматирование даты
+        return SAVE_DIRECTORY + dateFormat.format(now);
     }
 
     public ChordLibrary getChordLibrary()

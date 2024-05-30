@@ -7,6 +7,7 @@ import ivko.lana.generators.DrumsChannelGenerator;
 import ivko.lana.generators.Initializer;
 import ivko.lana.generators.MusicGenerator;
 import ivko.lana.musicentities.*;
+import ivko.lana.util.MidiSaver;
 import ivko.lana.util.MusicUtil;
 import ivko.lana.yaml.RhythmDetails;
 
@@ -28,7 +29,6 @@ import java.util.List;
  */
 public class VisualPanel extends JPanel
 {
-    private static final String SAVE_DIRECTORY = "D:\\music\\generated\\";
     public static final int TICK_RESOLUTION = 24;
     private JButton saveButton_;
     private JButton playButton_;
@@ -681,7 +681,7 @@ public class VisualPanel extends JPanel
     {
         try
         {
-            String fileName = generateNewName();
+            String fileName = MusicUtil.generateNewName();
             save(fileName);
             JOptionPane.showMessageDialog(null, String.format("Audio saved to %s", fileName));
         }
@@ -819,8 +819,13 @@ public class VisualPanel extends JPanel
         {
             Sequence sequence = new Sequence(Sequence.PPQ, TICK_RESOLUTION);
             Track track = sequence.createTrack();
+
+            track.add(new MidiEvent(createTempoMessage(), 0));
+
             writeToTrack(music_, track);
-            MidiSystem.write(sequence, 1, new File(fileName + ".mid"));
+            File midiFile = new File(fileName + ".mid");
+            MidiSystem.write(sequence, 1, midiFile);
+
             MidiToAudioConverter.convert(fileName + ".mid", fileName + ".wav");
         }
         catch (Exception e)
@@ -829,23 +834,44 @@ public class VisualPanel extends JPanel
         }
     }
 
+    private MetaMessage createTempoMessage() throws InvalidMidiDataException
+    {
+        RhythmDetails rhythmDetails = initializer_.getMelodyPrimaryRhythmDetails();
+        int tempoInMPQ = 60000000 / (rhythmDetails.getBaseDurationMultiplier() * rhythmDetails.getBaseDuration());
+        MetaMessage tempoMessage = new MetaMessage();
+        byte[] tempoBytes = {
+                (byte) (tempoInMPQ >> 16),
+                (byte) (tempoInMPQ >> 8),
+                (byte) tempoInMPQ
+        };
+        tempoMessage.setMessage(0x51, tempoBytes, tempoBytes.length);
+        return tempoMessage;
+    }
+
     private void writeToTrack(Music music, Track track) throws InvalidMidiDataException
     {
+//        ShortMessage msg = new ShortMessage();
+//        msg.setMessage(ShortMessage.NOTE_ON, 0, 60, 93); // нота C4
+//        track.add(new MidiEvent(msg, 0));
+//        msg = new ShortMessage();
+//        msg.setMessage(ShortMessage.NOTE_OFF, 0, 60, 0);
+//        track.add(new MidiEvent(msg, 24));
+
+
         List<Channel> channels = music.getChannels();
         for (Channel channel : channels)
         {
-//            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
-//            {
-//                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
-//            }
+            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
+            {
+                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
+            }
             float currentBeat = 0;
             List<ISound> sounds = channel.getAllSounds();
+            int a = 0;
             for (ISound sound : sounds)
             {
-                RhythmDetails rhythmDetails = initializer_.getMelodyPrimaryRhythmDetails();
-                int tickDivider = rhythmDetails.getBaseDurationMultiplier();
-                addNoteToTrack(track, currentBeat, sound.getTone(), sound.getAccent(), sound.getDuration() / tickDivider, channel.getChannelNumber());
-                currentBeat += sound.getDuration() / tickDivider;
+                addNoteToTrack(track, currentBeat, sound.getTone() + IScale.BASE_NOTE, sound.getAccent(), sound.getDuration(), channel.getChannelNumber());
+                currentBeat += sound.getDuration();
             }
         }
     }
@@ -859,10 +885,15 @@ public class VisualPanel extends JPanel
     }
 
 
-    private static void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
+    private void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
     {
+        duration *= initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier();
+
         long startTick = (long) (startBeat * TICK_RESOLUTION); // Преобразование битов в тики
         long endTick = (long) ((startBeat + duration) * TICK_RESOLUTION);
+
+        accent = Math.min(accent, 127);
+        tone = Math.min(tone, 127);
 
         ShortMessage onMessage = new ShortMessage();
         onMessage.setMessage(ShortMessage.NOTE_ON, channel, tone, accent);
@@ -952,17 +983,6 @@ public class VisualPanel extends JPanel
         line.stop();
         line.close();
         synthesizer.close();
-    }
-
-    private String generateNewName()
-    {
-        Date now = new Date();
-
-        // Определение формата
-        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy-HHmmss");
-
-        // Форматирование даты
-        return SAVE_DIRECTORY + dateFormat.format(now);
     }
 
     private void playMusic(Initializer initializer) throws InterruptedException

@@ -36,7 +36,7 @@ public class HertzChannelGenerator extends AccompanimentChannelGenerator
         super(initializer);
         midiNote_ = PitchBendCalculator.findClosestMidiNote(initializer.getHertz());
         RhythmDetails rhythmDetails = initializer.getMelodyPrimaryRhythmDetails();
-        int totalLength = initializer.getMinutes() * 60 * rhythmDetails.getBaseDurationMultiplier();
+        int totalLength = initializer.getMinutes() * rhythmDetails.getBaseDurationMultiplier();
         int noteDuration = rhythmDetails.getBaseDuration() * rhythmDetails.getAccents().size();
         noteCounter_ = totalLength / noteDuration;
         hertzNote_ = new Note(midiNote_, noteDuration, ACCENT, MusicUtil.HERTZ_CHANNEL_NUMBER, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier());

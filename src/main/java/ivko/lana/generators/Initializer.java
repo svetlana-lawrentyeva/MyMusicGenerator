@@ -34,7 +34,7 @@ public class Initializer
     private boolean useDrums_ = true;
 
     //    private int hertz_ = HertzChannelGenerator.PINEAL_GLAND;
-    private int hertz_ = HertzChannelGenerator.DNA;
+    private int hertz_ = 0;
 
     private int rhythmsCount_;
     private int partsCount_;
@@ -43,7 +43,7 @@ public class Initializer
     private MusicType musicType_;
 
     private int testChannelCount_ = 0;
-    private int minutes_ = 5;
+    private int minutes_ = 48;
 
     public Initializer()
     {
