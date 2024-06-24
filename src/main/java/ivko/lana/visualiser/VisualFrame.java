@@ -23,7 +23,7 @@ public class VisualFrame extends JFrame
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setMinimumSize(minimumSize);
         setLocation(screenSize.width / 2 - minimumSize.width / 2, screenSize.height / 2 - minimumSize.height / 2);
-        visualPanel_ = new VisualPanel();
+        visualPanel_ = new VisualPanel(this);
         add(visualPanel_);
     }
 }

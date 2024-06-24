@@ -2,11 +2,14 @@ package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
 import ivko.lana.musicentities.ChannelType;
+import ivko.lana.musicentities.IInstrumentChangeListener;
+import ivko.lana.musicentities.InstrumentCodesConfig;
 import ivko.lana.musicentities.MusicType;
 import ivko.lana.util.MusicUtil;
 import ivko.lana.yaml.*;
 
 import javax.sound.midi.Synthesizer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -26,10 +29,13 @@ public class Initializer
     private List<RhythmDetails> chordRhythmDetails_;
     private NextNoteProbabilities nextNoteProbabilities_;
     private ChordInstrumentsByMelody chordInstrumentsByMelody_;
-    private int soloInstrumentCode_;
+    private int soloInstrumentCode_ = 0;
+    private List<Integer> chordInstruments_ = new ArrayList<>();
     private DrumCombinations drumCombinations_;
     private List<IScale> scales_;
     private IScale scale_;
+    private InstrumentCodesConfig instrumentCodesConfig_;
+    private List<IInstrumentChangeListener> instrumentChangeListeners = new ArrayList<>();
 
     private boolean useDrums_ = true;
 
@@ -48,6 +54,7 @@ public class Initializer
     public Initializer()
     {
         scales_ = initializeScales();
+        instrumentCodesConfig_ = initializeInstrumentCodes();
         nextNoteProbabilities_ = initializeNextNoteProbabilities();
         chordInstrumentsByMelody_ = ChordInstrumentsByMelodyLoader.load();
         drumCombinations_ = initializeDrumCombinations();
@@ -60,6 +67,26 @@ public class Initializer
         preInitialize();
         LOGGER.info(String.format("The system is initialized:\n\tmusicType_: %s\n\tscale: %s\n\tpartsCount: %s\n\tchannelCount: %s\n\tisChordSequenced: %s",
                 musicType_, scale_.toString(), partsCount_, channelCount_, isChordSequenced_));
+    }
+
+    public void addInstrumentChangeListener(IInstrumentChangeListener listener)
+    {
+        instrumentChangeListeners.add(listener);
+    }
+
+    public void removeInstrumentChangeListener(IInstrumentChangeListener listener)
+    {
+        instrumentChangeListeners.remove(listener);
+    }
+
+    private InstrumentCodesConfig initializeInstrumentCodes()
+    {
+        return InstrumentCodesConfigLoader.load();
+    }
+
+    public InstrumentCodesConfig getInstrumentCodesConfig()
+    {
+        return instrumentCodesConfig_;
     }
 
     private void preInitialize()
@@ -168,12 +195,22 @@ public class Initializer
     {
         scale_ = scale;
         LOGGER.info(String.format("Set scale: %s", scale.getName()));
-        soloInstrumentCode_ = scale_.getSoloInstrument();
-        LOGGER.info(String.format("Set melody instrument: %s", soloInstrumentCode_));
+//        int soloInstrument = scale_.getSoloInstrument();
+//        setSoloInstrument(soloInstrument);
         melodyRhythmDetails_ = initializeRhythmDetails(ChannelType.MELODY);
         LOGGER.info(String.format("Set melody rhythm details: %s", melodyRhythmDetails_));
         chordRhythmDetails_ = initializeRhythmDetails(ChannelType.CHORD);
         LOGGER.info(String.format("Set chord rhythm details: %s", chordRhythmDetails_));
+    }
+
+    public void setSoloInstrument(int soloInstrument)
+    {
+        soloInstrumentCode_ = soloInstrument;
+        LOGGER.info(String.format("Set melody instrument: %s", soloInstrumentCode_));
+        for (IInstrumentChangeListener listener : instrumentChangeListeners)
+        {
+            listener.instrumentChanged(0, soloInstrument);
+        }
     }
 
     public void setMinutes(int minutes)
@@ -203,14 +240,16 @@ public class Initializer
 
     private int initializeChannelCount()
     {
-        int channelCount = IS_TEST
-                ? testChannelCount_
-                : (int) (channelCount_ >= 0
-                ? channelCount_
-                : Math.random() * 3);
-        Synthesizer synthesizer = MusicUtil.getInstance().getSynthesizer();
-        int possibleChannelCount = synthesizer.getChannels().length - 1;
-        return Math.min(channelCount, possibleChannelCount);
+//        int channelCount = IS_TEST
+//                ? testChannelCount_
+//                : (int) (channelCount_ >= 0
+//                ? channelCount_
+//                : Math.random() * 3);
+//        Synthesizer synthesizer = MusicUtil.getInstance().getSynthesizer();
+//        int possibleChannelCount = synthesizer.getChannels().length - 1;
+//        return Math.min(channelCount, possibleChannelCount);
+
+        return 0;
     }
 
     public static boolean isTest()
@@ -271,6 +310,29 @@ public class Initializer
     public boolean isChordSequeced()
     {
         return isChordSequenced_;
+    }
+
+    public int getChordInstrument(int channel)
+    {
+        return chordInstruments_.get(channel - 1);
+    }
+
+    public void setChordInstrument(int channel, int instrument)
+    {
+        int index = channel - 1;
+        if (index < chordInstruments_.size())
+        {
+            chordInstruments_.set(index, instrument);
+        }
+        else
+        {
+            chordInstruments_.add(instrument);
+        }
+        LOGGER.info(String.format("Set chord instrument: %s", soloInstrumentCode_));
+        for (IInstrumentChangeListener listener : instrumentChangeListeners)
+        {
+            listener.instrumentChanged(channel, instrument);
+        }
     }
 
     public List<Integer> getChordInstrumentCodes()

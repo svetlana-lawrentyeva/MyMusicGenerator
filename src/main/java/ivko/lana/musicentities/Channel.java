@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * @author Lana Ivko
  */
-public class Channel implements IPlayable
+public class Channel implements IPlayable, IInstrumentChangeListener
 {
     private final List<Part> parts_;
     private final int instrumentCode_;
@@ -146,5 +146,14 @@ public class Channel implements IPlayable
     public void play(MidiChannel channel, Metronom metronom) throws InterruptedException
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void instrumentChanged(int channelNumber, int code)
+    {
+        if (channelNumber_ == channelNumber)
+        {
+            channel_.programChange(code);
+        }
     }
 }

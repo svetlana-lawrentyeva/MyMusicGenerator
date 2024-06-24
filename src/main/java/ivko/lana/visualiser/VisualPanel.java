@@ -7,7 +7,6 @@ import ivko.lana.generators.DrumsChannelGenerator;
 import ivko.lana.generators.Initializer;
 import ivko.lana.generators.MusicGenerator;
 import ivko.lana.musicentities.*;
-import ivko.lana.util.MidiSaver;
 import ivko.lana.util.MusicUtil;
 import ivko.lana.yaml.RhythmDetails;
 
@@ -15,13 +14,13 @@ import javax.sound.midi.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,22 +28,28 @@ import java.util.List;
  */
 public class VisualPanel extends JPanel
 {
-    public static final int TICK_RESOLUTION = 24;
+    public static final int TICK_RESOLUTION = 12;
     private JButton saveButton_;
     private JButton playButton_;
     private JSpinner minutesSpinner_;
     private JComboBox<IScale> scaleComboBox_;
+    private JComboBox<InstrumentCode> soloInstrumentComboBox_;
+    private List<JComboBox<InstrumentCode>> chordComboBoxes_ = new ArrayList<>();
+    private JPanel chordInstrumentsPanel_;
     private JComboBox<RhythmDetails> rhythmSizeComboBox_;
     private Synthesizer synthesizer_;
 
     private Music music_;
     private Initializer initializer_;
 
+    private JFrame parentFrame_;
+
     private boolean isTest_ = Initializer.isTest();
 
-    public VisualPanel()
+    public VisualPanel(JFrame parentFrame)
     {
         super(new GridBagLayout());
+        parentFrame_ = parentFrame;
         synthesizer_ = MusicUtil.getInstance().getSynthesizer();
         initializer_ = new Initializer();
         prepare();
@@ -649,6 +654,7 @@ public class VisualPanel extends JPanel
         minutesSpinner_ = createMinutesSpinner();
         rhythmSizeComboBox_ = createRhythmSizeComboBox();
         scaleComboBox_ = createScaleComboBox();
+        soloInstrumentComboBox_ = createInstrumentComboBox(0);
         saveButton_ = new JButton("Save");
         playButton_ = new JButton("Play");
         if (isTest_)
@@ -662,10 +668,56 @@ public class VisualPanel extends JPanel
         add(scaleComboBox_, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(rhythmSizeComboBox_, new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
+
+        add(createInstrumentPanel(soloInstrumentComboBox_), new GridBagConstraints(0, 1, 3, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        chordInstrumentsPanel_ = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(chordInstrumentsPanel_, BoxLayout.Y_AXIS);
+        chordInstrumentsPanel_.setLayout(boxLayout);
+        add(chordInstrumentsPanel_, new GridBagConstraints(0, 2, 3, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(playButton_);
         buttonPanel.add(saveButton_);
-        add(buttonPanel, new GridBagConstraints(0, 1, 3, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(buttonPanel, new GridBagConstraints(0, 3, 3, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+    }
+
+    private JPanel createInstrumentPanel(JComboBox<InstrumentCode> instrumentComboBox)
+    {
+        JPanel instrumentPanel = new JPanel(new GridBagLayout());
+
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(e ->
+        {
+            JComboBox<InstrumentCode> newInstrumentComboBox = createInstrumentComboBox(chordComboBoxes_.size() + 1);
+            chordComboBoxes_.add(newInstrumentComboBox);
+            chordInstrumentsPanel_.add(createInstrumentPanel(newInstrumentComboBox));
+            ChordChannelGenerator chordChannelGenerator = new ChordChannelGenerator(initializer_, chordComboBoxes_.size());
+            //                Channel channel = chordChannelGenerator.generate();
+//                music_.getChannels()
+            revalidate();
+            repaint();
+            parentFrame_.pack();
+            parentFrame_.validate();
+        });
+
+        JButton removeButton = new JButton("-");
+        removeButton.addActionListener(e ->
+        {
+            chordComboBoxes_.remove(instrumentComboBox);
+            chordInstrumentsPanel_.remove(instrumentPanel);
+            revalidate();
+            repaint();
+            parentFrame_.pack();
+            parentFrame_.validate();
+        });
+
+        instrumentPanel.add(instrumentComboBox, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        instrumentPanel.add(addButton, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        instrumentPanel.add(removeButton, new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        return instrumentPanel;
     }
 
     private JSpinner createMinutesSpinner()
@@ -760,6 +812,68 @@ public class VisualPanel extends JPanel
         comboBox.addItemListener(e -> onRhythmSizeChanged());
         comboBox.setSelectedItem(initializer_.getScale());
         return comboBox;
+    }
+
+    private JComboBox<InstrumentCode> createInstrumentComboBox(int channel)
+    {
+        JComboBox<InstrumentCode> comboBox = new JComboBox<>(initializer_.getInstrumentCodesConfig().getInstrumentCodes().toArray(new InstrumentCode[0]));
+        comboBox.setRenderer((list, value, index, isSelected, cellHasFocus) ->
+        {
+            JLabel label = new JLabel();
+            if (value != null)
+            {
+                label.setText(value.getName());
+                if (isSelected)
+                {
+                    label.setBackground(list.getSelectionBackground());
+                    if (value.isMeditative())
+                    {
+                        label.setForeground(Color.BLUE);
+                    }
+                    else
+                    {
+                        label.setForeground(list.getSelectionForeground());
+                    }
+                }
+                else
+                {
+                    label.setBackground(list.getBackground());
+                    if (value.isMeditative())
+                    {
+                        label.setForeground(Color.BLUE);
+                    }
+                    else
+                    {
+                        label.setForeground(list.getForeground());
+                    }
+                }
+            }
+            label.setOpaque(true);
+            return label;
+        });
+        comboBox.addItemListener(e -> onInstrumentCodeChanged(channel));
+        comboBox.setSelectedItem(initializer_.getMelodyInstrumentCode());
+        return comboBox;
+    }
+
+    private void onInstrumentCodeChanged(int channel)
+    {
+        JComboBox<InstrumentCode> comboBox = channel == 0
+        ? soloInstrumentComboBox_
+                : chordComboBoxes_.get(channel - 1);
+        InstrumentCode selectedItem = (InstrumentCode) comboBox.getSelectedItem();
+        if (selectedItem != null)
+        {
+            if (channel == 0)
+            {
+                initializer_.setSoloInstrument(selectedItem.getCode());
+            }
+            else
+            {
+                initializer_.setChordInstrument(channel, selectedItem.getCode());
+            }
+        }
+
     }
 
     private void onRhythmSizeChanged()
@@ -887,19 +1001,21 @@ public class VisualPanel extends JPanel
 
     private void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
     {
-        duration *= initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier();
 
         long startTick = (long) (startBeat * TICK_RESOLUTION); // Преобразование битов в тики
         long endTick = (long) ((startBeat + duration) * TICK_RESOLUTION);
+//        duration *= initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier();
 
         accent = Math.min(accent, 127);
         tone = Math.min(tone, 127);
 
+        System.out.println("Note ON: Tone=" + tone + " Accent=" + accent + " StartTick=" + startTick);
         ShortMessage onMessage = new ShortMessage();
         onMessage.setMessage(ShortMessage.NOTE_ON, channel, tone, accent);
         MidiEvent noteOn = new MidiEvent(onMessage, startTick);
         track.add(noteOn);
 
+        System.out.println("Note OFF: Tone=" + tone + " EndTick=" + endTick);
         ShortMessage offMessage = new ShortMessage();
         offMessage.setMessage(ShortMessage.NOTE_OFF, channel, tone, 0);
         MidiEvent noteOff = new MidiEvent(offMessage, endTick);

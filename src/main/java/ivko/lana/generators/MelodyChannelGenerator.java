@@ -43,6 +43,7 @@ public class MelodyChannelGenerator implements IChannelGenerator
     {
         Channel channel = new Channel(parts, instrumentCode, channelNumber_);
         channel.setIsMelody(true);
+        initializer_.addInstrumentChangeListener(channel);
         return channel;
     }
 

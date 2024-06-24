@@ -30,6 +30,11 @@ public class Music implements IPlayable
         return channels_;
     }
 
+    public void addChannel(Channel channel)
+    {
+        channels_.add(channel);
+    }
+
     @Override
     public int getChannelNumber()
     {

@@ -1,0 +1,385 @@
+instrumentCodes:
+  - code: 0
+    name: Фортепиано
+    meditative: true
+  - code: 1
+    name: Гранд пианино
+    meditative: true
+  - code: 2
+    name: Электрическое фортепиано
+    meditative: true
+  - code: 3
+    name: Электрическое фортепиано 2
+    meditative: true
+  - code: 4
+    name: Электрическое фортепиано 3
+    meditative: true
+  - code: 5
+    name: Электрическое фортепиано 4
+    meditative: true
+  - code: 6
+    name: Клавесин
+    meditative: false
+  - code: 7
+    name: Клавесин (челеста)
+    meditative: false
+  - code: 8
+    name: Маримба
+    meditative: true
+  - code: 9
+    name: Ксилофон
+    meditative: false
+  - code: 10
+    name: Вибрафон
+    meditative: true
+  - code: 11
+    name: Колокольчики
+    meditative: true
+  - code: 12
+    name: Орган
+    meditative: false
+  - code: 13
+    name: Хаммонд орган
+    meditative: false
+  - code: 14
+    name: Орган с перкуссией
+    meditative: false
+  - code: 15
+    name: Рок-орган
+    meditative: false
+  - code: 16
+    name: Церковный орган
+    meditative: false
+  - code: 17
+    name: Рид-орган
+    meditative: false
+  - code: 18
+    name: Аккордеон
+    meditative: false
+  - code: 19
+    name: Гармоника
+    meditative: false
+  - code: 20
+    name: Бандонеон
+    meditative: false
+  - code: 21
+    name: Нейлоновая гитара
+    meditative: true
+  - code: 22
+    name: Стальная гитара
+    meditative: false
+  - code: 23
+    name: Джазовая гитара
+    meditative: true
+  - code: 24
+    name: Чистая гитара
+    meditative: true
+  - code: 25
+    name: Приглушенная гитара
+    meditative: false
+  - code: 26
+    name: Акустическая гитара
+    meditative: false
+  - code: 27
+    name: Электрическая гитара
+    meditative: true
+  - code: 28
+    name: Фузз-гитара
+    meditative: false
+  - code: 29
+    name: Дисторшн гитара
+    meditative: false
+  - code: 30
+    name: Синтетическая гитара
+    meditative: false
+  - code: 31
+    name: Соло-гитара
+    meditative: false
+  - code: 32
+    name: Акустический бас
+    meditative: false
+  - code: 33
+    name: Электрический бас (пальцами)
+    meditative: false
+  - code: 34
+    name: Электрический бас (медиатором)
+    meditative: false
+  - code: 35
+    name: Фретлесс бас
+    meditative: true
+  - code: 36
+    name: Слэп-бас 1
+    meditative: false
+  - code: 37
+    name: Слэп-бас 2
+    meditative: false
+  - code: 38
+    name: Синтезаторный бас 1
+    meditative: false
+  - code: 39
+    name: Синтезаторный бас 2
+    meditative: false
+  - code: 40
+    name: Скрипка
+    meditative: true
+  - code: 41
+    name: Альт
+    meditative: true
+  - code: 42
+    name: Виолончель
+    meditative: true
+  - code: 43
+    name: Контрабас
+    meditative: false
+  - code: 44
+    name: Секвенция струнных 1
+    meditative: true
+  - code: 45
+    name: Секвенция струнных 2
+    meditative: true
+  - code: 46
+    name: Синтетические струны 1
+    meditative: false
+  - code: 47
+    name: Синтетические струны 2
+    meditative: false
+  - code: 48
+    name: Хор "Аа"
+    meditative: true
+  - code: 49
+    name: Хор "Оо"
+    meditative: true
+  - code: 50
+    name: Синтетический хор "Аа"
+    meditative: false
+  - code: 51
+    name: Оркестровый удар
+    meditative: false
+  - code: 52
+    name: Труба
+    meditative: false
+  - code: 53
+    name: Тромбон
+    meditative: false
+  - code: 54
+    name: Туба
+    meditative: false
+  - code: 55
+    name: Ударные
+    meditative: true
+  - code: 56
+    name: Альт-саксофон
+    meditative: false
+  - code: 57
+    name: Тенор-саксофон
+    meditative: false
+  - code: 58
+    name: Баритон-саксофон
+    meditative: false
+  - code: 59
+    name: Оби
+    meditative: false
+  - code: 60
+    name: Английский рожок
+    meditative: false
+  - code: 61
+    name: Фагот
+    meditative: false
+  - code: 62
+    name: Кларнет
+    meditative: true
+  - code: 63
+    name: Пикколо
+    meditative: false
+  - code: 64
+    name: Флейта
+    meditative: true
+  - code: 65
+    name: Блокфлейта
+    meditative: false
+  - code: 66
+    name: Свисток
+    meditative: false
+  - code: 67
+    name: Пан-флейта
+    meditative: true
+  - code: 68
+    name: Бутылочное горлышко
+    meditative: false
+  - code: 69
+    name: Шакухачи
+    meditative: true
+  - code: 70
+    name: Свистулька
+    meditative: false
+  - code: 71
+    name: Окарина
+    meditative: false
+  - code: 72
+    name: Лидер 1 (квадратная волна)
+    meditative: false
+  - code: 73
+    name: Лидер 2 (пилообразная волна)
+    meditative: false
+  - code: 74
+    name: Лидер 3 (каллиопа)
+    meditative: false
+  - code: 75
+    name: Лидер 4 (чиптуна)
+    meditative: false
+  - code: 76
+    name: Лидер 5 (голоса)
+    meditative: false
+  - code: 77
+    name: Лидер 6 (кислота)
+    meditative: false
+  - code: 78
+    name: Лидер 7 (бас+лидер)
+    meditative: false
+  - code: 79
+    name: Лидер 8 (фантазия)
+    meditative: false
+  - code: 80
+    name: Пэд 1 (фантазия)
+    meditative: true
+  - code: 81
+    name: Пэд 2 (теплый)
+    meditative: true
+  - code: 82
+    name: Пэд 3 (полоса)
+    meditative: false
+  - code: 83
+    name: Пэд 4 (хор)
+    meditative: true
+  - code: 84
+    name: Пэд 5 (красный)
+    meditative: false
+  - code: 85
+    name: Пэд 6 (металлический)
+    meditative: false
+  - code: 86
+    name: Пэд 7 (галактика)
+    meditative: false
+  - code: 87
+    name: Пэд 8 (эхо)
+    meditative: true
+  - code: 88
+    name: Синтетические эффекты 1 (дождь)
+    meditative: false
+  - code: 89
+    name: Синтетические эффекты 2 (саундтрек)
+    meditative: false
+  - code: 90
+    name: Синтетические эффекты 3 (кристалл)
+    meditative: false
+  - code: 91
+    name: Синтетические эффекты 4 (атмосфера)
+    meditative: true
+  - code: 92
+    name: Синтетические эффекты 5 (свет)
+    meditative: false
+  - code: 93
+    name: Синтетические эффекты 6 (гоблины)
+    meditative: false
+  - code: 94
+    name: Синтетические эффекты 7 (эхо)
+    meditative: false
+  - code: 95
+    name: Синтетические эффекты 8 (научная фантастика)
+    meditative: false
+  - code: 96
+    name: Эффект 1 (свист)
+    meditative: false
+  - code: 97
+    name: Эффект 2 (ветер)
+    meditative: false
+  - code: 98
+    name: Эффект 3 (дождь)
+    meditative: false
+  - code: 99
+    name: Эффект 4 (морские волны)
+    meditative: false
+  - code: 100
+    name: Эффект 5 (пена)
+    meditative: false
+  - code: 101
+    name: Эффект 6 (птицы)
+    meditative: false
+  - code: 102
+    name: Гитара (мьют)
+    meditative: false
+  - code: 103
+    name: Ледяная флейта
+    meditative: false
+  - code: 104
+    name: Протяжный хор
+    meditative: false
+  - code: 105
+    name: Синтетический голос
+    meditative: false
+  - code: 106
+    name: Электронные звуки
+    meditative: false
+  - code: 107
+    name: Арфа
+    meditative: true
+  - code: 108
+    name: Пианиссимо
+    meditative: false
+  - code: 109
+    name: Брайт-акустик
+    meditative: false
+  - code: 110
+    name: Синтетические падения
+    meditative: false
+  - code: 111
+    name: Синтетические атаки
+    meditative: false
+  - code: 112
+    name: Шамисен
+    meditative: false
+  - code: 113
+    name: Кото
+    meditative: false
+  - code: 114
+    name: Калимба
+    meditative: false
+  - code: 115
+    name: Баглама
+    meditative: false
+  - code: 116
+    name: Фиддл
+    meditative: false
+  - code: 117
+    name: Шанай
+    meditative: false
+  - code: 118
+    name: Тутти
+    meditative: true
+  - code: 119
+    name: Тенгус
+    meditative: false
+  - code: 120
+    name: Агого
+    meditative: false
+  - code: 121
+    name: Стальной барабан
+    meditative: false
+  - code: 122
+    name: Деревянный блок
+    meditative: false
+  - code: 123
+    name: Тайко-барабан
+    meditative: false
+  - code: 124
+    name: Мелодийный том
+    meditative: false
+  - code: 125
+    name: Синтетические удары
+    meditative: false
+  - code: 126
+    name: Реверс-сайфон
+    meditative: false
+  - code: 127
+    name: Гунигер
+    meditative: false

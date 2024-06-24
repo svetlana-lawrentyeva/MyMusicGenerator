@@ -34,14 +34,18 @@ public class ChordChannelGenerator extends AccompanimentChannelGenerator
 
     protected Channel generateImpl(List<Part> parts)
     {
-        return new Channel(parts, getInstrumentCode(), channelNumber_);
+        Channel channel = new Channel(parts, getInstrumentCode(), channelNumber_);
+        initializer_.addInstrumentChangeListener(channel);
+        return channel;
     }
 
     private int getInstrumentCode()
     {
 //        return 0;
-        List<Integer> chordInstrumentCodes = initializer_.getChordInstrumentCodes();
-        int chordInstrumentIndex = (int) (Math.random() * chordInstrumentCodes.size());
-        return chordInstrumentCodes.get(chordInstrumentIndex);
+//        List<Integer> chordInstrumentCodes = initializer_.getChordInstrumentCodes();
+//        int chordInstrumentIndex = (int) (Math.random() * chordInstrumentCodes.size());
+//        return chordInstrumentCodes.get(chordInstrumentIndex);
+
+        return initializer_.getChordInstrument(channelNumber_);
     }
 }
