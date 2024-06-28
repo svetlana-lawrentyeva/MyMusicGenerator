@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class MidiToAudioConverter {
 
-    public static void convert(String midiFilePath, String wavFilePath) throws IOException, InterruptedException {
+    public static void convertWithTimidity(String midiFilePath, String wavFilePath) throws IOException, InterruptedException {
         // Команда для запуска TiMidity++
         String command = String.format("timidity %s -Ow -o %s", midiFilePath, wavFilePath);
 
@@ -34,7 +34,7 @@ public class MidiToAudioConverter {
         String wavFilePath = args[1];
 
         try {
-            convert(midiFilePath, wavFilePath);
+            convertWithTimidity(midiFilePath, wavFilePath);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
