@@ -49,7 +49,7 @@ public class AudioGenerator {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(
                     "fluidsynth",
-                    "-f", "D:\\path\\to\\fluidsynth.cfg",
+                    "-f", "D:\\install\\midi_sounds_library\\fluidsynth.cfg",
                     "-ni",
                     "D:\\install\\midi_sounds_library\\FluidR3_GM.sf2",
                     midiFilePath,

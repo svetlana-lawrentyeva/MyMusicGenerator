@@ -24,6 +24,26 @@ public class MidiToAudioConverter {
         }
     }
 
+    public static void convertWithFluidSynth(String midiFilePath, String wavFilePath)
+    {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    "fluidsynth",
+                    "-f", "D:\\path\\to\\fluidsynth.cfg",
+                    "-ni",
+                    "D:\\install\\midi_sounds_library\\FluidR3_GM.sf2",
+                    midiFilePath,
+                    "-F",
+                    wavFilePath
+            );
+            processBuilder.inheritIO();
+            Process process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Usage: MidiToWavConverter <input midi file> <output wav file>");

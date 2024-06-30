@@ -1,4 +1,4 @@
-package ivko.lana.converter;
+package ivko.lana.instruments_for_test;
 
 /**
  * @author Lana Ivko
