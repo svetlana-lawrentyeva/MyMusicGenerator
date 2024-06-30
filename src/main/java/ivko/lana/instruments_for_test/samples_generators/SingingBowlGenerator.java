@@ -4,57 +4,135 @@ package ivko.lana.instruments_for_test.samples_generators;
  * @author Lana Ivko
  */
 
-import javax.sound.sampled.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
-public class SingingBowlGenerator {
+public class SingingBowlGenerator
+{
 
     public static final String FILE_PATH = "singing_bowl.wav";
 
-    public static void main(String[] args) {
-        int duration = 10; // Длительность в секундах
+    public static void main(String[] args)
+    {
+        int duration = 360; // Длительность в секундах
         int sampleRate = 44100; // Частота дискретизации
         Util.clearPreviousFile(FILE_PATH);
-        byte[] bowlSound = generateSingingBowlSound(duration, sampleRate);
+        byte[] bowlSound = generateSingingBowlSound(duration, sampleRate, 1, 5);
         Util.saveWaveFile(bowlSound, sampleRate, FILE_PATH);
     }
 
-    public static byte[] generateSingingBowlSound(int duration, int sampleRate) {
+    public static byte[] generateSingingBowlSound(int duration, int sampleRate, int attackDuration, int decayDuration) {
         int totalSamples = duration * sampleRate;
         byte[] output = new byte[totalSamples * 2]; // 16-битный (2 байта на сэмпл)
 
-        double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200}; // Основные частоты и обертоны
-        double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03}; // Амплитуды для каждой частоты
-        double decayFactor = 0.00003; // Фактор затухания для амплитуды
-        Random random = new Random();
-        int rampSamples = sampleRate / 4; // Плавное нарастание в течение 1/4 секунды
+        int rampSamples = attackDuration * sampleRate; // Плавное нарастание в течение attackDuration секунд
+        int decaySamples = decayDuration * sampleRate; // Плавное затухание в течение decayDuration секунд
+        int sustainSamples = totalSamples - rampSamples - decaySamples; // Количество сэмплов, когда звук на уровне амплитуды без изменения
 
-        for (int i = 0; i < totalSamples; i++) {
-            double sampleValue = 0.0;
-            double rampFactor = (i < rampSamples) ? (double) i / rampSamples : 1.0;
-
-            for (int j = 0; j < frequencies.length; j++) {
-                double angle = 2.0 * Math.PI * frequencies[j] * i / sampleRate;
-                double variation = 0.001 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
-                sampleValue += Math.sin(angle + variation) * amplitudes[j];
-            }
-
-            // Применение затухания
-            sampleValue *= Math.exp(-decayFactor * i);
-
-            // Применение плавного нарастания
-            sampleValue *= rampFactor;
-
-            short sample = (short) (sampleValue * Short.MAX_VALUE);
-            output[i * 2] = (byte) (sample & 0xff);
-            output[i * 2 + 1] = (byte) ((sample >> 8) & 0xff);
-        }
+        int currentSample = 0;
+        currentSample = applyAttackPhase(output, currentSample, rampSamples, sampleRate);
+        currentSample = applySustainPhase(output, currentSample, sustainSamples, sampleRate);
+        applyDecayPhase(output, currentSample, decaySamples, sampleRate);
 
         return output;
     }
+
+
+    private static int applyAttackPhase(byte[] output, int startSample, int rampSamples, int sampleRate) {
+        double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
+        double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
+        Random random = new Random();
+        double maxAmplitudeFactor = 0.6; // Фактор уменьшения максимальной амплитуды
+
+        for (int i = 0; i < rampSamples; i++) {
+            double sampleValue = 0.0;
+            double rampFactor = (double) i / rampSamples;
+
+            for (int j = 0; j < frequencies.length; j++) {
+                double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
+                double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
+                sampleValue += Math.sin(angle + variation) * amplitudes[j];
+            }
+
+            sampleValue *= rampFactor * maxAmplitudeFactor; // Применение уменьшения максимальной амплитуды
+            short sample = (short) (sampleValue * Short.MAX_VALUE);
+            output[(startSample + i) * 2] = (byte) (sample & 0xff);
+            output[(startSample + i) * 2 + 1] = (byte) ((sample >> 8) & 0xff);
+        }
+
+        return startSample + rampSamples;
+    }
+
+
+    private static int applySustainPhase(byte[] output, int startSample, int sustainSamples, int sampleRate) {
+        double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
+        double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
+        double minAmplitude = 0.5; // Минимальная амплитуда затухания
+        double maxAmplitude = 0.6; // Максимальная амплитуда для пиков
+        Random random = new Random();
+
+        int cycleDuration = 2 * sampleRate; // Длительность одного цикла затухания-нарастания в сэмплах (увеличена до 4 секунд)
+        int halfCycle = cycleDuration / 2;
+
+        for (int i = 0; i < sustainSamples; i++) {
+            double sampleValue = 0.0;
+            double cyclePosition = (i % cycleDuration) / (double) halfCycle;
+            double rampFactor;
+
+            if (i % cycleDuration < halfCycle) {
+                // Фаза затухания
+                rampFactor = maxAmplitude - (maxAmplitude - minAmplitude) * cyclePosition;
+            } else {
+                // Фаза нарастания
+                rampFactor = minAmplitude + (maxAmplitude - minAmplitude) * (cyclePosition - 1.0);
+            }
+
+            for (int j = 0; j < frequencies.length; j++) {
+                double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
+                double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
+                sampleValue += Math.sin(angle + variation) * amplitudes[j];
+            }
+
+            sampleValue *= rampFactor;
+
+            short sample = (short) (sampleValue * Short.MAX_VALUE);
+            output[(startSample + i) * 2] = (byte) (sample & 0xff);
+            output[(startSample + i) * 2 + 1] = (byte) ((sample >> 8) & 0xff);
+        }
+
+        return startSample + sustainSamples;
+    }
+
+
+
+
+    private static void applyDecayPhase(byte[] output, int startSample, int decaySamples, int sampleRate) {
+        double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
+        double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
+        double decayFactor = 0.00003; // Фактор затухания для амплитуды
+        double minAmplitude = 0.5; // Минимальная амплитуда после затухания
+        Random random = new Random();
+
+        for (int i = 0; i < decaySamples; i++) {
+            double sampleValue = 0.0;
+            double rampFactor = 1.0 - (double) i / decaySamples;
+
+            for (int j = 0; j < frequencies.length; j++) {
+                double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
+                double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
+                sampleValue += Math.sin(angle + variation) * amplitudes[j];
+            }
+
+            // Применение затухания, чтобы оно сводилось к minAmplitude, а не к нулю
+            double decay = (1 - minAmplitude) * Math.exp(-decayFactor * (startSample + i)) + minAmplitude;
+            sampleValue *= decay;
+
+            sampleValue *= rampFactor;
+            short sample = (short) (sampleValue * Short.MAX_VALUE);
+            output[(startSample + i) * 2] = (byte) (sample & 0xff);
+            output[(startSample + i) * 2 + 1] = (byte) ((sample >> 8) & 0xff);
+        }
+    }
+
 }
 
 
