@@ -6,7 +6,7 @@ public class TibetanBowlSound {
 
     private static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
 
-    // Метод для создания синусоидальной волны с заданной частотой, длительностью и затуханием
+    // Метод для создания синусоидальной волны с затуханием и начальным ударом
     private static short[] createSineWaveWithDecay(double frequency, int durationMs, double sampleRate, double amplitude, double decayFactor) {
         int samples = (int) ((durationMs / 1000.0) * sampleRate);
         short[] output = new short[samples];
@@ -19,7 +19,7 @@ public class TibetanBowlSound {
             // Имитация удара
             double impact = 1.0;
             if (i < sampleRate * 0.05) { // Первые 50 мс
-                impact = Math.sin(Math.PI * (i / (sampleRate * 0.1)));
+                impact = Math.exp(-30.0 * i / (sampleRate * 0.05));
             }
 
             short value = (short) (Math.sin(angle) * amplitude * decay * impact * Short.MAX_VALUE);
@@ -33,8 +33,8 @@ public class TibetanBowlSound {
         float sampleRate = SAMPLE_RATE; // Частота дискретизации
         int durationMs = 8000; // Длительность в миллисекундах
         double[] frequencies = {220.0, 594.0, 1056.0, 1650.0}; // Пропорции частот 1:2.7:4.8:7.5
-        double[] amplitudes = {0.3, 0.2, 0.1, 0.05}; // Уменьшенные амплитуды для каждой гармоники
-        double decayFactor = 0.0002; // Плавное затухание
+        double[] amplitudes = {0.5, 0.2, 0.05, 0.02}; // Еще больше увеличили амплитуду для нижней частоты
+        double decayFactor = 0.0003; // Плавное затухание
 
         try {
             // Формат аудио
