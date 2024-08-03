@@ -8,10 +8,11 @@
     <artifactId>MyMusicGenerator</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <version>2.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/jfugue/jfugue -->
         <dependency>
@@ -19,6 +20,7 @@
             <artifactId>jfugue</artifactId>
             <version>5.0.9</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
@@ -47,14 +49,45 @@
             <version>2.4-1</version>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>multi-repo</id>
+            <repositories>
+                <repository>
+                    <id>MavenCentral</id>
+                    <url>https://repo.maven.apache.org/maven2/</url>
+                </repository>
+                <repository>
+                    <id>MavenSing</id>
+                    <url>https://maven.sing-group.org/repository/maven/</url>
+                </repository>
+                <repository>
+                    <id>SingGroup</id>
+                    <url>https://maven.sing-group.org/repository/maven/</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
     <repositories>
         <repository>
             <id>MavenCentral</id>
-            <url>https://repo.maven.apache.org/maven2/</url>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
             <id>MavenSing</id>
-            <url>https://maven.sing-group.org/repository/maven//</url>
+            <url>https://maven.sing-group.org/repository/maven</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>SingGroup</id>
+            <url>https://maven.sing-group.org/repository/maven/</url>
         </repository>
     </repositories>
 

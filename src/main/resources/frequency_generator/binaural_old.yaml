@@ -1,0 +1,61 @@
+frequencies:
+  - value: 0.1
+    description: Глубокий дельта-сон
+  - value: 0.2
+    description: Глубокая релаксация
+  - value: 0.5
+    description: Глубокий сон
+  - value: 1
+    description: Дельта-ритм, восстановление
+  - value: 2
+    description: Глубокая медитация
+  - value: 3
+    description: Тета-ритм, улучшение сна
+  - value: 4
+    description: Глубокий отдых
+  - value: 5
+    description: Сверхглубокая медитация
+  - value: 6
+    description: Внутренний покой
+  - value: 7
+    description: Интенсивная релаксация
+  - value: 8
+    description: Альфа-ритм, расслабление
+  - value: 9
+    description: Сосредоточение
+  - value: 10
+    description: Ясность сознания
+  - value: 12
+    description: Спокойствие
+  - value: 14
+    description: Бета-ритм, концентрация
+  - value: 15
+    description: Обостренное восприятие
+  - value: 16
+    description: Острота ума
+  - value: 18
+    description: Ускоренное обучение
+  - value: 20
+    description: Увеличение энергии
+  - value: 25
+    description: Увеличение внимания
+  - value: 30
+    description: Высокая осведомленность
+  - value: 35
+    description: Высокий уровень концентрации
+  - value: 40
+    description: Когнитивное улучшение
+  - value: 45
+    description: Ускоренное мышление
+  - value: 50
+    description: Умственное пробуждение
+  - value: 55
+    description: Креативность
+  - value: 60
+    description: Активность мозга
+  - value: 65
+    description: Продуктивность
+  - value: 70
+    description: Визуализация
+  - value: 75
+    description: Ментальная ясность

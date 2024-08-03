@@ -1,61 +1,203 @@
-frequencies:
-  - value: 0.1
-    description: Глубокий дельта-сон
-  - value: 0.2
-    description: Глубокая релаксация
-  - value: 0.5
-    description: Глубокий сон
-  - value: 1
-    description: Дельта-ритм, восстановление
-  - value: 2
-    description: Глубокая медитация
-  - value: 3
-    description: Тета-ритм, улучшение сна
-  - value: 4
-    description: Глубокий отдых
-  - value: 5
-    description: Сверхглубокая медитация
-  - value: 6
-    description: Внутренний покой
-  - value: 7
-    description: Интенсивная релаксация
-  - value: 8
-    description: Альфа-ритм, расслабление
-  - value: 9
-    description: Сосредоточение
-  - value: 10
-    description: Ясность сознания
-  - value: 12
-    description: Спокойствие
-  - value: 14
-    description: Бета-ритм, концентрация
-  - value: 15
-    description: Обостренное восприятие
-  - value: 16
-    description: Острота ума
-  - value: 18
-    description: Ускоренное обучение
-  - value: 20
-    description: Увеличение энергии
-  - value: 25
-    description: Увеличение внимания
-  - value: 30
-    description: Высокая осведомленность
-  - value: 35
-    description: Высокий уровень концентрации
-  - value: 40
-    description: Когнитивное улучшение
-  - value: 45
-    description: Ускоренное мышление
-  - value: 50
-    description: Умственное пробуждение
-  - value: 55
-    description: Креативность
-  - value: 60
-    description: Активность мозга
-  - value: 65
-    description: Продуктивность
-  - value: 70
-    description: Визуализация
-  - value: 75
-    description: Ментальная ясность
+binaural_beats:
+  delta:
+    1:
+      description:
+        - Deep sleep
+        - Meditation
+    2:
+      description:
+        - Deep sleep
+        - Regeneration
+    3:
+      description:
+        - Healing
+        - Regeneration
+    4:
+      description:
+        - Subconscious connection
+        - Deep relaxation
+  theta:
+    4:
+      description:
+        - Deep relaxation
+        - Meditation
+    5:
+      description:
+        - Creativity
+        - Meditation
+    6:
+      description:
+        - Emotional healing
+        - Relaxation
+    7:
+      description:
+        - Intuition
+        - Relaxation
+    8:
+      description:
+        - Light sleep
+        - Deep relaxation
+  alpha:
+    8:
+      description:
+        - Relaxation
+        - Stress reduction
+    9:
+      description:
+        - Calmness
+        - Relaxation
+    10:
+      description:
+        - Alert relaxation
+        - Visualization
+    11:
+      description:
+        - Relaxed focus
+        - Stress relief
+    12:
+      description:
+        - Meditation
+        - Creativity
+    13:
+      description:
+        - Focused relaxation
+        - Increased learning
+    14:
+      description:
+        - Enhanced memory
+        - Increased focus
+  beta:
+    15:
+      description:
+        - Active concentration
+        - Improved focus
+    16:
+      description:
+        - Enhanced cognitive function
+        - Decision making
+    17:
+      description:
+        - Alertness
+        - Active state
+    18:
+      description:
+        - Mental energy
+        - High mental activity
+    19:
+      description:
+        - Overcoming fatigue
+        - Sustained activity
+    20:
+      description:
+        - Intense concentration
+        - Focus on tasks
+    21:
+      description:
+        - Quick thinking
+        - Efficient task performance
+    22:
+      description:
+        - Memory improvement
+        - Learning enhancement
+    23:
+      description:
+        - Emotional stability
+        - Calmness under stress
+    24:
+      description:
+        - Creative thinking
+        - Innovative solutions
+    25:
+      description:
+        - Enhanced productivity
+        - Work efficiency
+    26:
+      description:
+        - Mental resilience
+        - Coping with mental loads
+    27:
+      description:
+        - Vigilance
+        - Reactivity
+    28:
+      description:
+        - Brain synchronization
+        - Improved coordination
+    29:
+      description:
+        - Determination
+        - Goal achievement
+    30:
+      description:
+        - Intense focus
+        - High energy level
+  gamma:
+    31:
+      description:
+        - Cognitive enhancement
+        - Increased perception
+    32:
+      description:
+        - Memory recall
+        - High-level information processing
+    33:
+      description:
+        - Mental sharpness
+        - Problem-solving
+    34:
+      description:
+        - Enhanced learning
+        - Consciousness expansion
+    35:
+      description:
+        - Meditation depth
+        - Increased intelligence
+    36:
+      description:
+        - High-level cognition
+        - Brain function optimization
+    37:
+      description:
+        - Insight
+        - High-level thinking
+    38:
+      description:
+        - Complex problem solving
+        - Analytical thinking
+    39:
+      description:
+        - Creativity
+        - Peak mental performance
+    40:
+      description:
+        - Enhanced awareness
+        - Lucid thinking
+  high_gamma:
+    45:
+      description:
+        - Accelerated thinking
+        - Quick processing
+    50:
+      description:
+        - Mental awakening
+        - Heightened awareness
+    55:
+      description:
+        - Creativity
+        - Innovation
+    60:
+      description:
+        - Brain activity
+        - Cognitive performance
+    65:
+      description:
+        - Productivity
+        - Efficiency
+    70:
+      description:
+        - Visualization
+        - Imagination
+    75:
+      description:
+        - Mental clarity
+        - Clear thinking
