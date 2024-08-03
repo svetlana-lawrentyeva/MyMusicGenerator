@@ -18,10 +18,6 @@ public class TibetanBowlSound {
 
             // Имитация удара
             double impact = 1.0;
-            if (i < sampleRate * 0.05) { // Первые 50 мс
-                impact = Math.exp(-30.0 * i / (sampleRate * 0.05));
-            }
-
             short value = (short) (Math.sin(angle) * amplitude * decay * impact * Short.MAX_VALUE);
             output[i] = value;
         }
@@ -31,10 +27,10 @@ public class TibetanBowlSound {
 
     public static void main(String[] args) {
         float sampleRate = SAMPLE_RATE; // Частота дискретизации
-        int durationMs = 8000; // Длительность в миллисекундах
+        int durationMs = 16000; // Длительность в миллисекундах
         double[] frequencies = {220.0, 594.0, 1056.0, 1650.0}; // Пропорции частот 1:2.7:4.8:7.5
-        double[] amplitudes = {0.5, 0.2, 0.05, 0.02}; // Еще больше увеличили амплитуду для нижней частоты
-        double decayFactor = 0.0003; // Плавное затухание
+        double[] amplitudes = {0.5, 0.2, 0.05, 0.02}; // Амплитуды для каждой гармоники
+        double decayFactor = 0.8; // Плавное затухание
 
         try {
             // Формат аудио
