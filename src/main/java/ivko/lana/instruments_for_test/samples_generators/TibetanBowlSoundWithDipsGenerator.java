@@ -53,11 +53,13 @@ public class TibetanBowlSoundWithDipsGenerator
     private static int applyAttackPhase(byte[] output, int startSample, int rampSamples, int sampleRate,
                                         double[] frequencies, double[] amplitudes, double[] dips, Random random)
     {
-        for (int i = 0; i < rampSamples; i++) {
+        for (int i = 0; i < rampSamples; i++)
+        {
             double sampleValue = 0.0;
             double rampFactor = (double) i / rampSamples;
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.002 * (random.nextDouble() - 0.5); // Уменьшенные случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j] * dips[j];
@@ -75,10 +77,12 @@ public class TibetanBowlSoundWithDipsGenerator
     private static int applySustainPhase(byte[] output, int startSample, int sustainSamples, int sampleRate,
                                          double[] frequencies, double[] amplitudes, double[] dips, Random random)
     {
-        for (int i = 0; i < sustainSamples; i++) {
+        for (int i = 0; i < sustainSamples; i++)
+        {
             double sampleValue = 0.0;
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.002 * (random.nextDouble() - 0.5); // Уменьшенные случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j] * dips[j];
@@ -95,11 +99,13 @@ public class TibetanBowlSoundWithDipsGenerator
     private static void applyDecayPhase(byte[] output, int startSample, int rampSamples, int sampleRate,
                                         double[] frequencies, double[] amplitudes, double[] dips, double decayFactor, Random random)
     {
-        for (int i = 0; i < rampSamples; i++) {
+        for (int i = 0; i < rampSamples; i++)
+        {
             double sampleValue = 0.0;
             double decayFactorAdjusted = Math.exp(-decayFactor * (i + 1)); // Сразу затухает после пика
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.002 * (random.nextDouble() - 0.5); // Уменьшенные случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j] * dips[j];
@@ -115,7 +121,8 @@ public class TibetanBowlSoundWithDipsGenerator
     public static byte[] applyAmplitudeModulation(byte[] input, double modulationFrequency, double modulationDepth, int sampleRate)
     {
         byte[] output = new byte[input.length];
-        for (int i = 0; i < input.length / 2; i++) {
+        for (int i = 0; i < input.length / 2; i++)
+        {
             short sample = (short) (((input[i * 2 + 1] & 0xff) << 8) | (input[i * 2] & 0xff));
             double modulation = 1.0 + modulationDepth * Math.sin(2.0 * Math.PI * modulationFrequency * i / sampleRate);
             sample = (short) (sample * modulation);

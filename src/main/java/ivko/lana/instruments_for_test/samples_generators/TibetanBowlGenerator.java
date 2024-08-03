@@ -16,11 +16,12 @@ public class TibetanBowlGenerator
         int duration = 13; // Длительность в секундах
         int sampleRate = 44100; // Частота дискретизации
         Util.clearPreviousFile(FILE_PATH);
-        byte[] sineWave = generateTibetanBowlSound( duration, sampleRate);
+        byte[] sineWave = generateTibetanBowlSound(duration, sampleRate);
         Util.saveWaveFile(sineWave, sampleRate, FILE_PATH);
     }
 
-    public static byte[] generateTibetanBowlSound(int duration, int sampleRate) {
+    public static byte[] generateTibetanBowlSound(int duration, int sampleRate)
+    {
         int totalSamples = duration * sampleRate;
         byte[] output = new byte[totalSamples * 2]; // 16-битный (2 байта на сэмпл)
 
@@ -30,11 +31,13 @@ public class TibetanBowlGenerator
         Random random = new Random();
         int rampSamples = sampleRate; // Плавное нарастание в течение 1 секунды
 
-        for (int i = 0; i < totalSamples; i++) {
+        for (int i = 0; i < totalSamples; i++)
+        {
             double sampleValue = 0.0;
             double rampFactor = (i < rampSamples) ? (double) i / rampSamples : 1.0;
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * i / sampleRate;
                 double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j];

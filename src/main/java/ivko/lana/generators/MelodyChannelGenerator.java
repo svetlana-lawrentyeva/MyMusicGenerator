@@ -49,7 +49,7 @@ public class MelodyChannelGenerator implements IChannelGenerator
 
     private List<Part> generateParts() throws InterruptedException
     {
-        int totalLength = initializer_.getMinutes() * 1000;
+        int totalLength = initializer_.getMinutes() * 60;
 
         List<Part> parts = new ArrayList<>();
         for (PartGenerator generator : generators_)

@@ -20,7 +20,8 @@ public class ChordCommonSequences
 
     private static List<List<Chord>> Sequences_;
 
-    private List<List<Chord>> get() throws IOException {
+    private List<List<Chord>> get() throws IOException
+    {
         if (Sequences_ == null)
         {
             Sequences_ = loadSequence();
@@ -39,7 +40,7 @@ public class ChordCommonSequences
         {
             Iterator<String> iterator = record.stream().iterator();
             List<Chord> chords = new ArrayList<>();
-            while(iterator.hasNext())
+            while (iterator.hasNext())
             {
                 String chordCode = iterator.next();
                 chords.add(MusicUtil.getInstance().getChordLibrary().getChord(chordCode));
@@ -55,7 +56,8 @@ public class ChordCommonSequences
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "PairLibrary{chordPairs=" + Sequences_ + '}';
     }
 }

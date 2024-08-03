@@ -110,7 +110,8 @@ public class HertzChannelGenerator extends AccompanimentChannelGenerator
                 int pitchBendValue = PitchBendCalculator.calculatePitchBendValue(initializer_.getHertz());
                 channel_.setPitchBend(pitchBendValue + 8192);
 
-            } catch (InvalidMidiDataException e)
+            }
+            catch (InvalidMidiDataException e)
             {
                 throw new RuntimeException(e);
             }

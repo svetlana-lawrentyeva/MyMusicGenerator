@@ -1,13 +1,11 @@
 package ivko.lana;
 
-import ivko.lana.musicentities.Music;
 import ivko.lana.visualiser.VisualFrame;
 
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Lana Ivko
@@ -27,15 +25,18 @@ public class Main
 //        DynamicMelodyGeneratorWithTheme.start(initializer);
     }
 
-    public static void renameFiles(String directoryPath) {
+    public static void renameFiles(String directoryPath)
+    {
         File dir = new File(directoryPath);
-        if (!dir.isDirectory()) {
+        if (!dir.isDirectory())
+        {
             System.out.println("Provided path is not a directory");
             return;
         }
 
         File[] files = dir.listFiles();
-        if (files == null || files.length == 0) {
+        if (files == null || files.length == 0)
+        {
             System.out.println("No files found in the directory");
 
             // FILE   20231203-133058-000824
@@ -43,15 +44,21 @@ public class Main
             return;
         }
 
-        for (File file : files) {
-            if (file.isFile()) {
+        for (File file : files)
+        {
+            if (file.isFile())
+            {
                 String oldName = file.getName();
                 String newName = convertFileName(oldName);
-                if (newName != null) {
+                if (newName != null)
+                {
                     File newFile = new File(dir, newName);
-                    if (file.renameTo(newFile)) {
+                    if (file.renameTo(newFile))
+                    {
                         System.out.println("Renamed: " + oldName + " to " + newName);
-                    } else {
+                    }
+                    else
+                    {
                         System.out.println("Failed to rename: " + oldName);
                     }
                 }
@@ -59,15 +66,18 @@ public class Main
         }
     }
 
-    private static String convertFileName(String oldName) {
+    private static String convertFileName(String oldName)
+    {
         // Example filename: FILE20231203-133058-000824.MP4
         // Extract date and time parts
-        if (!oldName.matches("PARK\\d{8}-\\d{6}-\\d{6}\\.\\w+")) {
+        if (!oldName.matches("PARK\\d{8}-\\d{6}-\\d{6}\\.\\w+"))
+        {
             System.out.println("Filename does not match expected format: " + oldName);
             return null;
         }
 
-        try {
+        try
+        {
             String datePart = oldName.substring(4, 12); // 20231203
             String timePart = oldName.substring(13, 19); // 133058
             String extension = oldName.substring(oldName.lastIndexOf(".")); // .MP4
@@ -88,7 +98,9 @@ public class Main
 
             // Construct new filename
             return "ЗАЯ (parking) " + newDatePart + " " + newTimePart + extension;
-        } catch (ParseException e) {
+        }
+        catch (ParseException e)
+        {
             System.out.println("Error parsing date/time in filename: " + oldName);
             return null;
         }

@@ -23,7 +23,7 @@ public class ChordChannelGenerator extends AccompanimentChannelGenerator
     @Override
     protected AccompanimentRhythmGenerator createRhythmGenerator(Initializer initializer)
     {
-        return  new ChordRhythmGenerator(initializer, channelNumber_);
+        return new ChordRhythmGenerator(initializer, channelNumber_);
     }
 
     @Override

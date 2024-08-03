@@ -9,12 +9,14 @@ import java.util.List;
 public class RhythmSeparator extends Rhythm
 {
     public static final RhythmSeparator SEPARATOR = new RhythmSeparator();
+
     private RhythmSeparator(List<ISound> sounds)
     {
         super(sounds, -1);
     }
 
-    private RhythmSeparator(){
+    private RhythmSeparator()
+    {
         super(null, -1);
     }
 

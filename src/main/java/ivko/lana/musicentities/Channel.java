@@ -33,7 +33,8 @@ public class Channel implements IPlayable, IInstrumentChangeListener
 
             LOGGER.info(String.format("%s (%s) number %s will be used", this.getClass().getSimpleName(), System.identityHashCode(this), channelNumber_));
             channel_ = synthesizer_.getChannels()[channelNumber_];
-        } catch (MidiUnavailableException e)
+        }
+        catch (MidiUnavailableException e)
         {
             throw new RuntimeException(e);
         }

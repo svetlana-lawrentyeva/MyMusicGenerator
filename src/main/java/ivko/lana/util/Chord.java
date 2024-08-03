@@ -10,7 +10,9 @@ public class Chord
     private String name;
     private List<Integer> notes;
 
-    public Chord(){}
+    public Chord()
+    {
+    }
 
     public Chord(String name, List<Integer> notes)
     {

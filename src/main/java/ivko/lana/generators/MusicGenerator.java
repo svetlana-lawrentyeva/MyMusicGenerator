@@ -1,26 +1,27 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.Channel;
-import ivko.lana.musicentities.ChannelType;
-import ivko.lana.musicentities.Music;
-import ivko.lana.musicentities.Part;
+import ivko.lana.musicentities.*;
 import ivko.lana.util.MusicUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Lana Ivko
  */
-public class MusicGenerator implements IMusicGenerator<Music>
+public class MusicGenerator implements IMusicGenerator<IMusic>
 {
     private MelodyChannelGenerator melodyChannelGenerator_ = null;
     private DrumsChannelGenerator drumsChannelGenerator_ = null;
     private HertzChannelGenerator hertzChannelGenerator_ = null;
     private List<ChordChannelGenerator> chordsChannelGenerators_ = new ArrayList<>();
+    private Initializer initializer_;
 
     public MusicGenerator(Initializer initializer)
     {
+        initializer_ = initializer;
         melodyChannelGenerator_ = new MelodyChannelGenerator(initializer, 0);
         if (initializer.useDrums())
         {
@@ -66,7 +67,7 @@ public class MusicGenerator implements IMusicGenerator<Music>
     }
 
     @Override
-    public Music generate() throws InterruptedException
+    public IMusic generate() throws InterruptedException
     {
         List<Channel> channels = new ArrayList<>();
         Channel melodyChannel = melodyChannelGenerator_.generate();
@@ -86,6 +87,19 @@ public class MusicGenerator implements IMusicGenerator<Music>
             generator.setMelodyChannel(melodyChannel);
             channels.add(generator.generate());
         }
-        return new Music(channels);
+        List<Integer> allSounds = new ArrayList<>();
+        for (Channel channel : channels)
+        {
+            List<ISound> sounds = channel.getAllSounds();
+            List<Integer> tones = sounds.stream()
+                    .filter(sound -> !sound.isSilent())
+                    .map(ISound::getTone)
+                    .collect(Collectors.toList());
+            allSounds.addAll(tones);
+        }
+        int min = Collections.min(allSounds);
+        int max = Collections.max(allSounds);
+
+        return MusicFactory.getMusic(channels, initializer_);
     }
 }

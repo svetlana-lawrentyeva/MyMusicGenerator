@@ -2,11 +2,8 @@ package ivko.lana.musicentities;
 
 import ivko.lana.util.MusicUtil;
 
-import javax.sound.midi.Instrument;
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.Synthesizer;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Lana Ivko

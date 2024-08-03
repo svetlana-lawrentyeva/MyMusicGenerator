@@ -82,12 +82,14 @@ public abstract class RhythmLoader
                                 return loadRhythmDetails(fileName, rhythmDirectory, baseDurationMultiplier);
                             })
                             .collect(Collectors.toList());
-                } catch (IOException e)
+                }
+                catch (IOException e)
                 {
                     throw new RuntimeException(e);
                 }
             }
-        } catch (URISyntaxException e)
+        }
+        catch (URISyntaxException e)
         {
             throw new RuntimeException(e);
         }

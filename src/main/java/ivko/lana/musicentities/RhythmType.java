@@ -5,10 +5,10 @@ package ivko.lana.musicentities;
  */
 public enum RhythmType
 {
-    START (0.0, new int[] {0, 5, 7}, new int[] {3, 4}),
-    BUILD (0.3, new int[] {1, 2, 3, 4, 8, 9}, new int[] {5, 7}),
-    PEAK (0.1, new int[] {6, 11}, new int[] {12, 9}),
-    END (0.8, new int[] {}, new int[] {0, 5, 7});
+    START(0.0, new int[]{0, 5, 7}, new int[]{3, 4}),
+    BUILD(0.3, new int[]{1, 2, 3, 4, 8, 9}, new int[]{5, 7}),
+    PEAK(0.1, new int[]{6, 11}, new int[]{12, 9}),
+    END(0.8, new int[]{}, new int[]{0, 5, 7});
 
     private RhythmType(double pauseProbability, int[] stepsForQuestion, int[] stepsForAnswer)
     {

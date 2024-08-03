@@ -62,7 +62,8 @@ public class SoundChord implements ISound
         if (!isSequenced_)
         {
             playRealChord(channel, metronom);
-        } else
+        }
+        else
         {
             if (sounds_.size() > 1)
             {
@@ -86,7 +87,8 @@ public class SoundChord implements ISound
                 try
                 {
                     sounds_.get(i).play(channel, metronom);
-                } catch (InterruptedException e)
+                }
+                catch (InterruptedException e)
                 {
                     throw new RuntimeException(e);
                 }
@@ -106,7 +108,8 @@ public class SoundChord implements ISound
                 try
                 {
                     note.play(channel, metronom);
-                } catch (InterruptedException e)
+                }
+                catch (InterruptedException e)
                 {
                     throw new RuntimeException(e);
                 }

@@ -3,19 +3,24 @@ package ivko.lana.util;
 /**
  * @author Lana Ivko
  */
+
 import javax.sound.midi.*;
 import java.io.File;
 import java.io.IOException;
 
-public class MidiSaver {
+public class MidiSaver
+{
 
-    public static void saveMidiFile(Sequence sequence, String filePath) throws IOException {
+    public static void saveMidiFile(Sequence sequence, String filePath) throws IOException
+    {
         File midiFile = new File(filePath);
         MidiSystem.write(sequence, 1, midiFile);
     }
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args)
+    {
+        try
+        {
             // Создайте новое MIDI последовательность
             Sequence sequence = new Sequence(Sequence.PPQ, 24);
 
@@ -41,12 +46,15 @@ public class MidiSaver {
             sequencer.start();
 
             // Дождитесь завершения воспроизведения
-            while (sequencer.isRunning()) {
+            while (sequencer.isRunning())
+            {
                 Thread.sleep(1000);
             }
             sequencer.close();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

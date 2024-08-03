@@ -1,11 +1,15 @@
 package ivko.lana.yaml;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Lana Ivko
  */
-public class ChordInstrumentsByMelody {
+public class ChordInstrumentsByMelody
+{
     private Map<Integer, List<Integer>> chordInstrumentsByMelody;
 
     public ChordInstrumentsByMelody(Map<Integer, List<Integer>> chordInstrumentsByMelody)
@@ -13,11 +17,13 @@ public class ChordInstrumentsByMelody {
         this.chordInstrumentsByMelody = chordInstrumentsByMelody;
     }
 
-    public ChordInstrumentsByMelody() {
+    public ChordInstrumentsByMelody()
+    {
         chordInstrumentsByMelody = new HashMap<>();
     }
 
-    public void addInstrument(Integer key, List<Integer> instrumentProgramNumbers) {
+    public void addInstrument(Integer key, List<Integer> instrumentProgramNumbers)
+    {
         chordInstrumentsByMelody.put(key, instrumentProgramNumbers);
     }
 
@@ -26,7 +32,8 @@ public class ChordInstrumentsByMelody {
         this.chordInstrumentsByMelody = chordInstrumentsByMelody;
     }
 
-    public List<Integer> getChordInstruments(Integer key) {
+    public List<Integer> getChordInstruments(Integer key)
+    {
         return chordInstrumentsByMelody.get(key);
     }
 

@@ -1,12 +1,12 @@
 chordInstrumentsByMelody:
   0:
-   - 0 # Acoustic Grand Piano
-   - 48 # String Ensemble 1
-   - 49 # String Ensemble 2
-   - 52 # Choir Aahs
-   - 53 # Voice Oohs
-   - 46 # Orchestral Harp
-   - 73 # Flute
+    - 0 # Acoustic Grand Piano
+    - 48 # String Ensemble 1
+    - 49 # String Ensemble 2
+    - 52 # Choir Aahs
+    - 53 # Voice Oohs
+    - 46 # Orchestral Harp
+    - 73 # Flute
   74:
     - 0   # Acoustic Grand Piano
     - 46  # Harp

@@ -11,8 +11,10 @@ public class TempNoteChecker
 {
     private static final int TICK_RESOLUTION = 24; // 24 ticks per quarter note
 
-    public void save(String fileName, int tempoInBPM) {
-        try {
+    public void save(String fileName, int tempoInBPM)
+    {
+        try
+        {
             // Создайте новое MIDI последовательность
             Sequence sequence = new Sequence(Sequence.PPQ, TICK_RESOLUTION);
 
@@ -44,12 +46,15 @@ public class TempNoteChecker
 
             System.out.println("MIDI file saved successfully: " + midiFile.getAbsolutePath());
 
-        } catch (InvalidMidiDataException | IOException e) {
+        }
+        catch (InvalidMidiDataException | IOException e)
+        {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         TempNoteChecker checker = new TempNoteChecker();
         int tempoInBPM = 75; // Установите ваш темп здесь
         checker.save(MusicUtil.generateNewName() + "output", tempoInBPM);

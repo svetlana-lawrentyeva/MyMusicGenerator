@@ -1,10 +1,10 @@
 package ivko.lana.generators;
 
 import ivko.lana.entities.IScale;
-import ivko.lana.musicentities.SoundChord;
 import ivko.lana.musicentities.ISound;
 import ivko.lana.musicentities.Note;
 import ivko.lana.musicentities.Rhythm;
+import ivko.lana.musicentities.SoundChord;
 import ivko.lana.yaml.RhythmDetails;
 
 import java.util.List;

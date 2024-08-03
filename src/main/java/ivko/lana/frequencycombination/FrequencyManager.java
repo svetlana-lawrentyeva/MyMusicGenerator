@@ -3,13 +3,16 @@ package ivko.lana.frequencycombination;
 /**
  * @author Lana Ivko
  */
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrequencyManager {
+public class FrequencyManager
+{
     private List<Frequency> frequencies;
 
-    public FrequencyManager() {
+    public FrequencyManager()
+    {
         this.frequencies = new ArrayList<>();
     }
 
@@ -18,17 +21,22 @@ public class FrequencyManager {
         this.frequencies = frequencies;
     }
 
-    public void addFrequency(Frequency frequency) {
+    public void addFrequency(Frequency frequency)
+    {
         frequencies.add(frequency);
     }
 
-    public List<Frequency> getFrequencies() {
+    public List<Frequency> getFrequencies()
+    {
         return frequencies;
     }
 
-    public Frequency getFrequencyByValue(double value) {
-        for (Frequency frequency : frequencies) {
-            if (Double.compare(frequency.getValue(), value) == 0) {
+    public Frequency getFrequencyByValue(double value)
+    {
+        for (Frequency frequency : frequencies)
+        {
+            if (Double.compare(frequency.getValue(), value) == 0)
+            {
                 return frequency;
             }
         }
@@ -36,7 +44,8 @@ public class FrequencyManager {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "FrequencyManager{" +
                 "frequencies=" + frequencies +
                 '}';

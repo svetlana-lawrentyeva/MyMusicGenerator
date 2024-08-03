@@ -51,6 +51,7 @@ public class FrequencyCombinationGenerator
             {
                 result.add(String.format(pattern, frequency.getValue(), binaural.getValue(), frequency.getDescription(), binaural.getDescription()));
             }
-        } return result;
+        }
+        return result;
     }
 }

@@ -3,11 +3,13 @@ package ivko.lana.visualiser;
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
 
-public class MidiSynthToMp3 {
+public class MidiSynthToMp3
+{
     private Synthesizer synthesizer;
     private AudioInputStream audioStream;
 
-    public MidiSynthToMp3() throws MidiUnavailableException, LineUnavailableException {
+    public MidiSynthToMp3() throws MidiUnavailableException, LineUnavailableException
+    {
         synthesizer = MidiSystem.getSynthesizer();
         synthesizer.open();
         Receiver receiver = synthesizer.getReceiver();
@@ -26,7 +28,8 @@ public class MidiSynthToMp3 {
         synthesizer.getReceiver().send(message, timeStamp);
     }
 
-    public AudioInputStream getAudioStream() {
+    public AudioInputStream getAudioStream()
+    {
         return audioStream;
     }
 }

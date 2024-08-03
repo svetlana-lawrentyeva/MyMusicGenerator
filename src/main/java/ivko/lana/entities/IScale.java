@@ -1,6 +1,5 @@
 package ivko.lana.entities;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -11,6 +10,7 @@ public interface IScale
     int BASE_NOTE = 60; // Middle C
 
     String getName();
+
     int[] getScale();
 
     int getBaseNote();

@@ -8,9 +8,7 @@ import ivko.lana.util.Pair;
 import ivko.lana.yaml.RhythmDetails;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Lana Ivko
@@ -18,7 +16,7 @@ import java.util.Map;
 public class DrumRhythmGenerator extends AccompanimentRhythmGenerator
 {
     protected List<Integer> drums_;
-//    private List<Integer> drumSequence_ = new ArrayList<>();
+    //    private List<Integer> drumSequence_ = new ArrayList<>();
     private int currentDrumIndex = 0;
     private List<Pair<Integer, Integer>> drumSequence_; // first = toneCode, second = duration
     private int drumDuration_;

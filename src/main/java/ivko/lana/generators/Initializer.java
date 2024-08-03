@@ -5,10 +5,8 @@ import ivko.lana.musicentities.ChannelType;
 import ivko.lana.musicentities.IInstrumentChangeListener;
 import ivko.lana.musicentities.InstrumentCodesConfig;
 import ivko.lana.musicentities.MusicType;
-import ivko.lana.util.MusicUtil;
 import ivko.lana.yaml.*;
 
-import javax.sound.midi.Synthesizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -37,7 +35,7 @@ public class Initializer
     private InstrumentCodesConfig instrumentCodesConfig_;
     private List<IInstrumentChangeListener> instrumentChangeListeners = new ArrayList<>();
 
-    private boolean useDrums_ = true;
+    private boolean useDrums_ = false;
 
     //    private int hertz_ = HertzChannelGenerator.PINEAL_GLAND;
     private int hertz_ = 0;
@@ -49,7 +47,8 @@ public class Initializer
     private MusicType musicType_;
 
     private int testChannelCount_ = 0;
-    private int minutes_ = 48;
+    private int minutes_ = 1;
+    private boolean isTibetan_ = true;
 
     public Initializer()
     {
@@ -67,6 +66,11 @@ public class Initializer
         preInitialize();
         LOGGER.info(String.format("The system is initialized:\n\tmusicType_: %s\n\tscale: %s\n\tpartsCount: %s\n\tchannelCount: %s\n\tisChordSequenced: %s",
                 musicType_, scale_.toString(), partsCount_, channelCount_, isChordSequenced_));
+    }
+
+    public boolean isTibetan()
+    {
+        return isTibetan_;
     }
 
     public void addInstrumentChangeListener(IInstrumentChangeListener listener)
@@ -221,13 +225,13 @@ public class Initializer
 
     private int initializePartsCount()
     {
-        int partsCount = IS_TEST ? 2 : (int) (Math.random() * 4) + 2;
+        int partsCount = IS_TEST ? 1 : 1;//(int) (Math.random() * 4) + 2;
         return partsCount;
     }
 
     public int getPhraseCount()
     {
-        int phraseCount = IS_TEST ? 2 : (int) (Math.random() * 4) + 4;
+        int phraseCount = IS_TEST ? 1 : 1;// (int) (Math.random() * 4) + 4;
         return phraseCount;
     }
 

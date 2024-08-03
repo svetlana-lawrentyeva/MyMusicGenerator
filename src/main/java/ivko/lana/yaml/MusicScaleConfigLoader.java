@@ -8,6 +8,7 @@ import ivko.lana.generators.Initializer;
 public class MusicScaleConfigLoader
 {
     public static final String FILE_NAME = Initializer.isTest() ? "scalesTest/scales.yaml" : "scales/scales.yaml";
+
     public static MusicScalesConfig load()
     {
         return YamlToJava.extract(FILE_NAME, MusicScalesConfig.class);

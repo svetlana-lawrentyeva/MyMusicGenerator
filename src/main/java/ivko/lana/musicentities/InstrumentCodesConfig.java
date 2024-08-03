@@ -3,20 +3,26 @@ package ivko.lana.musicentities;
 /**
  * @author Lana Ivko
  */
+
 import java.util.List;
 
-public class InstrumentCodesConfig {
+public class InstrumentCodesConfig
+{
 
     private List<InstrumentCode> instrumentCodes;
 
-    public InstrumentCodesConfig(){}
+    public InstrumentCodesConfig()
+    {
+    }
 
     // Getters and setters
-    public List<InstrumentCode> getInstrumentCodes() {
+    public List<InstrumentCode> getInstrumentCodes()
+    {
         return instrumentCodes;
     }
 
-    public void setInstrumentCodes(List<InstrumentCode> instrumentCodes) {
+    public void setInstrumentCodes(List<InstrumentCode> instrumentCodes)
+    {
         this.instrumentCodes = instrumentCodes;
     }
 }

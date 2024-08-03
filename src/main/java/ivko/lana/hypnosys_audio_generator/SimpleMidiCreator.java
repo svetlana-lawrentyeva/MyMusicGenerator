@@ -3,25 +3,31 @@ package ivko.lana.hypnosys_audio_generator;
 /**
  * @author Lana Ivko
  */
-import org.jfugue.pattern.Pattern;
-import org.jfugue.player.Player;
+
 import org.jfugue.midi.MidiFileManager;
+import org.jfugue.pattern.Pattern;
 
 import java.io.File;
 import java.io.IOException;
 
-public class SimpleMidiCreator {
+public class SimpleMidiCreator
+{
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         createSimpleMidi("test.midi");
     }
 
-    public static void createSimpleMidi(String outputFilePath) {
+    public static void createSimpleMidi(String outputFilePath)
+    {
         Pattern pattern = new Pattern("C D E F G A B");
-        try {
+        try
+        {
             File midiFile = new File(outputFilePath);
             MidiFileManager.savePatternToMidi(pattern, midiFile);
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

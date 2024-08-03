@@ -1,9 +1,6 @@
 package ivko.lana.yaml;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * @author Lana Ivko
@@ -13,6 +10,7 @@ public class NextNoteProbabilitiesLoader
     public static final String NEXT_NOTE_PROBABILITY_DIRECTORY = "predictions";
     public static final String MAJOR_FILE_NAME = "predictions.yaml";
     public static final String MINOR_FILE_NAME = "minorPredictions.yaml";
+
     public static NextNoteProbabilities loadNoteProbabilities()
     {
         String fileName = MAJOR_FILE_NAME;

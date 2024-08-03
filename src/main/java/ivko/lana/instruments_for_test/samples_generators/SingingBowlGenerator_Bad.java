@@ -9,7 +9,8 @@ public class SingingBowlGenerator_Bad
 
     public static final String FILE_PATH = "singing_bowl.wav";
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         int duration = 10; // Длительность в секундах
         int sampleRate = 44100; // Частота дискретизации
         Util.clearPreviousFile(FILE_PATH);
@@ -17,7 +18,8 @@ public class SingingBowlGenerator_Bad
         Util.saveWaveFile(bowlSound, sampleRate, FILE_PATH);
     }
 
-    public static byte[] generateSingingBowlSound(int duration, int sampleRate) {
+    public static byte[] generateSingingBowlSound(int duration, int sampleRate)
+    {
         int totalSamples = duration * sampleRate;
         byte[] output = new byte[totalSamples * 2]; // 16-битный (2 байта на сэмпл)
 
@@ -28,11 +30,13 @@ public class SingingBowlGenerator_Bad
         int rampSamples = sampleRate; // Плавное нарастание в течение 1 секунды
         int oscillationPeriod = sampleRate; // Период колебания амплитуды
 
-        for (int i = 0; i < totalSamples; i++) {
+        for (int i = 0; i < totalSamples; i++)
+        {
             double sampleValue = 0.0;
             double rampFactor = (i < rampSamples) ? Math.sin((Math.PI / 2) * ((double) i / rampSamples)) : 1.0; // Плавное экспоненциальное нарастание
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * i / sampleRate;
                 sampleValue += Math.sin(angle) * amplitudes[j] * Math.exp(exponentialDecayFactor * i); // Экспоненциальное затухание
             }
@@ -45,9 +49,12 @@ public class SingingBowlGenerator_Bad
             sampleValue *= rampFactor;
 
             // Ограничение максимальной амплитуды
-            if (sampleValue > maxAmplitude) {
+            if (sampleValue > maxAmplitude)
+            {
                 sampleValue = maxAmplitude;
-            } else if (sampleValue < -maxAmplitude) {
+            }
+            else if (sampleValue < -maxAmplitude)
+            {
                 sampleValue = -maxAmplitude;
             }
 

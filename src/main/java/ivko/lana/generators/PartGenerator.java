@@ -1,6 +1,9 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.*;
+import ivko.lana.musicentities.ChannelType;
+import ivko.lana.musicentities.Part;
+import ivko.lana.musicentities.Phrase;
+import ivko.lana.musicentities.PhraseType;
 
 import java.util.ArrayList;
 import java.util.List;

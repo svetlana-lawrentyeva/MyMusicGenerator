@@ -1,6 +1,8 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.*;
+import ivko.lana.musicentities.Channel;
+import ivko.lana.musicentities.DrumChannel;
+import ivko.lana.musicentities.Part;
 import ivko.lana.util.MusicUtil;
 
 import java.util.List;

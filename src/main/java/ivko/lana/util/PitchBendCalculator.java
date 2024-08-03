@@ -6,12 +6,14 @@ import ivko.lana.musicentities.Channel;
 
 import javax.sound.midi.*;
 
-public class PitchBendCalculator {
+public class PitchBendCalculator
+{
     private static final int MAX_PITCH_BEND_RANGE = 8192;
     private static final double REFERENCE_FREQUENCY = 440.0; // A4
     private static final int REFERENCE_NOTE = 69; // MIDI number for A4
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         // Примеры использования
 //        double[] frequencies = {285, 396, 417, 528, 639, 741, 852, 963};
         double[] frequencies = {285};
@@ -27,7 +29,8 @@ public class PitchBendCalculator {
         synthesizer.loadInstrument(instruments[instrumentCode]);
         midiChannel.programChange(instrumentCode);
 
-        for (double frequency : frequencies) {
+        for (double frequency : frequencies)
+        {
             int midiNote = findClosestMidiNote(frequency);
             int pitchBendValue = calculatePitchBendValue(frequency);
             double actualFrequency = calculateActualFrequency(frequency, pitchBendValue);
@@ -45,7 +48,8 @@ public class PitchBendCalculator {
         synthesizer.close();
     }
 
-    public static int calculatePitchBendValue1(double targetFrequency) {
+    public static int calculatePitchBendValue1(double targetFrequency)
+    {
         // Найти ближайшую ноту к целевой частоте
         int midiNote = findClosestMidiNote(targetFrequency);
 
@@ -64,7 +68,8 @@ public class PitchBendCalculator {
         return pitchBendValue;
     }
 
-    public static int calculatePitchBendValue(double targetFrequency) {
+    public static int calculatePitchBendValue(double targetFrequency)
+    {
         int midiNote = findClosestMidiNote(targetFrequency);
         double midiNoteFrequency = REFERENCE_FREQUENCY * Math.pow(2, (midiNote - REFERENCE_NOTE) / 12.0);
         double bendRatio = targetFrequency / midiNoteFrequency;
@@ -74,12 +79,14 @@ public class PitchBendCalculator {
         return pitchBendValue;
     }
 
-    public static int findClosestMidiNote(double frequency) {
+    public static int findClosestMidiNote(double frequency)
+    {
         // Вычислить MIDI-номер, который наиболее близко соответствует заданной частоте
         return (int) Math.round(REFERENCE_NOTE + 12 * Math.log(frequency / REFERENCE_FREQUENCY) / Math.log(2));
     }
 
-    public static void setPitchBendRange(Channel channel, int semitones, int cents) throws InvalidMidiDataException {
+    public static void setPitchBendRange(Channel channel, int semitones, int cents) throws InvalidMidiDataException
+    {
         ShortMessage message = new ShortMessage();
         message.setMessage(ShortMessage.CONTROL_CHANGE, channel.getChannelNumber(), 101, 0); // RPN MSB
         channel.getChannel().controlChange(101, 0);
@@ -95,7 +102,8 @@ public class PitchBendCalculator {
         channel.getChannel().controlChange(100, 127);
     }
 
-    public static double calculateActualFrequency(double targetFrequency, int pitchBendValue) {
+    public static double calculateActualFrequency(double targetFrequency, int pitchBendValue)
+    {
         int midiNote = findClosestMidiNote(targetFrequency);
         double midiNoteFrequency = REFERENCE_FREQUENCY * Math.pow(2, (midiNote - REFERENCE_NOTE) / 12.0);
         double pitchBendRatio = 1.0 + (double) pitchBendValue / MAX_PITCH_BEND_RANGE;
