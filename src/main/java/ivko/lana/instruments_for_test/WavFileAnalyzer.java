@@ -16,7 +16,7 @@ import java.nio.ByteOrder;
 
 public class WavFileAnalyzer
 {
-    private static final String DIRECTORY = "D:\\music\\generated\\";
+    private static final String DIRECTORY = "/home/therioyo/IdeaProjects/MyMusicGenerator/genearated/";
     public static void main(String[] args)
     {
         String wavFilePath1 = DIRECTORY + "29052024-160144.wav";

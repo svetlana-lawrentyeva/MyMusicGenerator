@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MusicUtil
 {
-    private static final String SAVE_DIRECTORY = "D:\\music\\generated\\";
+    private static final String SAVE_DIRECTORY = "/home/therioyo/IdeaProjects/MyMusicGenerator/genearated/";
     protected static final Random Random = new Random();
     public static final int MELODY_CHANNEL_NUMBER = 0;
     public static final int DRUMS_CHANNEL_NUMBER = 9;
