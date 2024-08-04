@@ -56,10 +56,12 @@ public class SoundFileWriter {
                 {330.0, 2000}
         };
 
+        TibetanBowlSound.setPulsationDepth(0.3f);
+        TibetanBowlSound.setPulsationRateFactor(0.2f);
         for (double[] note : notes)
         {
             TibetanBowlSound.play(note[0], (int) note[1]);
         }
-        writeSoundToFile("output.wav", notes);
+//        writeSoundToFile("output.wav", notes);
     }
 }
