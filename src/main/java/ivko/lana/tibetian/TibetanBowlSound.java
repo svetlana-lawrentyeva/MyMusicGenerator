@@ -4,10 +4,10 @@ import javax.sound.sampled.*;
 
 public class TibetanBowlSound {
 
-    private static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
+    public static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
 
-    // Метод для создания синусоидальной волны с затуханием и начальным ударом
-    private static short[] createSineWaveWithDecay(double frequency, int durationMs, double sampleRate, double amplitude, double decayFactor) {
+    // Метод для создания одной синусоидальной волны с затуханием
+    private static short[] createSineWaveWithDecay(double frequency, int durationMs, double sampleRate, double amplitude) {
         int samples = (int) ((durationMs / 1000.0) * sampleRate);
         short[] output = new short[samples];
         double angleIncrement = 2.0 * Math.PI * frequency / sampleRate;
@@ -15,19 +15,15 @@ public class TibetanBowlSound {
         for (int i = 0; i < samples; i++) {
             double angle = i * angleIncrement;
             double decay = 1.0 - (i / (double) samples); // Линейное затухание
-
-            // Имитация удара
-            double impact = 1.0;
-            short value = (short) (Math.sin(angle) * amplitude * decay * impact * Short.MAX_VALUE);
+            short value = (short) (Math.sin(angle) * amplitude * decay * Short.MAX_VALUE);
             output[i] = value;
         }
 
         return output;
     }
 
-    public static void main(String[] args) {
-
-        double baseFrequency = 220.0; // Основная частота
+    // Метод для создания полного звукового сигнала из гармоник
+    public static short[] createHarmonicSignal(double baseFrequency, int durationMs) {
         double[] frequencies = {
                 baseFrequency,
                 baseFrequency * 2.7,
@@ -35,37 +31,34 @@ public class TibetanBowlSound {
                 baseFrequency * 7.5
         };
 
-
-
-        float sampleRate = SAMPLE_RATE; // Частота дискретизации
-        int durationMs = 8000; // Длительность в миллисекундах
-//        double[] frequencies = {220.0, 594.0, 1056.0, 1650.0}; // Пропорции частот 1:2.7:4.8:7.5
         double[] amplitudes = {0.5, 0.2, 0.05, 0.02}; // Амплитуды для каждой гармоники
-        double decayFactor = 1; // Плавное затухание
+        int totalSamples = (int) ((durationMs / 1000.0) * SAMPLE_RATE);
+        short[] combinedSignal = new short[totalSamples];
 
-        try {
-            // Формат аудио (стерео)
-            AudioFormat format = new AudioFormat(sampleRate, 16, 2, true, true);
-
-            // Создаем финальный буфер для суммирования гармоник
-            int totalSamples = (int) ((durationMs / 1000.0) * sampleRate);
-            byte[] finalSound = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
-            short[] combinedSignal = new short[totalSamples];
-
-            for (int j = 0; j < frequencies.length; j++) {
-                short[] soundWave = createSineWaveWithDecay(frequencies[j], durationMs, sampleRate, amplitudes[j], decayFactor);
-                for (int i = 0; i < totalSamples; i++) {
-                    combinedSignal[i] += soundWave[i]; // Суммируем гармоники
-                }
+        for (int j = 0; j < frequencies.length; j++) {
+            short[] soundWave = createSineWaveWithDecay(frequencies[j], durationMs, SAMPLE_RATE, amplitudes[j]);
+            for (int i = 0; i < totalSamples; i++) {
+                combinedSignal[i] += soundWave[i]; // Суммируем гармоники
             }
+        }
+
+        return combinedSignal;
+    }
+
+    // Метод для проигрывания звука
+    private static void playSound(short[] sound, int durationMs) {
+        try {
+            AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 2, true, true);
+            int totalSamples = sound.length;
+            byte[] finalSound = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
 
             // Добавляем эффект изменения громкости по каналам
             for (int i = 0; i < totalSamples; i++) {
                 double pulsation = ((double) durationMs / 1000) * Math.PI; // Скорость перехода
                 double panning = 0.3 + 0.4 * Math.sin(pulsation * i / totalSamples); // Изменение громкости в диапазоне от 0.3 до 0.7
 
-                short leftValue = (short) (combinedSignal[i] * (1.0 - panning));
-                short rightValue = (short) (combinedSignal[i] * panning);
+                short leftValue = (short) (sound[i] * (1.0 - panning));
+                short rightValue = (short) (sound[i] * panning);
 
                 leftValue = (short) Math.max(Math.min(leftValue, Short.MAX_VALUE), Short.MIN_VALUE);
                 rightValue = (short) Math.max(Math.min(rightValue, Short.MAX_VALUE), Short.MIN_VALUE);
@@ -76,7 +69,6 @@ public class TibetanBowlSound {
                 finalSound[i * 4 + 3] = (byte) rightValue;
             }
 
-            // Воспроизведение звука
             SourceDataLine line = AudioSystem.getSourceDataLine(format);
             line.open(format);
             line.start();
@@ -88,5 +80,11 @@ public class TibetanBowlSound {
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
+    }
+
+    // Метод для воспроизведения звука с заданной частотой и длительностью
+    public static void play(double baseFrequency, int durationMs) {
+        short[] sound = createHarmonicSignal(baseFrequency, durationMs);
+        playSound(sound, durationMs);
     }
 }
