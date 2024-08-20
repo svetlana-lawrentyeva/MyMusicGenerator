@@ -5,7 +5,7 @@ import javax.sound.sampled.*;
 public class TibetanBowlSound {
 
     public static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
-    private static final int FADE_OUT_DURATION_MS = 5000; // Длительность затухания
+    public static final int FADE_OUT_DURATION_MS = 5000; // Длительность затухания
     private static float pulsationDepth = 0.5f; // Параметр для управления пульсацией (от 0 до 1)
     private static float pulsationRateFactor = 1.0f; // Коэффициент для управления скоростью пульсации
 
