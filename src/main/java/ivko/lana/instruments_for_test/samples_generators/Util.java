@@ -33,13 +33,17 @@ public class Util
         }
     }
 
-    public static void saveWaveFile(byte[] audioData, int sampleRate, String filePath) {
-        try {
+    public static void saveWaveFile(byte[] audioData, int sampleRate, String filePath)
+    {
+        try
+        {
             AudioFormat format = new AudioFormat(sampleRate, 16, 1, true, false);
             ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
             AudioInputStream audioInputStream = new AudioInputStream(bais, format, audioData.length / format.getFrameSize());
             AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, new File(filePath));
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

@@ -6,6 +6,7 @@ package ivko.lana.yaml;
 public class ChordRhythmLoader extends RhythmLoader
 {
     public static final String RHYTHM_DIRECTORY = "chord_rhythms";
+
     @Override
     protected String getRhythmDirectory()
     {

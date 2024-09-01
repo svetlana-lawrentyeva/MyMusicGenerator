@@ -22,7 +22,7 @@ public class MinorScale implements IScale
     @Override
     public int[] getScale()
     {
-        return MINOR_SCALE  ;
+        return MINOR_SCALE;
     }
 
     @Override
@@ -56,7 +56,8 @@ public class MinorScale implements IScale
     }
 
     // Метод для инициализации словаря аккордов
-    private static List<Integer[]> initializeChords() {
+    private static List<Integer[]> initializeChords()
+    {
         List<Integer[]> chords = new ArrayList<>();
         chords.add(new Integer[]{0, 3, 7});
         chords.add(new Integer[]{2, 5, 8});

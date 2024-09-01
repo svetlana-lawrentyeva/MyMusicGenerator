@@ -1,6 +1,7 @@
 package ivko.lana.entities;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Lana Ivko
@@ -68,9 +69,9 @@ public class MajorScale implements IScale
 //    }
 
 
-
-   //  Метод для инициализации словаря аккордов
-    private static List<Integer[]> initializeChords() {
+    //  Метод для инициализации словаря аккордов
+    private static List<Integer[]> initializeChords()
+    {
         List<Integer[]> chords = new ArrayList<>();
         chords.add(new Integer[]{0, 4, 7});
         chords.add(new Integer[]{2, 5, 9});

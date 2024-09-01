@@ -11,7 +11,8 @@ class ChartPanel extends JPanel
 {
     private List<Integer> data_;
 
-    public ChartPanel() {
+    public ChartPanel()
+    {
         int height = 300; // Высота панели для графика
         setPreferredSize(new Dimension((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), height));
         setBackground(Color.WHITE);
@@ -24,9 +25,11 @@ class ChartPanel extends JPanel
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g)
+    {
         super.paintComponent(g);
-        if (data_ == null || data_.isEmpty()) {
+        if (data_ == null || data_.isEmpty())
+        {
             return;
         }
 
@@ -47,24 +50,28 @@ class ChartPanel extends JPanel
         // Определить масштаб для высоты
         int maxDataRange = maxDataValue - minDataValue;
         int requiredHeight = maxDataRange * unitHeight;
-        if (requiredHeight < rowHeight) {
+        if (requiredHeight < rowHeight)
+        {
             unitHeight = rowHeight / maxDataRange;
         }
 
         g.setColor(Color.BLUE);
 
-        for (int row = 0; row < rows; row++) {
+        for (int row = 0; row < rows; row++)
+        {
             int startIndex = row * (maxWidth / minSpacing);
             int endIndex = Math.min(startIndex + (maxWidth / minSpacing), totalDataPoints);
 
             int prevX = 0;
             int prevY = rowHeight / 2; // Центр строки
 
-            for (int i = startIndex; i < endIndex; i++) {
+            for (int i = startIndex; i < endIndex; i++)
+            {
                 int x = (i - startIndex) * minSpacing;
                 int y = rowHeight - (int) (((data_.get(i) - minDataValue) * unitHeight)) + (row * rowHeight);
 
-                if (i != startIndex) { // Избегаем рисования линии с начальной точки
+                if (i != startIndex)
+                { // Избегаем рисования линии с начальной точки
                     g.drawLine(prevX, prevY, x, y);
                 }
                 prevX = x;
@@ -72,9 +79,6 @@ class ChartPanel extends JPanel
             }
         }
     }
-
-
-
 
 
 }

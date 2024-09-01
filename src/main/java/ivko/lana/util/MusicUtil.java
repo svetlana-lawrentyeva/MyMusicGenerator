@@ -1,7 +1,6 @@
 package ivko.lana.util;
 
 import ivko.lana.yaml.ChordLibraryLoader;
-import ivko.lana.yaml.DurationProbability;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;

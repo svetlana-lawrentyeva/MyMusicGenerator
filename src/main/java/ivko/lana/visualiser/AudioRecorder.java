@@ -2,7 +2,6 @@ package ivko.lana.visualiser;
 
 import javazoom.jl.converter.Converter;
 
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.sound.sampled.*;
@@ -10,8 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-
-
 
 
 public class AudioRecorder
@@ -48,7 +45,8 @@ public class AudioRecorder
 
     public void stopRecording()
     {
-        if (targetDataLine != null && targetDataLine.isOpen()) {
+        if (targetDataLine != null && targetDataLine.isOpen())
+        {
             targetDataLine.stop();
             targetDataLine.close();
             System.out.println("Recording stopped.");

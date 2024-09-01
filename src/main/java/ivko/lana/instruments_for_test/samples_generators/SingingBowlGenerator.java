@@ -22,7 +22,8 @@ public class SingingBowlGenerator
         Util.saveWaveFile(bowlSound, sampleRate, FILE_PATH);
     }
 
-    public static byte[] generateSingingBowlSound(int duration, int sampleRate, int attackDuration, int decayDuration) {
+    public static byte[] generateSingingBowlSound(int duration, int sampleRate, int attackDuration, int decayDuration)
+    {
         int totalSamples = duration * sampleRate;
         byte[] output = new byte[totalSamples * 2]; // 16-битный (2 байта на сэмпл)
 
@@ -40,16 +41,19 @@ public class SingingBowlGenerator
     }
 
 
-    private static int applyAttackPhase(byte[] output, int startSample, int rampSamples, int sampleRate) {
+    private static int applyAttackPhase(byte[] output, int startSample, int rampSamples, int sampleRate)
+    {
         double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
         double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
         Random random = new Random();
 
-        for (int i = 0; i < rampSamples; i++) {
+        for (int i = 0; i < rampSamples; i++)
+        {
             double sampleValue = 0.0;
             double rampFactor = (double) i / rampSamples;
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j];
@@ -65,7 +69,8 @@ public class SingingBowlGenerator
     }
 
 
-    private static int applySustainPhase(byte[] output, int startSample, int sustainSamples, int sampleRate) {
+    private static int applySustainPhase(byte[] output, int startSample, int sustainSamples, int sampleRate)
+    {
         double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
         double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
         double warbleFrequency = 2.0; // Частота воя (5 Гц)
@@ -75,15 +80,19 @@ public class SingingBowlGenerator
         int cycleDuration = 4 * sampleRate; // Длительность одного цикла затухания-нарастания в сэмплах (увеличена до 4 секунд)
         int halfCycle = cycleDuration / 2;
 
-        for (int i = 0; i < sustainSamples; i++) {
+        for (int i = 0; i < sustainSamples; i++)
+        {
             double sampleValue = 0.0;
             double cyclePosition = (i % cycleDuration) / (double) halfCycle;
             double rampFactor;
 
-            if (i % cycleDuration < halfCycle) {
+            if (i % cycleDuration < halfCycle)
+            {
                 // Фаза затухания
                 rampFactor = MAX_AMPLITUDE - (MAX_AMPLITUDE - MIN_AMPLITUDE) * cyclePosition;
-            } else {
+            }
+            else
+            {
                 // Фаза нарастания
                 rampFactor = MIN_AMPLITUDE + (MAX_AMPLITUDE - MIN_AMPLITUDE) * (cyclePosition - 1.0);
             }
@@ -91,7 +100,8 @@ public class SingingBowlGenerator
             // Применение воя (warble effect)
             double warble = 1.0 + warbleDepth * Math.sin(2.0 * Math.PI * warbleFrequency * i / sampleRate);
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j];
@@ -108,11 +118,13 @@ public class SingingBowlGenerator
     }
 
 
-    public static byte[] applyNonLinearDecay(byte[] output, int sampleRate, double minAmplitude) {
+    public static byte[] applyNonLinearDecay(byte[] output, int sampleRate, double minAmplitude)
+    {
         int totalSamples = output.length / 2; // Количество сэмплов
         double decayFactor = Math.log(minAmplitude) / totalSamples; // Фактор затухания для амплитуды
 
-        for (int i = 0; i < totalSamples; i++) {
+        for (int i = 0; i < totalSamples; i++)
+        {
             double sampleValue = ((output[i * 2 + 1] << 8) | (output[i * 2] & 0xff)) / (double) Short.MAX_VALUE;
 
             // Применение нелинейного затухания
@@ -128,19 +140,21 @@ public class SingingBowlGenerator
     }
 
 
-
-    private static void applyDecayPhase(byte[] output, int startSample, int decaySamples, int sampleRate) {
+    private static void applyDecayPhase(byte[] output, int startSample, int decaySamples, int sampleRate)
+    {
         double[] frequencies = {220, 440, 660, 880, 1100, 1320, 1540, 1760, 1980, 2200};
         double[] amplitudes = {0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08, 0.06, 0.04, 0.03};
         double decayFactor = 0.00003; // Фактор затухания для амплитуды
         double minAmplitude = 0.5; // Минимальная амплитуда после затухания
         Random random = new Random();
 
-        for (int i = 0; i < decaySamples; i++) {
+        for (int i = 0; i < decaySamples; i++)
+        {
             double sampleValue = 0.0;
             double rampFactor = 1.0 - (double) i / decaySamples;
 
-            for (int j = 0; j < frequencies.length; j++) {
+            for (int j = 0; j < frequencies.length; j++)
+            {
                 double angle = 2.0 * Math.PI * frequencies[j] * (startSample + i) / sampleRate;
                 double variation = 0.01 * (random.nextDouble() - 0.5); // Очень небольшие случайные колебания
                 sampleValue += Math.sin(angle + variation) * amplitudes[j];

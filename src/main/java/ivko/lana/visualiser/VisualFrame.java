@@ -1,11 +1,7 @@
 package ivko.lana.visualiser;
 
-import ivko.lana.util.MusicUtil;
-
-import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 /**
  * @author Lana Ivko

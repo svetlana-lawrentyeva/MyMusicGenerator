@@ -18,10 +18,12 @@ public class RhythmDetails
     private String name_;
 
 
-    public RhythmDetails() {
+    public RhythmDetails()
+    {
     }
 
-    public RhythmDetails(int baseDuration, List<DurationProbability> durations, List<Integer> accents, List<Integer> relaxDrum, List<Integer> epicDrum) {
+    public RhythmDetails(int baseDuration, List<DurationProbability> durations, List<Integer> accents, List<Integer> relaxDrum, List<Integer> epicDrum)
+    {
         this.baseDuration = baseDuration;
         this.durations = durations;
         this.accents = accents;
@@ -29,23 +31,28 @@ public class RhythmDetails
         this.epicDrum = epicDrum;
     }
 
-    public int getBaseDuration() {
+    public int getBaseDuration()
+    {
         return baseDuration;
     }
 
-    public void setBaseDuration(int baseDuration) {
+    public void setBaseDuration(int baseDuration)
+    {
         this.baseDuration = baseDuration;
     }
 
-    public List<DurationProbability> getDurations() {
+    public List<DurationProbability> getDurations()
+    {
         return durations;
     }
 
-    public void setDurations(List<DurationProbability> durations) {
+    public void setDurations(List<DurationProbability> durations)
+    {
         this.durations = durations;
     }
 
-    public List<Integer> getAccents() {
+    public List<Integer> getAccents()
+    {
         return accents;
     }
 
@@ -56,15 +63,18 @@ public class RhythmDetails
                 : relaxDrum;
     }
 
-    public void setAccents(List<Integer> accents) {
+    public void setAccents(List<Integer> accents)
+    {
         this.accents = accents;
     }
 
-    public void setRelaxDrum(List<Integer> relaxDrum) {
+    public void setRelaxDrum(List<Integer> relaxDrum)
+    {
         this.relaxDrum = relaxDrum;
     }
 
-    public void setEpicDrum(List<Integer> epicDrum) {
+    public void setEpicDrum(List<Integer> epicDrum)
+    {
         this.epicDrum = epicDrum;
     }
 

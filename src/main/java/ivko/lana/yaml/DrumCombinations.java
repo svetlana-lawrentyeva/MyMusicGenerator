@@ -9,7 +9,9 @@ public class DrumCombinations
 {
     private List<List<Integer>> combinations;
 
-    public DrumCombinations(){}
+    public DrumCombinations()
+    {
+    }
 
     public List<List<Integer>> getCombinations()
     {

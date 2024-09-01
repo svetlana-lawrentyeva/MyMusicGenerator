@@ -1,6 +1,9 @@
 package ivko.lana.generators;
 
-import ivko.lana.musicentities.*;
+import ivko.lana.musicentities.ISound;
+import ivko.lana.musicentities.Note;
+import ivko.lana.musicentities.PhraseType;
+import ivko.lana.musicentities.RhythmType;
 import ivko.lana.yaml.RhythmDetails;
 
 import java.util.Arrays;

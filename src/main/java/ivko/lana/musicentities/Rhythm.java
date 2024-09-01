@@ -17,6 +17,7 @@ public class Rhythm implements ISound
         sounds_ = sounds;
         channel_ = channel;
     }
+
     @Override
     public int getDuration()
     {

@@ -7,7 +7,9 @@ public class Setup
 {
     private int baseDurationMultiplier;
 
-    public Setup(){}
+    public Setup()
+    {
+    }
 
     public int getBaseDurationMultiplier()
     {

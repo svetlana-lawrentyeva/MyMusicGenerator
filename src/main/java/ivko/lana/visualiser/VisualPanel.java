@@ -1,6 +1,5 @@
 package ivko.lana.visualiser;
 
-import ivko.lana.converter.MidiToAudioConverter;
 import ivko.lana.entities.IScale;
 import ivko.lana.generators.ChordChannelGenerator;
 import ivko.lana.generators.DrumsChannelGenerator;
@@ -37,7 +36,7 @@ public class VisualPanel extends JPanel
     private JComboBox<RhythmDetails> rhythmSizeComboBox_;
     private Synthesizer synthesizer_;
 
-    private Music music_;
+    private IMusic music_;
     private Initializer initializer_;
 
     private JFrame parentFrame_;
@@ -92,13 +91,18 @@ public class VisualPanel extends JPanel
             drumsChannelGenerator.setMelodyChannel(melodyChannel);
             channels.add(drumsChannelGenerator.generate());
 
-            music_ = new Music(channels);
+            music_ = getMusic(channels);
             music_.play();
         }
         catch (InterruptedException e)
         {
             throw new RuntimeException(e);
         }
+    }
+
+    private IMusic getMusic(List<Channel> channels)
+    {
+        return MusicFactory.getMusic(channels, initializer_);
     }
 
     private void playGamma()
@@ -150,7 +154,7 @@ public class VisualPanel extends JPanel
             drumsChannelGenerator.setMelodyChannel(melodyChannel);
             channels.add(drumsChannelGenerator.generate());
 
-            music_ = new Music(channels);
+            music_ = getMusic(channels);
             music_.play();
         }
         catch (InterruptedException e)
@@ -511,7 +515,7 @@ public class VisualPanel extends JPanel
             drumsChannelGenerator.setMelodyChannel(melodyChannel);
             channels.add(drumsChannelGenerator.generate());
 
-            music_ = new Music(channels);
+            music_ = getMusic(channels);
             music_.play();
         }
         catch (InterruptedException e)
@@ -527,90 +531,90 @@ public class VisualPanel extends JPanel
             int channelNumber = 0;
             List<Rhythm> rhythms = new ArrayList<>();
             List<ISound> sounds = new ArrayList<>();
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(2, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(0, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(7, 8, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 8, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 2, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 2, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(2, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(0, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(7, 8, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 8, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 2, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 2, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(9, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(9, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(5, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(0, 8, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(0, 8, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 2, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 2, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(9, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(9, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(5, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(9, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(7, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(7, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(4, 4, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(5, 4, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(2, 4, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(4, 1, 75, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(5, 1, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(2, 1, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
             sounds = new ArrayList<>();
-            sounds.add(new Note(0, 8, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
-            sounds.add(new Note(0, 8, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 2, 70, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
+            sounds.add(new Note(0, 2, 85, channelNumber, initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier()));
             rhythms.add(new Rhythm(sounds, channelNumber));
             rhythms.add(RhythmSeparator.SEPARATOR);
 
@@ -638,7 +642,7 @@ public class VisualPanel extends JPanel
             drumsChannelGenerator.setMelodyChannel(melodyChannel);
 //            channels.add(drumsChannelGenerator.generate());
 
-            music_ = new Music(channels);
+            music_ = getMusic(channels);
             music_.play();
         }
         catch (InterruptedException e)
@@ -753,7 +757,8 @@ public class VisualPanel extends JPanel
                     try
                     {
 //                        playTestMusic();
-                        playMusic(initializer_); // Ваш метод для воспроизведения музыки
+                        music_ = generateMusic(initializer_); // Ваш метод для воспроизведения музыки
+                        music_.play();
                     }
                     catch (Exception ex)
                     {
@@ -857,7 +862,7 @@ public class VisualPanel extends JPanel
     private void onInstrumentCodeChanged(int channel)
     {
         JComboBox<InstrumentCode> comboBox = channel == 0
-        ? soloInstrumentComboBox_
+                ? soloInstrumentComboBox_
                 : chordComboBoxes_.get(channel - 1);
         InstrumentCode selectedItem = (InstrumentCode) comboBox.getSelectedItem();
         if (selectedItem != null)
@@ -927,97 +932,7 @@ public class VisualPanel extends JPanel
 
     private void save(String fileName)
     {
-        try
-        {
-            Sequence sequence = new Sequence(Sequence.PPQ, TICK_RESOLUTION);
-            Track track = sequence.createTrack();
-
-            track.add(new MidiEvent(createTempoMessage(), 0));
-
-            writeToTrack(music_, track);
-            File midiFile = new File(fileName + ".mid");
-            MidiSystem.write(sequence, 1, midiFile);
-
-            MidiToAudioConverter.convertWithTimidity(fileName + ".mid", fileName + ".wav");
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private MetaMessage createTempoMessage() throws InvalidMidiDataException
-    {
-        RhythmDetails rhythmDetails = initializer_.getMelodyPrimaryRhythmDetails();
-        int tempoInMPQ = 60000000 / (rhythmDetails.getBaseDurationMultiplier() * rhythmDetails.getBaseDuration());
-        MetaMessage tempoMessage = new MetaMessage();
-        byte[] tempoBytes = {
-                (byte) (tempoInMPQ >> 16),
-                (byte) (tempoInMPQ >> 8),
-                (byte) tempoInMPQ
-        };
-        tempoMessage.setMessage(0x51, tempoBytes, tempoBytes.length);
-        return tempoMessage;
-    }
-
-    private void writeToTrack(Music music, Track track) throws InvalidMidiDataException
-    {
-//        ShortMessage msg = new ShortMessage();
-//        msg.setMessage(ShortMessage.NOTE_ON, 0, 60, 93); // нота C4
-//        track.add(new MidiEvent(msg, 0));
-//        msg = new ShortMessage();
-//        msg.setMessage(ShortMessage.NOTE_OFF, 0, 60, 0);
-//        track.add(new MidiEvent(msg, 24));
-
-
-        List<Channel> channels = music.getChannels();
-        for (Channel channel : channels)
-        {
-            if (channel.getChannelNumber() != MusicUtil.DRUMS_CHANNEL_NUMBER)
-            {
-                setInstrument(track, channel.getInstrumentCode(), channel.getChannelNumber()); // Скрипка на канале 1
-            }
-            float currentBeat = 0;
-            List<ISound> sounds = channel.getAllSounds();
-            int a = 0;
-            for (ISound sound : sounds)
-            {
-                addNoteToTrack(track, currentBeat, sound.getTone() + IScale.BASE_NOTE, sound.getAccent(), sound.getDuration(), channel.getChannelNumber());
-                currentBeat += sound.getDuration();
-            }
-        }
-    }
-
-    private static void setInstrument(Track track, int instrument, int channel) throws InvalidMidiDataException
-    {
-        ShortMessage programChange = new ShortMessage();
-        programChange.setMessage(ShortMessage.PROGRAM_CHANGE, channel, instrument, 0);
-        MidiEvent changeInstrument = new MidiEvent(programChange, 0);
-        track.add(changeInstrument);
-    }
-
-
-    private void addNoteToTrack(Track track, float startBeat, int tone, int accent, float duration, int channel) throws InvalidMidiDataException
-    {
-
-        long startTick = (long) (startBeat * TICK_RESOLUTION); // Преобразование битов в тики
-        long endTick = (long) ((startBeat + duration) * TICK_RESOLUTION);
-//        duration *= initializer_.getMelodyPrimaryRhythmDetails().getBaseDurationMultiplier();
-
-        accent = Math.min(accent, 127);
-        tone = Math.min(tone, 127);
-
-        System.out.println("Note ON: Tone=" + tone + " Accent=" + accent + " StartTick=" + startTick);
-        ShortMessage onMessage = new ShortMessage();
-        onMessage.setMessage(ShortMessage.NOTE_ON, channel, tone, accent);
-        MidiEvent noteOn = new MidiEvent(onMessage, startTick);
-        track.add(noteOn);
-
-        System.out.println("Note OFF: Tone=" + tone + " EndTick=" + endTick);
-        ShortMessage offMessage = new ShortMessage();
-        offMessage.setMessage(ShortMessage.NOTE_OFF, channel, tone, 0);
-        MidiEvent noteOff = new MidiEvent(offMessage, endTick);
-        track.add(noteOff);
+        music_.save(fileName);
     }
 
     public static void convertMidiToWav(String midiFilePath, String wavFilePath) throws Exception
@@ -1099,18 +1014,17 @@ public class VisualPanel extends JPanel
         synthesizer.close();
     }
 
-    private void playMusic(Initializer initializer) throws InterruptedException
+    private IMusic generateMusic(Initializer initializer) throws InterruptedException
     {
         MusicGenerator musicGenerator = new MusicGenerator(initializer);
-        music_ = musicGenerator.generate();
-        music_.play();
+        return musicGenerator.generate();
     }
 
     private void stopMusic() throws InterruptedException
     {
         if (music_ != null)
         {
-            music_.stop();
+//            music_.stop();
         }
     }
 }
