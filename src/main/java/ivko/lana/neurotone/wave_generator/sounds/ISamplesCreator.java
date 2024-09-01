@@ -5,5 +5,5 @@ package ivko.lana.neurotone.wave_generator.sounds;
  */
 public interface ISamplesCreator
 {
-    public short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, boolean isBaseSound);
+    short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, double phaseMultiplier, int overtoneIndex);
 }

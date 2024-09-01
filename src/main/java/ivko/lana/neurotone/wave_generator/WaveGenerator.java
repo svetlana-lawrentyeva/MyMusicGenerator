@@ -4,6 +4,9 @@ import ivko.lana.neurotone.IWaveGenerator;
 import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.processing.NotesSerializer;
 import ivko.lana.neurotone.util.CustomLogger;
+import ivko.lana.neurotone.wave_generator.melody.MelodyNotesDistributor;
+import ivko.lana.neurotone.wave_generator.melody.Triad;
+import ivko.lana.neurotone.wave_generator.melody.TriadSequenceGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,14 +21,15 @@ public class WaveGenerator implements IWaveGenerator
 {
     private static final Logger logger = CustomLogger.getLogger(WaveGenerator.class.getName());
     private FrequencyConverter frequencyConverter_;
-    private NotesDistributor notesDistributor_;
+    private INotesDistributor notesDistributor_;
     private volatile int seconds_;
 
     public WaveGenerator(int minutes)
     {
         seconds_ = minutes * 60;
-        notesDistributor_ = new NotesDistributor();
-        frequencyConverter_ = new FrequencyConverter();
+        WaveType waveType = Constants.WaveType_;
+        notesDistributor_ = waveType.getNoteDistributor();
+        frequencyConverter_ = new FrequencyConverter(waveType);
     }
 
     public boolean generateMusic()
@@ -40,8 +44,8 @@ public class WaveGenerator implements IWaveGenerator
                     ? "а"
                     : "ов";
             logger.info(String.format("Осталось сгенерировать %s фрагмент%s", seconds_, tail));
-
             double[][] notes = notesDistributor_.getNotes();
+
             seconds_ -= calculateNotesDuration(notes);
             if (seconds_ < 0)
             {
@@ -56,7 +60,15 @@ public class WaveGenerator implements IWaveGenerator
             {
                 throw new RuntimeException(e);
             }
-            frequencyConverter_.convert(notes);
+            if (Constants.IsSeparated_)
+            {
+                double[][] notesForRightChannel = notesDistributor_.getNotes();
+                frequencyConverter_.convert(notes, notesForRightChannel);
+            }
+            else
+            {
+                frequencyConverter_.convert(notes);
+            }
             result = true;
         }
         return result;
@@ -125,7 +137,7 @@ public class WaveGenerator implements IWaveGenerator
     private double[][] distributeAccordsToRhythm(TriadSequenceGenerator.TriadSequence triadSequence, int[] rhythms)
     {
         // Длительность одного удара в миллисекундах
-        double beatDurationMs = Constants.BEAT_DURATION_MS;
+        double beatDurationMs = Constants.BeatDurationMs_;
         // Создаем список для хранения результата
         List<double[]> result = new ArrayList<>();
 
@@ -141,17 +153,17 @@ public class WaveGenerator implements IWaveGenerator
             boolean hasMoreAccords = noteIndex < triads.length;
             boolean hasMoreBeats = rhythmIndex < rhythms.length;
 
-            List<Double> frequencySequence = triad.getFrequencySequence();
-            double[][] notes = new double[frequencySequence.size()][2];
+            List<Double> scaleDegrees = triad.getScaleDegrees();
+            double[][] notes = new double[scaleDegrees.size()][2];
 
             if (hasMoreAccords && hasMoreBeats)
             {
                 // Оба массива имеют элементы
-                double noteDuration = (beatCount * beatDurationMs) / frequencySequence.size();
-                for (int i = 0; i < frequencySequence.size(); ++i)
+                double noteDuration = (beatCount * beatDurationMs) / scaleDegrees.size();
+                for (int i = 0; i < scaleDegrees.size(); ++i)
                 {
-                    Double frequency = frequencySequence.get(i);
-                    notes[i][0] = frequency;
+                    Double scaleDegree = scaleDegrees.get(i);
+                    notes[i][0] = scaleDegree;
                     notes[i][1] = noteDuration;
                 }
                 result.addAll(Arrays.asList(notes));
@@ -159,11 +171,11 @@ public class WaveGenerator implements IWaveGenerator
             else if (!hasMoreAccords && hasMoreBeats)
             {
                 // Остались биты, но закончились аккорды
-                double noteDuration = (beatCount * beatDurationMs) / frequencySequence.size();
-                for (int i = 0; i < frequencySequence.size(); ++i)
+                double noteDuration = (beatCount * beatDurationMs) / scaleDegrees.size();
+                for (int i = 0; i < scaleDegrees.size(); ++i)
                 {
-                    Double frequency = frequencySequence.get(i);
-                    notes[i][0] = frequency;
+                    Double scaleDegree = scaleDegrees.get(i);
+                    notes[i][0] = scaleDegree;
                     notes[i][1] = noteDuration;
                 }
                 result.addAll(Arrays.asList(notes));
@@ -179,15 +191,15 @@ public class WaveGenerator implements IWaveGenerator
 
                 do
                 {
-                    double pinchedDuration = (oneNoteBeat * beatDurationMs) / frequencySequence.size();
+                    double pinchedDuration = (oneNoteBeat * beatDurationMs) / scaleDegrees.size();
                     double leftDuration = leftBeatCount * beatDurationMs;
                     boolean isLastNote = noteIndex == triads.length;
 
-                    for (int i = 0; i < frequencySequence.size(); ++i)
+                    for (int i = 0; i < scaleDegrees.size(); ++i)
                     {
-                        Double frequency = frequencySequence.get(i);
-                        notes[i][0] = frequency;
-                        notes[i][1] = isLastNote && i == frequencySequence.size() - 1
+                        Double scaleDegree = scaleDegrees.get(i);
+                        notes[i][0] = scaleDegree;
+                        notes[i][1] = isLastNote && i == scaleDegrees.size() - 1
                                 ? pinchedDuration + leftDuration
                                 : pinchedDuration;
                     }

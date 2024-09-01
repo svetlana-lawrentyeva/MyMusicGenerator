@@ -1,5 +1,6 @@
 package ivko.lana.neurotone.wave_generator.sounds.simple;
 
+import ivko.lana.neurotone.util.ShiftFactor;
 import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
 
 /**
@@ -7,42 +8,20 @@ import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
  */
 public class SimpleOvertonesHelper implements IOvertoneHelper
 {
-    private static final double[] HARMONIC_MULTIPLIERS = {1};
-    private static final double[] HARMONIC_AMPLITUDES = {1};
-
-
-    private static final double[] HIT_MULTIPLIERS = {21.46};
-    private static final double[] HIT_AMPLITUDES = {4};
-
-    private static final double[] SCALED_HARMONIC_AMPLITUDES = {
-            HARMONIC_AMPLITUDES[0] * HARMONIC_AMPLITUDE_SCALE_FACTOR
-    };
-
-    private static final double[] SCALED_HIT_AMPLITUDES = {
-            HIT_AMPLITUDES[0] * HIT_AMPLITUDE_SCALE_FACTOR
-    };
+    private static final ShiftFactor[] SIMPLE_SHIFT_FACTORS =
+            {
+                    new ShiftFactor(1, 1, 1.5, 1)
+            };
 
     @Override
-    public double[] getMultipliers()
+    public ShiftFactor[] getHarmonyShiftFactors()
     {
-        return HARMONIC_MULTIPLIERS;
+        return SIMPLE_SHIFT_FACTORS;
     }
 
     @Override
-    public double[] getAmplitudes()
+    public ShiftFactor[] getHitShiftFactors()
     {
-        return HARMONIC_AMPLITUDES;
-    }
-
-    @Override
-    public double[] getHitMultipliers()
-    {
-        return HIT_MULTIPLIERS;
-    }
-
-    @Override
-    public double[] getHitAmplitudes()
-    {
-        return HIT_AMPLITUDES;
+        return SIMPLE_SHIFT_FACTORS;
     }
 }

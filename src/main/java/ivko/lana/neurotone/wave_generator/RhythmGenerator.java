@@ -22,6 +22,21 @@ public class RhythmGenerator
             }
         }
 
+        public int[] getPattern()
+        {
+            return pattern_;
+        }
+
+        public double getProbability()
+        {
+            return probability_;
+        }
+
+        public int getLength()
+        {
+            return length_;
+        }
+
         @Override
         public String toString()
         {

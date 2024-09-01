@@ -1,11 +1,9 @@
 package ivko.lana.neurotone.wave_generator;
 
-import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.sounds.Sound;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -17,44 +15,44 @@ public class FullWave
 
     private WaveDetail waveDetail_;
 
-    public FullWave(double[][] notes, boolean isLeft)
+    public FullWave(WaveType waveType, double[][] notes, boolean isLeft)
     {
-        double[] frequencies = new double[notes.length];
+        double[] scaleDegrees = new double[notes.length];
         double[] durations = new double[notes.length];
-        SingleMelody[] singleMelodies = null;
+        SingleWave[] singleWaves = null;
         for (int i = 0; i < notes.length; i++)
         {
-            double frequency = notes[i][0];
-            frequencies[i] = frequency;
-            frequency = isLeft ? frequency : frequency + Constants.FrequencyOffset_;
+            double scaleDegree = notes[i][0];
+            scaleDegrees[i] = scaleDegree;
+//            scaleDegree = isLeft ? scaleDegree : scaleDegree + Constants.FrequencyOffset_;
             int durationMs = (int) notes[i][1];
             durations[i] = durationMs;
-            SoundsCache soundsCache = SoundsLibrary.getInstance().getSoundsCache(isLeft, frequency, durationMs);
+            SoundsCache soundsCache = SoundsLibrary.getInstance().getSoundsCache(waveType, isLeft, scaleDegree, durationMs);
 
-            if (singleMelodies == null)
+            if (singleWaves == null)
             {
-                singleMelodies = new SingleMelody[soundsCache.getSize()];
-                for (int j = 0; j < singleMelodies.length; ++j)
+                singleWaves = new SingleWave[soundsCache.getSize()];
+                for (int j = 0; j < singleWaves.length; ++j)
                 {
-                    singleMelodies[j] = new SingleMelody(notes.length);
+                    singleWaves[j] = new SingleWave(notes.length);
                 }
             }
-            for (int j = 0; j < singleMelodies.length; ++j)
+            for (int j = 0; j < singleWaves.length; ++j)
             {
                 Sound sound = soundsCache.getAt(j);
-                singleMelodies[j].addNote(sound, i);
+                singleWaves[j].addNote(sound, i);
             }
         }
 
-        if (singleMelodies != null)
+        if (singleWaves != null)
         {
-            short[][] fullSamples = new short[singleMelodies.length][];
-            for (int i = 0; i < singleMelodies.length; ++i)
+            short[][] fullSamples = new short[singleWaves.length][];
+            for (int i = 0; i < singleWaves.length; ++i)
             {
-                fullSamples[i] = singleMelodies[i].getSamples();
+                fullSamples[i] = singleWaves[i].getSamples();
             }
             short[] samples = convertFadedNotesToByteArray(fullSamples);
-            waveDetail_ = new WaveDetail(frequencies, durations, samples);
+            waveDetail_ = new WaveDetail(scaleDegrees, durations, samples);
         }
     }
 

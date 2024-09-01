@@ -132,7 +132,7 @@ public class FfmpegProcess
                 "-s", "1920x1080",                          // Разрешение видео
                 "-r", String.valueOf(VideoConstants.FPS),   // Частота кадров
                 "-i", "pipe:0",                             // Видеовход через стандартный ввод (stdin)
-                "-i", AudioSaver.FILE_NAME,                 // Входной аудиофайл
+                "-i", AudioSaver.getAudioFileName(),                 // Входной аудиофайл
                 "-c:v", "libx264",                          // Кодек для видео
                 "-b:v", "2M",                              // Битрейт видео
                 "-preset", "ultrafast",                      // Пресет для улучшения качества сжатия
@@ -150,7 +150,7 @@ public class FfmpegProcess
                 "-s", "1920x1080",                        // Разрешение видео
                 "-r", String.valueOf(VideoConstants.FPS), // Частота кадров
                 "-i", "pipe:0",                           // Видеовход через стандартный ввод (stdin)
-                "-i", AudioSaver.FILE_NAME,               // Входной аудиофайл
+                "-i", AudioSaver.getAudioFileName(),               // Входной аудиофайл
                 "-c:v", "libx265",                        // Кодек для видео
                 "-b:v", "10M",                            // Битрейт видео
                 "-preset", "slow",                        // Пресет для улучшения качества сжатия

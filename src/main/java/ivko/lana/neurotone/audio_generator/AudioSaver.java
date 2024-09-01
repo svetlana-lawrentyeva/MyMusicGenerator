@@ -20,7 +20,7 @@ public class AudioSaver extends StereoSaver
 {
     private static final Logger logger = CustomLogger.getLogger(AudioSaver.class.getName());
 
-    public static String FILE_NAME = "generated1.wav";
+    public static String FileName_ = "generated.wav";
     private AudioFormat format_;
     private long dataSize = 0; // отслеживание размера данных
 
@@ -45,11 +45,21 @@ public class AudioSaver extends StereoSaver
         }
     }
 
+    public static void setFileName(String fileName)
+    {
+        FileName_ = fileName;
+    }
+
     @Override
     protected String getFileName()
     {
+        return FileName_;
+    }
+
+    public static String getAudioFileName()
+    {
         logger.info("Asking for the audio file name");
-        return FILE_NAME;
+        return FileName_;
     }
 
     @Override
@@ -84,7 +94,7 @@ public class AudioSaver extends StereoSaver
     {
         try
         {
-            updateWavHeader(FILE_NAME); // Обновляем заголовок перед закрытием
+            updateWavHeader(FileName_); // Обновляем заголовок перед закрытием
         }
         catch (IOException e)
         {

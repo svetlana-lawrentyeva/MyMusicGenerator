@@ -4,10 +4,13 @@ import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.SoundsCache;
-import ivko.lana.neurotone.wave_generator.SoundsLibrary;
 import ivko.lana.neurotone.wave_generator.sounds.Sound;
+import ivko.lana.neurotone.wave_generator.sounds.SoundType;
+import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleClearSamplesCreator;
 import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleSamplesCreator;
+import org.bytedeco.libfreenect._freenect_context;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -17,55 +20,102 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
 {
     private static final Logger logger = CustomLogger.getLogger(TibetanSamplesCreator.class.getName());
 
-    private static final double LEFT_MULTIPLIER = 9;
-    private static final int RIGHT_MULTIPLIER = -7;
+    private static final double LEFT_MULTIPLIER = 1;
+    private static final double RIGHT_MULTIPLIER = -1;
 
-    private double angle_;
+    private int repeatFrequencyCounter_ = 1;
+    private double previousFrequency_ = -1;
 
     public TibetanSamplesCreator()
     {
         super();
     }
 
-    public short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, boolean isBaseSound)
+    protected SimpleClearSamplesCreator createClearSamplesCreator()
     {
-        return durationMs == 0
-                ? createHitSamples(frequency, amplitude)
-                : createFullSamples(durationMs, frequency, amplitude, isLeft, isBaseSound);
+        return new TibetanClearSamplesCreator();
     }
 
-    private short[] createFullSamples(int durationMs, double frequency, double amplitude, boolean isLeft, boolean isBaseSound)
+    protected TibetanClearSamplesCreator getClearSamplesCreator()
     {
-        double multiplier = isLeft ? LEFT_MULTIPLIER : RIGHT_MULTIPLIER;
+        return (TibetanClearSamplesCreator) super.getClearSamplesCreator();
+    }
 
-        short[] baseSignal = createClearSamples(durationMs, frequency, amplitude, 1, 1);
-//        baseSignal = applyEffects(baseSignal, Constants.BASE_PULSATION_SPEED, multiplier);
-        double vibrationFactor = getVibrationFactor(frequency);
-        baseSignal = applyVibrationEffect(baseSignal, 1.5, vibrationFactor * (1 / multiplier));
-        short[] phoneSignal = createClearSamples(durationMs, frequency*2, amplitude / 3, 1, 0.5);
-        phoneSignal = applyVibrationEffect(phoneSignal, 1.5, 0.0015);
-        phoneSignal = applyEffects(phoneSignal, Constants.BASE_PULSATION_SPEED, multiplier);
-        baseSignal = combineSamples(baseSignal, phoneSignal);
+    public short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, double phaseMultiplier, int overtoneIndex)
+    {
+        amplitude *= 0.4;
+        double multiplier = (isLeft ? LEFT_MULTIPLIER : RIGHT_MULTIPLIER) * phaseMultiplier ;
 
-        if (isBaseSound)
+        getClearSamplesCreator().setDurationFadeInFactor(1);
+        getClearSamplesCreator().setDurationFadeOutFactor(1);
+
+        double basePulsationSpeed = Constants.BASE_PULSATION_SPEED;
+
+        // Время одной выборки
+        double time = 1.0 / Constants.SAMPLE_RATE; // Время на один семпл
+
+        // Вычисляем пульсацию
+        double pulsation = Constants.PulsationSpeedFactor_ * (basePulsationSpeed * multiplier) * time * 0.5;
+        pulsation /= repeatFrequencyCounter_ * 0.25;
+        amplitude *= repeatFrequencyCounter_ * 0.25;
+
+        if (frequency == previousFrequency_)
         {
-            short[] hitSignal = prepareHitSignal(frequency, amplitude, multiplier);
-            baseSignal = combineSamples(baseSignal, hitSignal);
+            repeatFrequencyCounter_++;
+        }
+        else
+        {
+            repeatFrequencyCounter_ = 1;
+        }
+        previousFrequency_ = frequency;
+
+        // Определяем угловую скорость пульсации
+        double angularFrequency = 2 * Math.PI * pulsation;
+
+        // Вычисляем фазовые сдвиги
+        double phaseShift1 = 0;  // без сдвига
+        double phaseShift2 = angularFrequency / 3; // сдвиг на одну треть пульсации
+        double phaseShift3 = 2 * angularFrequency / 3; // сдвиг на две трети пульсации
+
+        short[] baseSignal = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift1);
+        baseSignal = applyEffects(baseSignal, pulsation, multiplier);
+
+        short[] baseSignal2 = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift2);
+        baseSignal2 = applyEffects(baseSignal2, Constants.BASE_PULSATION_SPEED, multiplier);
+
+        short[] baseSignal3 = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift3);
+        baseSignal3 = applyEffects(baseSignal3, Constants.BASE_PULSATION_SPEED, multiplier);
+
+        baseSignal = Util.combineSamples(baseSignal, baseSignal2);
+        baseSignal = Util.combineSamples(baseSignal, baseSignal3);
+
+        baseSignal = applyEffects(baseSignal, Constants.BASE_PULSATION_SPEED, multiplier);
+//        baseSignal = applyVibrationEffect(baseSignal, 1 / multiplier);
+        getClearSamplesCreator().setDurationFadeInFactor(1);
+        getClearSamplesCreator().setDurationFadeOutFactor(0.5 + 0.125 * overtoneIndex);
+        short[] phoneSignal = getClearSamplesCreator().createClearSamples(durationMs - (overtoneIndex * 250), frequency, amplitude * 0.3);
+//        phoneSignal = applyVibrationEffect(phoneSignal, 0.0015);
+        baseSignal = Util.combineSamples(baseSignal, phoneSignal);
+
+        if (overtoneIndex == 0)
+        {
+            short[] hitSignal = prepareHitSignal(frequency, amplitude);
+            baseSignal = Util.combineSamples(baseSignal, hitSignal);
         }
         return baseSignal;
     }
 
-    private short[] prepareHitSignal(double frequency, double amplitude, double multiplier)
+    private short[] prepareHitSignal(double frequency, double amplitude)
     {
-        double durationFadeInFactor = 1;
-        double durationFadeOutFactor = 0.2;
+        double durationFadeInFactor = 0.03;;
+        double durationFadeOutFactor = 0.25;
         int durationHitMs = (int) (Constants.HIT_DURATION_MS * durationFadeInFactor);
-        durationHitMs = (int) Math.max(durationHitMs, Constants.PAUSE_DURATION_MS + Constants.SMALL_AMPLITUDES_DURATION_MS + Constants.HIT_DURATION_MS * durationFadeInFactor);
-        short[] baseSignalForHit = createClearSamples(durationHitMs, frequency, amplitude * 3, durationFadeInFactor, durationFadeOutFactor);
-        baseSignalForHit = applyEffects(baseSignalForHit, Constants.BASE_PULSATION_SPEED, multiplier);
-
+        durationHitMs = (int) Math.max(durationHitMs, Constants.PAUSE_DURATION_MS + Constants.SMALL_AMPLITUDES_DURATION_MS + durationHitMs);
+        getClearSamplesCreator().setDurationFadeInFactor(durationFadeInFactor);
+        getClearSamplesCreator().setDurationFadeOutFactor(durationFadeOutFactor);
+        short[] baseSignalForHit = getClearSamplesCreator().createClearSamples(durationHitMs, frequency, amplitude * 0.5);
         short[] hitSignal = getHit(frequency);
-        hitSignal = combineSamples(hitSignal, baseSignalForHit);
+        hitSignal = Util.combineSamples(hitSignal, baseSignalForHit);
         return hitSignal;
     }
 
@@ -75,7 +125,7 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         {
             frequency /= 10;
         }
-        return frequency;
+        return frequency * Constants.VibrationFactor_;
     }
 
     private short[] shiftSignal(short[] signal, int shift)
@@ -85,116 +135,18 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         return result;
     }
 
-    private short[] createClearSamples(int durationMs, double frequency, double amplitude, double durationFadeInFactor, double durationFadeOutFactor)
-    {
-        int pauseLength = Util.convertMsToSampleLength(Constants.PAUSE_DURATION_MS);
-        int smallAmplitudesLength = Util.convertMsToSampleLength(Constants.SMALL_AMPLITUDES_DURATION_MS);
-        int introSamplesLength = pauseLength + smallAmplitudesLength;
-        int fadeInSamplesLength = Util.convertMsToSampleLength((int) (Constants.FADE_IN_DURATION_MS * durationFadeInFactor)) - introSamplesLength;
-        int fadeOutSamplesLength = Util.convertMsToSampleLength((int) (Constants.FADE_OUT_DURATION_MS * durationFadeOutFactor));
-
-        // Создаем интро
-        short[] introWave = getIntro(frequency, amplitude, pauseLength, smallAmplitudesLength);
-        // Создаем нарастание
-        short[] fadeInWave = createFadeInWave(frequency, amplitude, fadeInSamplesLength);
-
-        int constantSamplesLength = Util.convertMsToSampleLength(durationMs) - introSamplesLength - fadeInSamplesLength;
-
-        if (constantSamplesLength < 0)
-        {
-            throw new IllegalArgumentException(
-                    String.format("Суммарная длительность паузы (%s), малой амплитуды (%s) и нарастающей части (%s) [%s] превышает общую длительность ноты (%s).",
-                            pauseLength,
-                            smallAmplitudesLength,
-                            fadeInSamplesLength,
-                            pauseLength + smallAmplitudesLength + fadeInSamplesLength,
-                            Util.convertMsToSampleLength(durationMs)
-                    ));
-        }
-        // Создаем основную часть
-        short[] constantWave = createConstantWave(frequency, constantSamplesLength, amplitude);
-        // Создаем затухание
-        short[] fadeOutWave = createFadeOutWave(frequency, amplitude, fadeOutSamplesLength, true);
-
-        short[] combinedSignal = new short[introSamplesLength + fadeInSamplesLength + constantSamplesLength + fadeOutSamplesLength];
-
-        System.arraycopy(introWave, 0, combinedSignal, 0, introSamplesLength);
-        System.arraycopy(fadeInWave, 0, combinedSignal, introSamplesLength, fadeInSamplesLength);
-        System.arraycopy(constantWave, 0, combinedSignal, introSamplesLength + fadeInSamplesLength, constantSamplesLength);
-        System.arraycopy(fadeOutWave, 0, combinedSignal, introSamplesLength + fadeInSamplesLength + constantSamplesLength, fadeOutSamplesLength);
-        return combinedSignal;
-    }
-
-    private static int getHitPosition()
-    {
-        return Util.convertMsToSampleLength(Constants.PAUSE_DURATION_MS) + Util.convertMsToSampleLength(Constants.SMALL_AMPLITUDES_DURATION_MS);
-    }
-
     private short[] getHit(double frequency)
     {
-        int startHitPosition = getHitPosition();
-        // Создание ударного эффекта
-        SoundsCache hitSoundsCache = SoundsLibrary.getInstance().getHitsCache(frequency);
-        int harmonicSize = hitSoundsCache.getSize();
-        short[][] hitHarmonics = new short[harmonicSize][];
-        for (int i = 0; i < harmonicSize; ++i)
-        {
-            Sound sound = hitSoundsCache.getAt(i);
-            hitHarmonics[i] = sound.getSamples();
-        }
-        short[] combinedHitHarmonics = new short[hitHarmonics[0].length + startHitPosition];
-
-        for (int i = 0; i < hitHarmonics.length; ++i)
-        {
-            short[] hitHarmonic = hitHarmonics[i];
-            for (int j = 0; j < hitHarmonic.length; ++j)
-            {
-                combinedHitHarmonics[j + startHitPosition] += hitHarmonic[j];
-            }
-        }
-        return combinedHitHarmonics;
+        TibetanHitSound tibetanHitSound = TibetanHitSoundLibrary.getInstance().getHitSound(SoundType.TIBETAN, frequency);
+        return tibetanHitSound.getSamples();
     }
 
-    private short[] createHitSamples(double frequency, double amplitude)
-    {
-        double durationFadeInFactor = 0.5;
-        double durationFadeOutFactor = 0.05;
-        int duration = (int) (Constants.FADE_IN_DURATION_MS * durationFadeInFactor);
-        duration = (int) Math.max(duration, Constants.PAUSE_DURATION_MS + Constants.SMALL_AMPLITUDES_DURATION_MS + Constants.FADE_IN_DURATION_MS * durationFadeInFactor);
-        short[] hitSignal = createClearSamples(duration, frequency, amplitude, durationFadeInFactor, durationFadeOutFactor);
-
-        double angleIncrement = 2.0 * Math.PI * frequency / Constants.SAMPLE_RATE;
-        double distortionAmount = 5.0; // Усиливаем искажения
-        double phaseShift = Math.PI / 4; // Добавляем фазовый сдвиг
-
-        double lowFreq = 0.5; // Низкочастотное колебание
-        double lowFreqIncrement = 2.0 * Math.PI * lowFreq / Constants.SAMPLE_RATE;
-
-        for (int i = 0; i < hitSignal.length; i++)
-        {
-            // Вычисляем искажение с использованием низкочастотного сигнала
-            double lowFreqDistortion = Math.sin(i * lowFreqIncrement);
-            double distortion = 1.0 + distortionAmount * Math.sin(i * angleIncrement + phaseShift) * lowFreqDistortion;
-
-            // Применяем искажение к каждому семплу
-            hitSignal[i] = (short) (hitSignal[i] * distortion);
-
-            // Ограничение значений, чтобы не выйти за пределы допустимых значений для short
-            hitSignal[i] = Util.getLimitedValue(hitSignal[i]);
-        }
-        return hitSignal;
-    }
-
-    public static double min = Double.MAX_VALUE;
-    public static double max = 0;
-
-    // short[] vibratedSamples = applyVibrationEffect(originalSamples, 5.0, 0.5);
-    private short[] applyVibrationEffect(short[] samples, double frequency, double amount)
+    private short[] applyVibrationEffect(short[] samples, double amount)
     {
         int totalSamples = samples.length;
         short[] vibratedSamples = new short[totalSamples];
 
-        double angleIncrement = 2.0 * Math.PI * frequency / Constants.SAMPLE_RATE;
+        double angleIncrement = 2.0 * Math.PI * Constants.VibrationFactor_ / Constants.SAMPLE_RATE;
 
         for (int i = 0; i < totalSamples; i++)
         {
@@ -230,10 +182,6 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
 
             // Ограничение значений
             channel[i] = Util.getLimitedValue(channel[i]);
-
-            int abs = Math.abs(channel[i]);
-            min = Math.min(min, abs);
-            max = Math.max(max, abs);
         }
 
         return channel;
@@ -267,52 +215,5 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         // Оставляем синус для "сосисочности"
         double sineValue = Math.sin(Math.PI * pulsation - shift);
         return sineValue;
-    }
-
-    private short[] getIntro(double frequency, double amplitude, int pauseLength, int smallAmplitudesLength)
-    {
-        // Пауза перед началом нарастания
-        short[] pause = new short[pauseLength];
-
-        // Генерация свип-сигнала с малыми амплитудами
-        short[] smallAmplitudeWave = createSmallAmplitudeWave(frequency, amplitude * 0.005, smallAmplitudesLength);
-
-        short[] output = new short[pauseLength + smallAmplitudeWave.length];
-        System.arraycopy(pause, 0, output, 0, pauseLength);
-        System.arraycopy(smallAmplitudeWave, 0, output, pauseLength, smallAmplitudeWave.length);
-
-        return output;
-    }
-
-    public short[] createFadeInWave(double frequency, double amplitude, int fadeInSamplesLength)
-    {
-        boolean isLined = true;
-        double angleIncrement = 2.0 * Math.PI * frequency / Constants.SAMPLE_RATE;
-        short[] output = new short[fadeInSamplesLength];
-
-        for (int i = 0; i < fadeInSamplesLength; i++)
-        {
-            angle_ = incrementAngle(angleIncrement);
-            double fadeFactor = !isLined
-                ? Math.pow(i / (double) fadeInSamplesLength, (double) 1 / 6.0)
-                : i / (double) fadeInSamplesLength; // Линейное затухание
-            output[i] = (short) (Math.sin(angle_) * amplitude * fadeFactor * Short.MAX_VALUE);
-        }
-
-        return output;
-    }
-
-    // Метод для создания слабых колебаний с малыми амплитудами
-    private short[] createSmallAmplitudeWave(double frequency, double amplitude, int length)
-    {
-        short[] smallWave = new short[length];
-        double angleIncrement = 2.0 * Math.PI * frequency / Constants.SAMPLE_RATE;
-
-        for (int i = 0; i < length; i++)
-        {
-            angle_ = incrementAngle(angleIncrement);
-            smallWave[i] = (short) (Math.sin(angle_) * amplitude * Short.MAX_VALUE);
-        }
-        return smallWave;
     }
 }

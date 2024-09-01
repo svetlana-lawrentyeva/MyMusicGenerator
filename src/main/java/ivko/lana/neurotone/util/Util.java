@@ -17,6 +17,33 @@ import java.util.stream.Stream;
 public class Util
 {
     private static final Logger logger = CustomLogger.getLogger(Util.class.getName());
+
+    public static short[] combineSamples(short[] base, short[] effect)
+    {
+        int maxLength = Math.max(base.length, effect.length);
+        short[] combined = new short[maxLength];
+
+        int minLength = Math.min(base.length, effect.length);
+
+        // Суммирование элементов с одинаковыми индексами
+        for (int i = 0; i < minLength; i++)
+        {
+            combined[i] = (short) (Constants.UnitizationDividerFactor_ * Util.getLimitedValue((int) (base[i] + Constants.UnitizationDividerFactor_  * effect[i])));
+//            combined[i] = Util.getLimitedValue((int) (Constants.UnitizationDividerFactor_ * base[i] + Constants.UnitizationDividerFactor_  * effect[i]));
+        }
+
+        // Копирование оставшихся элементов из большего массива
+        if (base.length > minLength)
+        {
+            System.arraycopy(base, minLength, combined, minLength, base.length - minLength);
+        }
+        else if (effect.length > minLength)
+        {
+            System.arraycopy(effect, minLength, combined, minLength, effect.length - minLength);
+        }
+
+        return combined;
+    }
     public static void writeShortArrayToFile(String fileName, short[] array)
     {
         deleteFileIfExists(fileName);

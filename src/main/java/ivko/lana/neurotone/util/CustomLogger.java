@@ -15,7 +15,7 @@ public class CustomLogger
 {
     public static Logger getLogger(String name)
     {
-        Logger logger = Logger.getLogger(StereoPlayer.class.getName());
+        Logger logger = Logger.getLogger(name);
 
         try
         {

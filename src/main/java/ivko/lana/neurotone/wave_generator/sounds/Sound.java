@@ -1,6 +1,7 @@
 package ivko.lana.neurotone.wave_generator.sounds;
 
 import ivko.lana.neurotone.util.CustomLogger;
+import ivko.lana.neurotone.wave_generator.SoundsCache;
 
 import java.util.logging.Logger;
 
@@ -15,12 +16,15 @@ public class Sound
     private final int durationMs_;
     private final short[] samples_;
 
-    public Sound(SoundType soundType, double frequency, double amplitude, int durationMs, boolean isLeft, boolean isBaseFrequency)
+    public Sound(SoundType soundType, SoundsCache.SoundDetails soundDetails, int overtoneIndex)
     {
-        frequency_ = frequency;
-        durationMs_ = durationMs;
+        frequency_ = soundDetails.getFrequency();
+        durationMs_ = soundDetails.getDurationsMs();
+        double amplitude = soundDetails.getAmplitude();
+        boolean isLeft = soundDetails.isLeft();
+        double phaseMultiplier = soundDetails.getPhaseMultiplier();
         ISamplesCreator samplesCreator = soundType.getSamplesCreator();
-        samples_ = samplesCreator.createSamples(durationMs, frequency, amplitude, isLeft, isBaseFrequency);
+        samples_ = samplesCreator.createSamples(durationMs_, frequency_, amplitude, isLeft, phaseMultiplier, overtoneIndex);
     }
 
     public double getFrequency()

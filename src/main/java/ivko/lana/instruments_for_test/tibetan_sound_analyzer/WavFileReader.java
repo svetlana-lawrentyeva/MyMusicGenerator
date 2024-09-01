@@ -155,7 +155,7 @@ public class WavFileReader
 
     public static void main(String[] args)
     {
-        File wavFile = new File("D:/VIDEO/NEUROTONE/EXAMPLE_LOUD.wav"); // Замените на путь к вашему файлу
+        File wavFile = new File("D:\\VIDEO\\NEUROTONE\\development\\left.wav"); // Замените на путь к вашему файлу
         try
         {
             double[] samples = getMonoSamples(wavFile);

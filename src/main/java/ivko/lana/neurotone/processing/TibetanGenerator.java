@@ -2,12 +2,13 @@ package ivko.lana.neurotone.processing;
 
 import ivko.lana.neurotone.IWaveGenerator;
 import ivko.lana.neurotone.StereoPlayer;
+import ivko.lana.neurotone.wave_generator.WaveType;
+import ivko.lana.neurotone.wave_generator.melody.NoteGenerator;
 import ivko.lana.neurotone.wave_generator.WaveDetail;
 import ivko.lana.neurotone.wave_generator.WaveGenerator;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.FrequencyConverter;
-import org.opencv.core.Core;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class TibetanGenerator
                 latch.await();
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             logger.severe(String.valueOf(e));
             e.printStackTrace();
@@ -111,6 +112,11 @@ public class TibetanGenerator
                     try
                     {
                         player.close();
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                     finally
                     {
@@ -149,32 +155,11 @@ public class TibetanGenerator
         }
     }
 
-    enum Mode
+    public enum Mode
     {
-        PLAY
-                {
-                    @Override
-                    List<StereoPlayer> getStereoPlayers(GeneratorType generatorType)
-                    {
-                        return generatorType.getPlayers();
-                    }
-                },
-        SAVE
-                {
-                    @Override
-                    List<StereoPlayer> getStereoPlayers(GeneratorType generatorType)
-                    {
-                        return generatorType.getSavers();
-                    }
-                },
-        PLAY_AND_SAVE
-                {
-                    @Override
-                    List<StereoPlayer> getStereoPlayers(GeneratorType generatorType)
-                    {
-                        return Util.concatLists(generatorType.getPlayers(), generatorType.getSavers());
-                    }
-                };
+        PLAY {@Override List<StereoPlayer> getStereoPlayers(GeneratorType generatorType) {return generatorType.getPlayers();}},
+        SAVE {@Override List<StereoPlayer> getStereoPlayers(GeneratorType generatorType) {return generatorType.getSavers();}},
+        PLAY_AND_SAVE {@Override List<StereoPlayer> getStereoPlayers(GeneratorType generatorType) {return Util.concatLists(generatorType.getPlayers(), generatorType.getSavers());}};
 
         abstract List<StereoPlayer> getStereoPlayers(GeneratorType generatorType);
     }
@@ -189,7 +174,7 @@ public class TibetanGenerator
     private static IWaveGenerator getMockGenerator()
     {
         Iterator<double[][]> iterator = generateNoteSequence().iterator();
-        FrequencyConverter frequencyConverter = new FrequencyConverter();
+        FrequencyConverter frequencyConverter = new FrequencyConverter(Constants.WaveType_);
         return new IWaveGenerator()
         {
             @Override
@@ -219,55 +204,52 @@ public class TibetanGenerator
 
     private static List<double[][]> generateNoteSequence()
     {
-//        double[][] notes1 = {      // Частота и длительность в секундах
-//                {288.0, 6000.0},
-//                {360.0, 6000.0},
-//                {216.0, 6000.0},
-//                {324.0, 1000.0},
-//                {405.0, 1000.0},
-//                {243.0, 1000.0},
-//                {324.0, 1000.0},
-//                {405.0, 1000.0},
-//                {243.0, 1000.0}
-//        };
+        double[][] notes1 =
+                {
+                        {1.0, 5000.0},
+                        {0.0, 5000.0},
+                        {3.0, 5000.0},
+                        {5.0, 5000.0},
+                        {2.0, 5000.0},
+                        {4.0, 5000.0},
+                        {0.0, 5000.0},
+                        {6.0, 5000.0}
+                };
+        double[][] notes2 =
+                {
+                        {3.0, 5000.0},
+                        {5.0, 5000.0},
+                        {0.0, 5000.0},
+                        {7.0, 5000.0}
+                };
+        double[][] notes3 =
+                {
+                        {2.0, 5000.0},
+                        {4.0, 5000.0},
+                        {6.0, 5000.0},
+                        {0.0, 5000.0},
+                        {2.0, 5000.0},
+                        {0.0, 5000.0},
+                        {4.0, 5000.0},
+                        {6.0, 5000.0}
+                };
 //        double[][] notes2 = {
-//                {243.0, 4000.0},
-//                {288.0, 4000.0},
-//                {360.0, 4000.0},
-//                {324.0, 1000.0},
-//                {405.0, 1000.0},
-//                {243.0, 7000.0},
-//                {324.0, 1000.0},
-//                {405.0, 1000.0},
-//                {243.0, 7000.0}
+//                {243.0, 2000.0},
+//                {288.0, 2000.0},
+//                {360.0, 2000.0},
+//                {324.0, 2000.0},
+//                {405.0, 2000.0},
+//                {243.0, 2000.0},
+//                {324.0, 2000.0},
+//                {405.0, 2000.0},
+//                {243.0, 2000.0}
 //        };
-        double[][] notes1 = {      // Частота и длительность в секундах
-                {288.0, 2000.0},
-                {360.0, 2000.0},
-                {216.0, 2000.0},
-                {324.0, 2000.0},
-                {405.0, 2000.0},
-                {243.0, 2000.0},
-                {324.0, 2000.0},
-                {405.0, 2000.0},
-                {243.0, 2000.0}
-        };
-        double[][] notes2 = {
-                {243.0, 2000.0},
-                {288.0, 2000.0},
-                {360.0, 2000.0},
-                {324.0, 2000.0},
-                {405.0, 2000.0},
-                {243.0, 2000.0},
-                {324.0, 2000.0},
-                {405.0, 2000.0},
-                {243.0, 2000.0}
-        };
 //        double[][] notes1 = {
-//                {432.00, 1000}
+//                {136.1, 1000},
+////                {150, 1000}
 //        };
-//        double[][] notes2 = {
-//                {432.00 * 2, 10000}
+//        double[][] notes1 = {
+//                {1, 1000}
 //        };
 //        double[][] notes = {
 //                {432.0, 2000.0},
@@ -290,11 +272,14 @@ public class TibetanGenerator
         List<double[][]> noteSequence = new ArrayList<>();
         noteSequence.add(notes1);
         noteSequence.add(notes2);
+        noteSequence.add(notes3);
 
         try
         {
-            NotesSerializer.getInstance().serializeToCSV(notes1);
-            NotesSerializer.getInstance().serializeToCSV(notes2);
+            for (double[][] note : noteSequence)
+            {
+                NotesSerializer.getInstance().serializeToCSV(note);
+            }
         }
         catch (IOException e)
         {
@@ -306,15 +291,22 @@ public class TibetanGenerator
 
     private static final int MINUTES = 60;
     private static final boolean IS_MOCK = false;
-
     public static void main(String[] args)
     {
         NotesSerializer.initialize();
-        int baseFrequency = 174;
+        double baseFrequency = 432;
         Constants.setBaseFrequency(baseFrequency);
-        Constants.setPulsationDepth(0.05f);
-        Constants.setPulsationSpeedFactor(0.5f);
-        Constants.setFrequencyOffset(3.8);
+        Constants.setPulsationDepth(1f);
+        Constants.setPulsationSpeedFactor(0.4f);
+        Constants.setVibrationFactor(1);
+        Constants.setBeatDurationMs(4000);
+        Constants.setSeparation(false);
+        Constants.setOneTone(false);
+        Constants.setWaveType(WaveType.SOLFEGE);
+//        Constants.setUnitizationDividerFactor(0.5);
+//        Constants.setFadeOutDurationMs(6000);
+//        Constants.setFrequencyOffset(3);
+        Constants.setScaleDegreeType(NoteGenerator.ScaleDegreeType.MAJOR);
 
         TibetanGenerator generator = new TibetanGenerator(GeneratorType.AUDIO, Mode.SAVE, () -> getWaveGenerator(IS_MOCK));
         try

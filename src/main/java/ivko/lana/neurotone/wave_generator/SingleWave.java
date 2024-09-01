@@ -7,11 +7,11 @@ import ivko.lana.neurotone.wave_generator.sounds.Sound;
 /**
  * @author Lana Ivko
  */
-public class SingleMelody
+public class SingleWave
 {
     private Sound[] sounds_;
 
-    public SingleMelody(int notesLength)
+    public SingleWave(int notesLength)
     {
         sounds_ = new Sound[notesLength];
     }
@@ -26,7 +26,7 @@ public class SingleMelody
         int totalSamplesLength = 0;
 
         // Рассчитываем общую длину результирующего массива семплов
-        int fadeOutLength = Util.convertMsToSampleLength(Constants.FADE_OUT_DURATION_MS);
+        int fadeOutLength = Util.convertMsToSampleLength(Constants.FadeOutDurationMs_);
         for (int j = 0; j < sounds_.length; ++j)
         {
             Sound note = sounds_[j];
