@@ -22,7 +22,7 @@ public abstract class StereoPlayer
     private static WaveDetail RightTail_ = new WaveDetail();
     private static final Logger logger = CustomLogger.getLogger(StereoPlayer.class.getName());
 
-    public static final int FADE_OUT_TAIL = Util.convertMsToSampleLength(Constants.FADE_OUT_DURATION_MS);
+    public static final int FADE_OUT_TAIL = Util.convertMsToSampleLength(Constants.FadeOutDurationMs_);
     private BlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
     private boolean isPlayerRunning_ = true;
 

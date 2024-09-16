@@ -13,7 +13,6 @@ public class SoundsLibrary
 {
     private final Map<Double, Map<Integer, SoundsCache>> leftSoundsLibrary_;
     private final Map<Double, Map<Integer, SoundsCache>> rightSoundsLibrary_;
-    private final Map<Double, SoundsCache> hitsLibrary_;
     private SoundType soundType_;
 
     private SoundsLibrary()
@@ -21,7 +20,6 @@ public class SoundsLibrary
         soundType_ = Constants.SOUND_TYPE;
         leftSoundsLibrary_ = new HashMap<>();
         rightSoundsLibrary_ = new HashMap<>();
-        hitsLibrary_ = new HashMap<>();
     }
 
     public static SoundsLibrary getInstance()
@@ -29,34 +27,23 @@ public class SoundsLibrary
         return InstanceHolder.INSTANCE;
     }
 
-    public SoundsCache getSoundsCache(boolean isLeft, double frequency, int durationMs)
+    public SoundsCache getSoundsCache(WaveType waveType, boolean isLeft, double scaleDegree, int durationMs)
     {
         Map<Double, Map<Integer, SoundsCache>> library = isLeft ? leftSoundsLibrary_ : rightSoundsLibrary_;
-        Map<Integer, SoundsCache> durationsMap = library.get(frequency);
+        Map<Integer, SoundsCache> durationsMap = library.get(scaleDegree);
         if (durationsMap == null)
         {
             durationsMap = new HashMap<>();
         }
-        library.put(frequency, durationsMap);
+        library.put(scaleDegree, durationsMap);
 
         SoundsCache soundsCache = durationsMap.get(durationMs);
         if (soundsCache == null)
         {
-            soundsCache = new SoundsCache(soundType_, frequency, durationMs, isLeft);
+            soundsCache = new SoundsCache(waveType, soundType_, scaleDegree, durationMs, isLeft);
             durationsMap.put(durationMs, soundsCache);
         }
         return soundsCache;
-    }
-
-    public SoundsCache getHitsCache(double frequency)
-    {
-        SoundsCache hitCache = hitsLibrary_.get(frequency);
-        if (hitCache == null)
-        {
-            hitCache = new SoundsCache(soundType_, frequency, 0, true);
-            hitsLibrary_.put(frequency, hitCache);
-        }
-        return hitCache;
     }
 
     private static class InstanceHolder

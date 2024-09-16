@@ -18,7 +18,7 @@ public class SavedWaveSupplier implements IWaveGenerator
 
     public SavedWaveSupplier()
     {
-        frequencyConverter_ = new FrequencyConverter();
+        frequencyConverter_ = new FrequencyConverter(WaveType.SOLFEGE);
         iterator_ = getNewIterator();
     }
 

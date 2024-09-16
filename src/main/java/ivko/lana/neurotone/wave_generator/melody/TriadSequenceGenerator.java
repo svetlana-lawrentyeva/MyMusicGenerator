@@ -1,11 +1,11 @@
-package ivko.lana.neurotone.wave_generator;
+package ivko.lana.neurotone.wave_generator.melody;
 
 import java.util.*;
 
 /**
  * @author Lana Ivko
  */
-public class TriadSequenceGenerator
+public class TriadSequenceGenerator implements ITriadSequenceGenerator
 {
     private Map<Triad, List<TriadSequence>> sequencesByStartAccord_;
     private Map<Triad, List<TriadSequence>> lastSequencesByStartAccord_;
@@ -18,17 +18,17 @@ public class TriadSequenceGenerator
         init();
     }
 
-    public TriadSequence generateNext(TriadSequence previous)
+    public Triad[] generateNext(Triad previous)
     {
         return generateNextImpl(sequencesByStartAccord_, previous);
     }
 
-    public TriadSequence generateLast(TriadSequence previous)
+    public Triad[] generateLast(Triad previous)
     {
         return generateNextImpl(lastSequencesByStartAccord_, previous);
     }
 
-    public TriadSequence generateNextImpl(Map<Triad, List<TriadSequence>> triadSequence, TriadSequence previous)
+    private Triad[] generateNextImpl(Map<Triad, List<TriadSequence>> triadSequence, Triad previous)
     {
         Triad startTriad;
         List<Triad> possibleStartTriads;
@@ -41,14 +41,22 @@ public class TriadSequenceGenerator
         }
         else
         {
-            Triad lastTriad = previous.sequences_[previous.sequences_.length - 1];
-            possibleStartTriads = endStartNoteSequenceConnections_.get(lastTriad);
+            possibleStartTriads = endStartNoteSequenceConnections_.get(previous);
             randomIndex = random_.nextInt(possibleStartTriads.size());
             startTriad = possibleStartTriads.get(randomIndex);
         }
         List<TriadSequence> triadSequences = triadSequence.get(startTriad);
-        randomIndex = random_.nextInt(triadSequences.size());
-        return triadSequences.get(randomIndex);
+        TriadSequence result;
+        if (triadSequences == null)
+        {
+            result = lastSequencesByStartAccord_.get(Triad.DOMINANT).get(0);
+        }
+        else
+        {
+            randomIndex = random_.nextInt(triadSequences.size());
+            result = triadSequences.get(randomIndex);
+        }
+        return result.getSequences();
     }
 
     private void init()

@@ -1,4 +1,4 @@
-package ivko.lana.neurotone.wave_generator;
+package ivko.lana.neurotone.wave_generator.melody;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +22,15 @@ public enum Triad
         scaleDegreeSequence_ = Arrays.asList(sequence);
     }
 
-    public List<Double> getFrequencySequence()
+    public List<Double> getScaleDegrees()
     {
-        List<Integer> scaleDegreeSequence = scaleDegreeSequence_;
-        return scaleDegreeSequence.stream()
-                .map(NoteGenerator::getScaleDegree)
+        return scaleDegreeSequence_.stream()
+                .map(scaleDegree -> (double) scaleDegree)
                 .collect(Collectors.toList());
+//        List<Integer> scaleDegreeSequence = scaleDegreeSequence_;
+//        return scaleDegreeSequence.stream()
+//                .map(NoteGenerator::getScaleDegree)
+//                .collect(Collectors.toList());
     }
 
     private List<Integer> scaleDegreeSequence_;

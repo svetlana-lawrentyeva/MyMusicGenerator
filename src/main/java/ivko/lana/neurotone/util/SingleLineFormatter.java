@@ -13,7 +13,9 @@ public class SingleLineFormatter extends Formatter
     public String format(LogRecord record)
     {
         // Форматируем строку как: Время - Уровень - Имя потока - Сообщение
-        return String.format("%1$tF %1$tT %2$-7s %3$-20s %4$s%n",
+        return String.format("%1$s%n %2$s%n %3$tF %3$tT %4$-7s %5$-20s %6$s%n",
+                record.getSourceClassName(),
+                record.getSourceMethodName(),
                 record.getMillis(),  // %1$ - время
                 record.getLevel().getLocalizedName(),  // %2$ - уровень
                 "[" + Thread.currentThread().getName() + "]",  // %3$ - имя потока в квадратных скобках

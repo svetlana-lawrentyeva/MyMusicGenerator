@@ -5,10 +5,7 @@ import ivko.lana.neurotone.StereoPlayer;
 import ivko.lana.neurotone.StereoSaver;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.video_generator.VideoSaver;
-import ivko.lana.neurotone.wave_generator.FrequencyConverter;
-import ivko.lana.neurotone.wave_generator.SavedWaveSupplier;
-import ivko.lana.neurotone.wave_generator.WaveDetail;
-import ivko.lana.neurotone.wave_generator.WaveGenerator;
+import ivko.lana.neurotone.wave_generator.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -256,7 +253,7 @@ public class VideoProcessor
     private static IWaveGenerator getMockGenerator()
     {
         Iterator<double[][]> iterator = generateNoteSequence().iterator();
-        FrequencyConverter frequencyConverter = new FrequencyConverter();
+        FrequencyConverter frequencyConverter = new FrequencyConverter(WaveType.SOLFEGE);
         return new IWaveGenerator()
         {
             @Override

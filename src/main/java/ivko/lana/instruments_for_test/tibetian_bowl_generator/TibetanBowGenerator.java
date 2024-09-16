@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class TibetanBowGenerator
 {
-    public static final String FILE_PATH = "tibetan_2_bowl_sound_with_dips_2.wav";
+    public static final String FILE_PATH = "tibetan_2_bowl_sound_with_dips_100.wav";
     private static final int SAMPLE_RATE = 44100;
 
     public static void main(String[] args)
