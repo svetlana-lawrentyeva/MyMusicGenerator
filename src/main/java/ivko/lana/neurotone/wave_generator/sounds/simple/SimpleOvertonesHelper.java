@@ -1,6 +1,6 @@
 package ivko.lana.neurotone.wave_generator.sounds.simple;
 
-import ivko.lana.neurotone.util.ShiftFactor;
+import ivko.lana.neurotone.util.ShiftMultipleFactor;
 import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
 
 /**
@@ -8,19 +8,19 @@ import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
  */
 public class SimpleOvertonesHelper implements IOvertoneHelper
 {
-    private static final ShiftFactor[] SIMPLE_SHIFT_FACTORS =
+    private static final ShiftMultipleFactor[] SIMPLE_SHIFT_FACTORS =
             {
-                    new ShiftFactor(1, 1, 1.5, 1)
+                    new ShiftMultipleFactor(1, 1, 1.5, 1)
             };
 
     @Override
-    public ShiftFactor[] getHarmonyShiftFactors()
+    public ShiftMultipleFactor[] getHarmonyShiftFactors()
     {
         return SIMPLE_SHIFT_FACTORS;
     }
 
     @Override
-    public ShiftFactor[] getHitShiftFactors()
+    public ShiftMultipleFactor[] getHitShiftFactors()
     {
         return SIMPLE_SHIFT_FACTORS;
     }

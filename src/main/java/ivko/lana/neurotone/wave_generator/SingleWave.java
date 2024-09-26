@@ -4,6 +4,10 @@ import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.sounds.Sound;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.TreeSet;
+
 /**
  * @author Lana Ivko
  */
@@ -54,14 +58,13 @@ public class SingleWave
                 {
                     short previousValue = samples[startFadeOutIndex + j];
                     short currentValue = sound.getSamples()[j];
-                    samples[startFadeOutIndex + j] = (short) Math.max(Math.min(previousValue + currentValue, Short.MAX_VALUE), Short.MIN_VALUE);
+                    samples[startFadeOutIndex + j] = Util.getLimitedValue(previousValue + currentValue);
                 }
 
                 System.arraycopy(sound.getSamples(), fadeOutLength, samples, lastEndIndex, sound.getSamples().length - fadeOutLength);
                 lastEndIndex += sound.getSamples().length - fadeOutLength;
             }
         }
-
         return samples;
     }
 }

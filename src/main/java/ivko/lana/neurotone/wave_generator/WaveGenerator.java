@@ -39,11 +39,11 @@ public class WaveGenerator implements IWaveGenerator
         {
             int tailDefiner = seconds_ % 10;
             String tail = tailDefiner == 1 && (seconds_ < 10 || seconds_ > 20)
-                    ? ""
+                    ? "у"
                     : tailDefiner > 1 && tailDefiner < 5 && (seconds_ < 10 || seconds_ > 20)
-                    ? "а"
-                    : "ов";
-            logger.info(String.format("Осталось сгенерировать %s фрагмент%s", seconds_, tail));
+                    ? "ы"
+                    : "";
+            logger.info(String.format("Осталось сгенерировать %s секунд%s", seconds_, tail));
             double[][] notes = notesDistributor_.getNotes();
 
             seconds_ -= calculateNotesDuration(notes);

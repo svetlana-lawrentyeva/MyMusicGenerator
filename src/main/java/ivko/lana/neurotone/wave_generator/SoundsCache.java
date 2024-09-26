@@ -1,8 +1,7 @@
 package ivko.lana.neurotone.wave_generator;
 
 import ivko.lana.neurotone.processing.Constants;
-import ivko.lana.neurotone.util.ShiftFactor;
-import ivko.lana.neurotone.wave_generator.melody.NoteGenerator;
+import ivko.lana.neurotone.util.IShiftFactor;
 import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
 import ivko.lana.neurotone.wave_generator.sounds.Sound;
 import ivko.lana.neurotone.wave_generator.sounds.SoundType;
@@ -20,12 +19,12 @@ public class SoundsCache
     public SoundsCache(WaveType waveType, SoundType soundType, double scaleDegree, int durationMs, boolean isLeft)
     {
         IOvertoneHelper overtoneHelper = soundType.getOvertoneHelper();
-        ShiftFactor[] harmonyShiftFactors = overtoneHelper.getHarmonyShiftFactors();
+        IShiftFactor[] harmonyShiftFactors = overtoneHelper.getHarmonyShiftFactors();
         soundsByOvertones_ = new HashMap<>();
 
         for (int i = 0; i < harmonyShiftFactors.length; ++i)
         {
-            ShiftFactor shiftFactor = harmonyShiftFactors[i];
+            IShiftFactor shiftFactor = harmonyShiftFactors[i];
             double baseFrequency = scaleDegree == 0 ? 0 : waveType.getNoteDistributor().getFrequency((int) scaleDegree);
             double overtoneFrequency = shiftFactor.calculate(baseFrequency);
             double amplitude = shiftFactor.getAmplitude();
@@ -53,7 +52,7 @@ public class SoundsCache
         private final double amplitude_;
         private final int durationsMs_;
         private final boolean isLeft_;
-        private final double phaseMultiplier;
+        private final double phaseMultiplier_;
 
         public SoundDetails(double frequency, double amplitude, int durationsMs, boolean isLeft, double phaseMultiplier)
         {
@@ -61,7 +60,7 @@ public class SoundsCache
             amplitude_ = amplitude;
             durationsMs_ = durationsMs;
             isLeft_ = isLeft;
-            this.phaseMultiplier = phaseMultiplier;
+            phaseMultiplier_ = phaseMultiplier;
         }
 
         public double getFrequency()
@@ -86,7 +85,7 @@ public class SoundsCache
 
         public double getPhaseMultiplier()
         {
-            return phaseMultiplier;
+            return phaseMultiplier_;
         }
     }
 }

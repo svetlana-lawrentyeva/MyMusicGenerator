@@ -3,14 +3,12 @@ package ivko.lana.neurotone.wave_generator.sounds.tibetan;
 import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
-import ivko.lana.neurotone.wave_generator.SoundsCache;
-import ivko.lana.neurotone.wave_generator.sounds.Sound;
 import ivko.lana.neurotone.wave_generator.sounds.SoundType;
 import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleClearSamplesCreator;
 import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleSamplesCreator;
-import org.bytedeco.libfreenect._freenect_context;
 
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -41,7 +39,23 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         return (TibetanClearSamplesCreator) super.getClearSamplesCreator();
     }
 
+    @Override
     public short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, double phaseMultiplier, int overtoneIndex)
+    {
+        short[] samples1 = createSamplesImpl(durationMs, frequency, amplitude, isLeft, phaseMultiplier, overtoneIndex);
+        short[] samples2 = createSamplesImpl(durationMs, frequency + frequency * 0.01, amplitude * 0.25, isLeft, phaseMultiplier, overtoneIndex);
+        short[] samples3 = createSamplesImpl(durationMs, frequency + frequency * 0.015, amplitude * 0.125, isLeft, phaseMultiplier, overtoneIndex);
+        short[] samples4 = createSamplesImpl(durationMs, frequency + frequency * 0.02, amplitude * 0.0625, isLeft, phaseMultiplier, overtoneIndex);
+        short[] samples5 = createSamplesImpl(durationMs, frequency + frequency * 0.03, amplitude * 0.0325, isLeft, phaseMultiplier, overtoneIndex);
+        samples1 = Util.combineSamples(samples1, samples2);
+        samples1 = Util.combineSamples(samples1, samples3);
+        samples1 = Util.combineSamples(samples1, samples4);
+        samples1 = Util.combineSamples(samples1, samples5);
+
+        return samples1;
+    }
+
+    private short[] createSamplesImpl(int durationMs, double frequency, double amplitude, boolean isLeft, double phaseMultiplier, int overtoneIndex)
     {
         amplitude *= 0.4;
         double multiplier = (isLeft ? LEFT_MULTIPLIER : RIGHT_MULTIPLIER) * phaseMultiplier ;
@@ -78,22 +92,34 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         double phaseShift3 = 2 * angularFrequency / 3; // сдвиг на две трети пульсации
 
         short[] baseSignal = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift1);
-        baseSignal = applyEffects(baseSignal, pulsation, multiplier);
+        if (overtoneIndex < 2)
+        {
+            baseSignal = Util.addPulsation(baseSignal, pulsation, multiplier, 0);
+        }
 
         short[] baseSignal2 = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift2);
-        baseSignal2 = applyEffects(baseSignal2, Constants.BASE_PULSATION_SPEED, multiplier);
+        if (overtoneIndex < 2)
+        {
+            baseSignal2 = Util.addPulsation(baseSignal2, Constants.BASE_PULSATION_SPEED, multiplier, 0);
+        }
 
         short[] baseSignal3 = getClearSamplesCreator().createClearSamples(durationMs, frequency, amplitude, phaseShift3);
-        baseSignal3 = applyEffects(baseSignal3, Constants.BASE_PULSATION_SPEED, multiplier);
+        if (overtoneIndex < 2)
+        {
+            baseSignal3 = Util.addPulsation(baseSignal3, Constants.BASE_PULSATION_SPEED, multiplier, 0);
+        }
 
         baseSignal = Util.combineSamples(baseSignal, baseSignal2);
         baseSignal = Util.combineSamples(baseSignal, baseSignal3);
 
-        baseSignal = applyEffects(baseSignal, Constants.BASE_PULSATION_SPEED, multiplier);
+        if (overtoneIndex < 2)
+        {
+            baseSignal = Util.addPulsation(baseSignal, Constants.BASE_PULSATION_SPEED, multiplier, 0);
+        }
 //        baseSignal = applyVibrationEffect(baseSignal, 1 / multiplier);
         getClearSamplesCreator().setDurationFadeInFactor(1);
         getClearSamplesCreator().setDurationFadeOutFactor(0.5 + 0.125 * overtoneIndex);
-        short[] phoneSignal = getClearSamplesCreator().createClearSamples(durationMs - (overtoneIndex * 250), frequency, amplitude * 0.3);
+        short[] phoneSignal = getClearSamplesCreator().createClearSamples(durationMs - (overtoneIndex * 250), frequency, amplitude * 0.1);
 //        phoneSignal = applyVibrationEffect(phoneSignal, 0.0015);
         baseSignal = Util.combineSamples(baseSignal, phoneSignal);
 
@@ -102,6 +128,7 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
             short[] hitSignal = prepareHitSignal(frequency, amplitude);
             baseSignal = Util.combineSamples(baseSignal, hitSignal);
         }
+
         return baseSignal;
     }
 
@@ -113,9 +140,13 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
         durationHitMs = (int) Math.max(durationHitMs, Constants.PAUSE_DURATION_MS + Constants.SMALL_AMPLITUDES_DURATION_MS + durationHitMs);
         getClearSamplesCreator().setDurationFadeInFactor(durationFadeInFactor);
         getClearSamplesCreator().setDurationFadeOutFactor(durationFadeOutFactor);
-        short[] baseSignalForHit = getClearSamplesCreator().createClearSamples(durationHitMs, frequency, amplitude * 0.5);
+        short[] baseSignalForHit = getClearSamplesCreator().createClearSamples(durationHitMs, frequency, amplitude * 3);
+//        short[] hitSignal = new short[baseSignalForHit.length];
         short[] hitSignal = getHit(frequency);
         hitSignal = Util.combineSamples(hitSignal, baseSignalForHit);
+        Random random = new Random();
+        double leftVolume = random.nextDouble();
+        hitSignal = Util.changeLeftRightBalance(hitSignal, leftVolume);
         return hitSignal;
     }
 

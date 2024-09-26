@@ -20,6 +20,8 @@ public class AudioSaver extends StereoSaver
 {
     private static final Logger logger = CustomLogger.getLogger(AudioSaver.class.getName());
 
+    public static final String OUTPUT_DIRECTORY = "";
+
     public static String FileName_ = "generated.wav";
     private AudioFormat format_;
     private long dataSize = 0; // отслеживание размера данных
@@ -53,7 +55,7 @@ public class AudioSaver extends StereoSaver
     @Override
     protected String getFileName()
     {
-        return FileName_;
+        return OUTPUT_DIRECTORY + FileName_;
     }
 
     public static String getAudioFileName()

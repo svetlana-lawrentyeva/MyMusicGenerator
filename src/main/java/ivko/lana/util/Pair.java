@@ -37,6 +37,6 @@ public class Pair<T, U>
     @Override
     public String toString()
     {
-        return "Pair{" + first_ + ", " + second_ + '}';
+        return String.format("{%s : %s}", first_, second_);
     }
 }

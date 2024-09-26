@@ -9,6 +9,7 @@ import ivko.lana.neurotone.wave_generator.WaveGenerator;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.FrequencyConverter;
+import org.apache.commons.math3.analysis.function.Min;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,11 +51,17 @@ public class TibetanGenerator
 
         try
         {
-            while (waveGenerator_.generateMusic())
+            long leftMs = Minutes_ * 60 * 1000;
+            logger.info(String.format("Before generating we have %s (%s s, %s min) ms left", leftMs, leftMs / 1000, leftMs / 1000 / 60));
+            do
             {
+                waveGenerator_.generateMusic();
                 // Создаем новый CountDownLatch с количеством стереоплееров
                 CountDownLatch latch = new CountDownLatch(stereoPlayers_.size());
                 CountDownLatch startSignal = new CountDownLatch(1); // Для одновременного запуска потоков
+
+                WaveDetail leftChannel = waveGenerator_.getLeftChannel();
+                WaveDetail rightChannel = waveGenerator_.getRightChannel();
 
                 for (StereoPlayer player : stereoPlayers_)
                 {
@@ -64,7 +71,8 @@ public class TibetanGenerator
                         {
                             startSignal.await(); // Ожидание сигнала на запуск всех потоков
                             processesCounter_.incrementAndGet();
-                            player.processData(waveGenerator_.getLeftChannel(), waveGenerator_.getRightChannel());
+                            player.processData(leftChannel, rightChannel);
+                            logger.info(String.format("Player processed %s seconds", leftChannel.getSamples().length / Constants.SAMPLE_RATE));
                         }
                         catch (Throwable e)
                         {
@@ -78,6 +86,10 @@ public class TibetanGenerator
                         }
                     });
                 }
+                long createdMs = Util.convertSampleLengthToMs(leftChannel.getSamples().length) - Constants.FadeOutDurationMs_;
+                leftMs -= createdMs;
+                logger.info(String.format("After generating %s (%s s, %s min) ms we have %s (%s s, %s min) ms left",
+                        createdMs, createdMs / 1000, createdMs / 1000 / 60, leftMs, leftMs / 1000, leftMs / 1000 / 60));
 
                 // Все потоки готовы, даем стартовый сигнал
                 startSignal.countDown();
@@ -85,6 +97,7 @@ public class TibetanGenerator
                 // Ожидаем завершения всех потоков в текущей итерации
                 latch.await();
             }
+            while (leftMs + Constants.FadeOutDurationMs_ >= 0);
         }
         catch (Throwable e)
         {
@@ -168,7 +181,7 @@ public class TibetanGenerator
     {
         return isMock
                 ? getMockGenerator()
-                : new WaveGenerator(MINUTES);
+                : new WaveGenerator(Minutes_);
     }
 
     private static IWaveGenerator getMockGenerator()
@@ -204,35 +217,30 @@ public class TibetanGenerator
 
     private static List<double[][]> generateNoteSequence()
     {
-        double[][] notes1 =
-                {
-                        {1.0, 5000.0},
-                        {0.0, 5000.0},
-                        {3.0, 5000.0},
-                        {5.0, 5000.0},
-                        {2.0, 5000.0},
-                        {4.0, 5000.0},
-                        {0.0, 5000.0},
-                        {6.0, 5000.0}
-                };
-        double[][] notes2 =
-                {
-                        {3.0, 5000.0},
-                        {5.0, 5000.0},
-                        {0.0, 5000.0},
-                        {7.0, 5000.0}
-                };
-        double[][] notes3 =
-                {
-                        {2.0, 5000.0},
-                        {4.0, 5000.0},
-                        {6.0, 5000.0},
-                        {0.0, 5000.0},
-                        {2.0, 5000.0},
-                        {0.0, 5000.0},
-                        {4.0, 5000.0},
-                        {6.0, 5000.0}
-                };
+//        double[][] notes1 =
+//                {
+//                        {1.0, 5000.0},
+//                        {3.0, 5000.0},
+//                        {5.0, 5000.0},
+//                        {2.0, 5000.0},
+//                        {4.0, 5000.0},
+//                        {6.0, 5000.0}
+//                };
+//        double[][] notes2 =
+//                {
+//                        {3.0, 5000.0},
+//                        {5.0, 5000.0},
+//                        {7.0, 5000.0}
+//                };
+//        double[][] notes3 =
+//                {
+//                        {2.0, 5000.0},
+//                        {4.0, 5000.0},
+//                        {6.0, 5000.0},
+//                        {2.0, 5000.0},
+//                        {4.0, 5000.0},
+//                        {6.0, 5000.0}
+//                };
 //        double[][] notes2 = {
 //                {243.0, 2000.0},
 //                {288.0, 2000.0},
@@ -244,12 +252,23 @@ public class TibetanGenerator
 //                {405.0, 2000.0},
 //                {243.0, 2000.0}
 //        };
+        double[][] notes1 = {
+                {1, 12000},
+                {2, 12000},
+                {1, 12000},
+                {2, 12000},
+                {3, 12000},
+        };
 //        double[][] notes1 = {
-//                {136.1, 1000},
-////                {150, 1000}
-//        };
-//        double[][] notes1 = {
-//                {1, 1000}
+//                {1, 5000},
+//                {2, 5000},
+//                {3, 5000},
+//                {4, 5000},
+//                {5, 5000},
+//                {6, 5000},
+//                {7, 5000},
+//                {8, 5000},
+//                {9, 5000},
 //        };
 //        double[][] notes = {
 //                {432.0, 2000.0},
@@ -271,8 +290,8 @@ public class TibetanGenerator
 
         List<double[][]> noteSequence = new ArrayList<>();
         noteSequence.add(notes1);
-        noteSequence.add(notes2);
-        noteSequence.add(notes3);
+//        noteSequence.add(notes2);
+//        noteSequence.add(notes3);
 
         try
         {
@@ -289,23 +308,32 @@ public class TibetanGenerator
         return noteSequence;
     }
 
-    private static final int MINUTES = 1;
-    private static final boolean IS_MOCK = false;
+    private static int Minutes_ = 1;
+    public static final boolean IS_MOCK = false;
     public static void main(String[] args)
     {
+        String minutesProperty = System.getProperty("minutes", "1");
+        String baseFrequencyProperty = System.getProperty("baseFrequency", "174");
+//        String baseFrequencyProperty = System.getProperty("baseFrequency", "963");
+//        String baseFrequencyProperty = System.getProperty("baseFrequency", "741");
+        String offsetProperty = System.getProperty("offset", "0");
+
+        Minutes_ = Integer.parseInt(minutesProperty);
+        double baseFrequency = Double.parseDouble(baseFrequencyProperty);
+        double offset = Double.parseDouble(offsetProperty);
+
         NotesSerializer.initialize();
-        double baseFrequency = 432;
-        Constants.setBaseFrequency(baseFrequency);
-        Constants.setPulsationDepth(1f);
+        Constants.setOneTone(true);
+//        Constants.setPulsationDepth(1f);
         Constants.setPulsationSpeedFactor(0.4f);
         Constants.setVibrationFactor(1);
         Constants.setBeatDurationMs(4000);
         Constants.setSeparation(false);
-        Constants.setOneTone(false);
+        Constants.setBaseFrequency(baseFrequency);
         Constants.setWaveType(WaveType.SOLFEGE);
 //        Constants.setUnitizationDividerFactor(0.5);
 //        Constants.setFadeOutDurationMs(6000);
-//        Constants.setFrequencyOffset(3);
+        Constants.setFrequencyOffset(offset);
         Constants.setScaleDegreeType(NoteGenerator.ScaleDegreeType.MAJOR);
 
         TibetanGenerator generator = new TibetanGenerator(GeneratorType.AUDIO, Mode.PLAY, () -> getWaveGenerator(IS_MOCK));
