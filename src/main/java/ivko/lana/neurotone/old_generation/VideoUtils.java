@@ -13,9 +13,9 @@ public class VideoUtils
 
     public static final String ffmpegPath = "C:\\ffmpeg\\bin\\ffmpeg";
     public static final String ffprobePath = "C:\\ffmpeg\\bin\\ffprobe";
-    public static final String videoFilePath = "D:\\VIDEO\\ANKULISTKA\\binaurals\\174Hz.mov";
+    public static final String videoFilePath = "F:\\VIDEO\\ANKULISTKA\\binaurals\\174Hz.mov";
     public static final String frequencyFilePath = "/frequencies_test.txt";
-    public static final String outputDirectory = "D:\\VIDEO\\ANKULISTKA\\binaurals\\results\\";
+    public static final String outputDirectory = "F:\\VIDEO\\ANKULISTKA\\binaurals\\results\\";
 
     public static double getVideoDuration(String ffprobePath, String videoFilePath)
     {

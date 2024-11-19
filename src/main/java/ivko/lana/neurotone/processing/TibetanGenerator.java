@@ -323,7 +323,7 @@ public class TibetanGenerator
         double offset = Double.parseDouble(offsetProperty);
 
         NotesSerializer.initialize();
-        Constants.setOneTone(true);
+        Constants.setOneTone(false);
 //        Constants.setPulsationDepth(1f);
         Constants.setPulsationSpeedFactor(0.4f);
         Constants.setVibrationFactor(1);

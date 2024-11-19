@@ -93,7 +93,7 @@ public class AudioAnalyzer
         String[] filePaths = {
 //                "C:\\Users\\slana\\Downloads\\example.wav",
 //                "C:\\Users\\slana\\Downloads\\example1.wav",
-                "D:/VIDEO/NEUROTONE/EXAMPLE.wav"
+                "F:/VIDEO/NEUROTONE/EXAMPLE.wav"
         };
 
         try (PrintWriter writer = new PrintWriter(new FileWriter("analysis_FrequencyAndMagnitude.txt", true)))

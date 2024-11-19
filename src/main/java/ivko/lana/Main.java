@@ -17,8 +17,8 @@ public class Main
         VisualFrame frame = new VisualFrame();
         frame.setVisible(true);
 
-//        String directoryPath = "D:\\VIDEO\\зая умный"; // Replace with your directory path
-//        String directoryPath = "D:\\VIDEO\\TEST"; // Rep lace with your directory path
+//        String directoryPath = "F:\\VIDEO\\зая умный"; // Replace with your directory path
+//        String directoryPath = "F:\\VIDEO\\TEST"; // Rep lace with your directory path
 //        renameFiles(directoryPath);
 
 

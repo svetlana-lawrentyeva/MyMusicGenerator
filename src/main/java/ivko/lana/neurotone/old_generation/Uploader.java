@@ -17,12 +17,12 @@ public class Uploader
 
     private static final String FFMPEG_PATH = "C:\\ffmpeg\\bin\\ffmpeg";
     private static final String FFPROBE_PATH = "C:\\ffmpeg\\bin\\ffprobe";
-    public static final String SOURCE_PATH = "D:\\VIDEO\\ANKULISTKA\\binaurals\\source\\";
+    public static final String SOURCE_PATH = "F:\\VIDEO\\ANKULISTKA\\binaurals\\source\\";
     private static final String VIDEO_FILE_NAME = "delta_base.mp4";
     private static final String TEST_VIDEO_FILE_NAME = "1_minute_blue.mov";
-    private static final String OUTPUT_DIRECTORY = "D:\\VIDEO\\ANKULISTKA\\binaurals\\results\\";
+    private static final String OUTPUT_DIRECTORY = "F:\\VIDEO\\ANKULISTKA\\binaurals\\results\\";
     public static final String LOG_CREATE_VIDEO_FILE_NAME = "createdVideos.txt";
-    private static final String TEST_OUTPUT_DIRECTORY = "D:\\VIDEO\\ANKULISTKA\\binaurals\\result_for_test\\";
+    private static final String TEST_OUTPUT_DIRECTORY = "F:\\VIDEO\\ANKULISTKA\\binaurals\\result_for_test\\";
 
     private final String videoFilePath_;
 
