@@ -15,7 +15,7 @@ public class Constants
     public static final boolean NEED_ADDITIONAL_EFFECTS = true;
     public static final String ADDITIONAL_EFFECTS_PATH = "F:/VIDEO/EFFECTS/";
     public static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
-    public static final int HIT_DURATION_MS = 8000; // Длительность затухания удара
+    public static final int HIT_DURATION_MS = 4000; // Длительность затухания удара
     public static final int PAUSE_DURATION_MS = (int) (1000 * 0.09317); // Длительность паузы
     public static final int SMALL_AMPLITUDES_DURATION_MS = (int) (1000 * (0.129545 - 0.09317)); // Длительность маленьких колебаний
     public static final int FADE_IN_DURATION_MS = 400; // Длительность нарастания

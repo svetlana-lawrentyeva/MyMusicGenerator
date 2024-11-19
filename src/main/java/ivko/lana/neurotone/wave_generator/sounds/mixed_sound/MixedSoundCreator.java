@@ -158,7 +158,7 @@ public class MixedSoundCreator implements ISamplesCreator
                 logger.info(String.format("currentCounter: %s", currentCounter));
                 int currentSoundQty = random_.nextInt(currentCounter) + 1;
                 int shift = (random_.nextInt(currentCounter / currentSoundQty) + 1) * oneBeatDurationMs;
-                short[] tibetanBaseSamples = tibetanSamplesCreator_.createHitSamples(currentFrequency, amplitude_ * 2);
+                short[] tibetanBaseSamples = tibetanSamplesCreator_.createHitSamples(currentFrequency, amplitude_);
                 short[] totalSoundSamples = new short[tibetanBaseSamples.length + shift * (currentSoundQty - 1)];
                 int currentShift = 0;
                 for (int j = 0; j < currentSoundQty; ++j)
