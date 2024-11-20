@@ -253,7 +253,7 @@ public class VideoProcessor
     private static IWaveGenerator getMockGenerator()
     {
         Iterator<double[][]> iterator = generateNoteSequence().iterator();
-        FrequencyConverter frequencyConverter = new FrequencyConverter(WaveType.SOLFEGE);
+        FrequencyConverter frequencyConverter = new FrequencyConverter(Constants.WaveType_);
         return new IWaveGenerator()
         {
             @Override

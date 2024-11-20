@@ -55,7 +55,20 @@ public class AudioSaver extends StereoSaver
     @Override
     protected String getFileName()
     {
-        return OUTPUT_DIRECTORY + FileName_;
+        return OUTPUT_DIRECTORY + getFileNameImpl();
+    }
+
+    private String getFileNameImpl()
+    {
+        if (FileName_ == null)
+        {
+            FileName_ = Constants.WaveType_.generateFileName();
+        }
+        if (FileName_ == null)
+        {
+            FileName_ = "generated.wav";
+        }
+        return FileName_;
     }
 
     public static String getAudioFileName()
@@ -75,7 +88,7 @@ public class AudioSaver extends StereoSaver
     {
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
-        int totalSamples = leftChannel.length; // Предполагается, что длина обоих каналов одинакова
+        int totalSamples = Math.min(leftChannel.length, rightChannel.length);
         byte[] stereoByteArray = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
 
         for (int i = 0; i < totalSamples; i++)

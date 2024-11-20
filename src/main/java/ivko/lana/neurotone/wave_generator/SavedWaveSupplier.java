@@ -1,6 +1,7 @@
 package ivko.lana.neurotone.wave_generator;
 
 import ivko.lana.neurotone.IWaveGenerator;
+import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.processing.NotesSerializer;
 
 import java.util.Iterator;
@@ -18,7 +19,7 @@ public class SavedWaveSupplier implements IWaveGenerator
 
     public SavedWaveSupplier()
     {
-        frequencyConverter_ = new FrequencyConverter(WaveType.SOLFEGE);
+        frequencyConverter_ = new FrequencyConverter(Constants.WaveType_);
         iterator_ = getNewIterator();
     }
 

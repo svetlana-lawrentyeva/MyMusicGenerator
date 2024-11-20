@@ -33,25 +33,41 @@ public class SolfegeNotesDistributor implements INotesDistributor
         random_ = new Random();
         if (Constants.OneTone_)
         {
-            activeFrequencies_ = new double[] {Constants.BaseFrequency_};
+            activeFrequencies_ = new double[]{Constants.BaseFrequency_};
         }
         else
         {
-            int length = TibetanGenerator.IS_MOCK ? SOLFEGE_FREQUENCIES.length : random_.nextInt(SOLFEGE_FREQUENCIES.length - MIN_NUMBER) + MIN_NUMBER;
-//            int length = MIN_NUMBER;
+//            int length = TibetanGenerator.IS_MOCK ? SOLFEGE_FREQUENCIES.length : random_.nextInt(SOLFEGE_FREQUENCIES.length - MIN_NUMBER) + MIN_NUMBER;
+            int length = MIN_NUMBER;
             activeFrequencies_ = new double[length];
             int startIndex = TibetanGenerator.IS_MOCK ? 0 : random_.nextInt(SOLFEGE_FREQUENCIES.length - length);
             System.arraycopy(SOLFEGE_FREQUENCIES, startIndex, activeFrequencies_, 0, length);
 //            System.arraycopy(SOLFEGE_FREQUENCIES, 3, activeFrequencies_, 0, length);
         }
+    }
 
+    @Override
+    public String generateFileName()
+    {
         String frequencies = Arrays.stream(activeFrequencies_).mapToObj(String::valueOf).collect(Collectors.joining("_"));
         logger.info(String.format("Frequencies: %s", frequencies));
-        AudioSaver.setFileName(frequencies + ".wav");
+        return frequencies + ".wav";
     }
 
     @Override
     public double[][] getLastNotes()
+    {
+        return getNotes();
+    }
+
+    @Override
+    public double[][] getNotesForLeftChannel()
+    {
+        return getNotes();
+    }
+
+    @Override
+    public double[][] getNotesForRightChannel()
     {
         return getNotes();
     }

@@ -4,7 +4,6 @@ import ivko.lana.neurotone.IWaveGenerator;
 import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.processing.NotesSerializer;
 import ivko.lana.neurotone.util.CustomLogger;
-import ivko.lana.neurotone.wave_generator.melody.MelodyNotesDistributor;
 import ivko.lana.neurotone.wave_generator.melody.Triad;
 import ivko.lana.neurotone.wave_generator.melody.TriadSequenceGenerator;
 
@@ -44,29 +43,71 @@ public class WaveGenerator implements IWaveGenerator
                     ? "ы"
                     : "";
             logger.info(String.format("Осталось сгенерировать %s секунд%s", seconds_, tail));
-            double[][] notes = notesDistributor_.getNotes();
-
-            seconds_ -= calculateNotesDuration(notes);
-            if (seconds_ < 0)
+            if (Constants.IsSeparatedChannels_)
             {
-                notes = addLastNotes(notes);
-            }
-            logger.info(getLogMessage(notes));
-            try
-            {
-                NotesSerializer.getInstance().serializeToCSV(notes);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-            if (Constants.IsSeparated_)
-            {
+                double[][] notesForLeftChannel = notesDistributor_.getNotes();
                 double[][] notesForRightChannel = notesDistributor_.getNotes();
-                frequencyConverter_.convert(notes, notesForRightChannel);
+                int leftSeconds = calculateNotesDuration(notesForLeftChannel);
+                int rightSeconds = calculateNotesDuration(notesForRightChannel);
+                seconds_ -= Math.min(leftSeconds, rightSeconds);
+                if (seconds_ < 0)
+                {
+                    notesForLeftChannel = addLastNotes(notesForLeftChannel);
+                    notesForRightChannel = addLastNotes(notesForRightChannel);
+                }
+                try
+                {
+                    NotesSerializer.getInstance().serializeToCSV(notesForLeftChannel);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                logger.info("Left channel: " + getLogMessage(notesForLeftChannel));
+                logger.info("Right channel: " + getLogMessage(notesForRightChannel));
+                frequencyConverter_.convert(notesForLeftChannel, notesForRightChannel);
+            }
+            else if (Constants.IsSeparatedMelodies_)
+            {
+                double[][] notesForLeftChannel = notesDistributor_.getNotesForLeftChannel();
+                double[][] notesForRightChannel = notesDistributor_.getNotesForRightChannel();
+                int leftSeconds = calculateNotesDuration(notesForLeftChannel);
+                int rightSeconds = calculateNotesDuration(notesForRightChannel);
+                seconds_ -= Math.min(leftSeconds, rightSeconds);
+                if (seconds_ < 0)
+                {
+                    notesForLeftChannel = addLastNotes(notesForLeftChannel);
+                    notesForRightChannel = addLastNotes(notesForRightChannel);
+                }
+                try
+                {
+                    NotesSerializer.getInstance().serializeToCSV(notesForLeftChannel);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                logger.info("Left channel: " + getLogMessage(notesForLeftChannel));
+                logger.info("Right channel: " + getLogMessage(notesForRightChannel));
+                frequencyConverter_.convert(notesForLeftChannel, notesForRightChannel);
             }
             else
             {
+                double[][] notes = notesDistributor_.getNotes();
+                seconds_ -= calculateNotesDuration(notes);
+                if (seconds_ < 0)
+                {
+                    notes = addLastNotes(notes);
+                }
+                try
+                {
+                    NotesSerializer.getInstance().serializeToCSV(notes);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                logger.info(getLogMessage(notes));
                 frequencyConverter_.convert(notes);
             }
             result = true;

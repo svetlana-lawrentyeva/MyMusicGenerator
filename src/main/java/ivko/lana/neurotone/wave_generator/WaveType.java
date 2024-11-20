@@ -1,5 +1,6 @@
 package ivko.lana.neurotone.wave_generator;
 
+import ivko.lana.neurotone.audio_generator.AudioSaver;
 import ivko.lana.neurotone.wave_generator.melody.MelodyNotesDistributor;
 import ivko.lana.neurotone.wave_generator.solfege.SolfegeNotesDistributor;
 
@@ -16,6 +17,11 @@ public enum WaveType
     public INotesDistributor getNoteDistributor()
     {
         return notesDistributor_;
+    }
+
+    public String generateFileName()
+    {
+        return notesDistributor_.generateFileName();
     }
 
     WaveType(INotesDistributor notesDistributor)

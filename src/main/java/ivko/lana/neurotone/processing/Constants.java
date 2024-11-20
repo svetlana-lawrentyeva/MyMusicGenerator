@@ -26,8 +26,10 @@ public class Constants
     public static double FrequencyOffset_ = 0.0; // Коэффициент для управления скоростью пульсации
     public static double BaseFrequency_ = -1;
     public static double BeatDurationMs_ = 4000.0;
-    public static int FadeOutDurationMs_ = 10000; // Длительность затухания
-    public static boolean IsSeparated_ = false;
+    public static int FadeOutDurationMs_ = 6000; // Длительность затухания
+    public static boolean IsSeparatedChannels_ = false;
+    public static boolean IsSeparatedMelodies_ = false;
+    public static boolean UsePause_ = true;
     public static boolean OneTone_ = false;
 
     public static double UnitizationDividerFactor_ = 1;
@@ -74,9 +76,19 @@ public class Constants
         UnitizationDividerFactor_ = unitizationDividerFactor;
     }
 
-    public static void setSeparation(boolean isSeparated)
+    public static void setSeparationChannels(boolean isSeparated)
     {
-        IsSeparated_ = isSeparated;
+        IsSeparatedChannels_ = isSeparated;
+    }
+
+    public static void setSeparationMelodies(boolean isSeparated)
+    {
+        IsSeparatedMelodies_ = isSeparated;
+    }
+
+    public static void setUsePause(boolean usePause)
+    {
+        UsePause_ = usePause;
     }
 
     public static void setOneTone(boolean oneTone)
