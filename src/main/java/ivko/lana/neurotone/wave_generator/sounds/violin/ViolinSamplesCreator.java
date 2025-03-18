@@ -56,7 +56,7 @@ public class ViolinSamplesCreator implements ISamplesCreator
             short[] additionalSamples = additionalSamplesConverter_ != null ? additionalSamplesConverter_.apply(chordDetail) : null;
             int additionalBeats = additionalSamples == null
                     ? 0
-                    : (int) (beatMs * (additionalSamples.length / Constants.SAMPLE_RATE) / 1000);
+                    : (int) (((additionalSamples.length / Constants.SAMPLE_RATE) * 1000) / beatMs);
             int beats = Math.max(chordDetail.getBeats(), additionalBeats);
             short[] samples = chordCreator.createSamples(chord, beats * beatMs, phaseMultiplier, overtoneIndex);
             if (additionalSamples != null)

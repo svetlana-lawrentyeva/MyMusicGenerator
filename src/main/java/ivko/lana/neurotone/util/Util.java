@@ -147,6 +147,11 @@ public class Util
         return (short) Math.max(Math.min(originalValue, Short.MAX_VALUE), Short.MIN_VALUE);
     }
 
+    public static int getLimitedIntValue(int originalValue)
+    {
+        return Math.max(Math.min(originalValue, Integer.MAX_VALUE), Integer.MIN_VALUE);
+    }
+
 
     public static short[] addPulsation(short[] samples, double basePulsationSpeed, double multiplier, double phaseShift)
     {
@@ -168,6 +173,32 @@ public class Util
 
             // Ограничение значений
             channel[i] = Util.getLimitedValue(channel[i]);
+        }
+
+        return channel;
+    }
+
+
+    public static int[] addPulsation(int[] samples, double basePulsationSpeed, double multiplier, double phaseShift)
+    {
+        int totalSamples = samples.length;
+        int[] channel = new int[totalSamples];
+
+        for (int i = 0; i < totalSamples; i++)
+        {
+            double panning = createPanning(basePulsationSpeed, multiplier, i, phaseShift);
+
+            // Усиливаем влияние пульсации на переходах
+            double enhancedPanning = 0.5 * (1.0 - Math.sin(Math.PI * panning)); // Используем синус для сглаживания
+
+            // Дополнительно усиливаем амплитуду в точках перехода
+            double transitionEnhancement = 1.0 + 0.2 * Math.abs(Math.sin(Math.PI * panning)); // Увеличение на 20% в точках перехода
+
+            // Применение сглаженной пульсации с утолщением переходов
+            channel[i] = (short) (samples[i] * (1.0 - enhancedPanning) * transitionEnhancement);
+
+            // Ограничение значений
+            channel[i] = Util.getLimitedIntValue(channel[i]);
         }
 
         return channel;

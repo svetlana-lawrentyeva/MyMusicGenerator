@@ -326,7 +326,7 @@ public class TibetanGenerator
 //        Constants.setPulsationDepth(1f);
         Constants.setPulsationSpeedFactor(0.4f);
         Constants.setVibrationFactor(1);
-        Constants.setBeatDurationMs(2000);
+        Constants.setBeatDurationMs(6000);
         Constants.setSeparationChannels(false);
         Constants.setSeparationMelodies(true);
         Constants.setUsePause(false);

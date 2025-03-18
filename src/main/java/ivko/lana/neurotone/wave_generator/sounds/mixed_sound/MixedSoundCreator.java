@@ -10,6 +10,7 @@ import ivko.lana.neurotone.wave_generator.sounds.violin.Chord;
 import ivko.lana.neurotone.wave_generator.sounds.violin.ChordDetail;
 import ivko.lana.neurotone.wave_generator.sounds.violin.ViolinSamplesCreator;
 import ivko.lana.util.Pair;
+import org.bytedeco.javacpp.annotation.Const;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -81,6 +82,7 @@ public class MixedSoundCreator implements ISamplesCreator
 //            int tibetanFrequenciesCounter = random_.nextInt(Math.min(totalBeatsCounter, changeFactors.length)) + 1;
             int tibetanFrequenciesCounter = changeFactors.length;
             int oneBeatDurationMs = durationMs_ / totalBeatsCounter;
+//            int oneBeatDurationMs = durationMs_ / changeFactors.length;
             logger.info(String.format("starting divideIntoRandomParts with totalBeatsCounter: %s, tibetanFrequenciesCounter: %s", totalBeatsCounter, tibetanFrequenciesCounter));
 //            int[] beatsPerFrequency = divideIntoRandomParts(totalBeatsCounter, tibetanFrequenciesCounter);
             int[] beatsPerFrequency = new int[totalBeatsCounter];
@@ -150,11 +152,48 @@ public class MixedSoundCreator implements ISamplesCreator
             logger.info(String.format("createSamplesAndTailSizes with beatsPerFrequency: %s", Arrays.toString(beatsPerFrequency)));
             int startFrequencyChooserIndex = random_.nextInt(changeFactors.length + 1 - tibetanFrequenciesCounter);
             List<Pair<short[], Integer>> samplesAndTailSizes = new ArrayList<>();
-            for (int i = 0; i < tibetanFrequenciesCounter; ++i)
+//            for (int i = 0; i < tibetanFrequenciesCounter; ++i)
+//            {
+//                Pair<Integer, Integer> changeFactor = changeFactors[startFrequencyChooserIndex + i];
+//                double currentFrequency = 2 * (changeFactor.getFirst() * frequency_ / changeFactor.getSecond());
+//                int currentCounter = beatsPerFrequency[i];
+//                logger.info(String.format("currentCounter: %s", currentCounter));
+//                int currentSoundQty = random_.nextInt(currentCounter) + 1;
+//                int shift = (random_.nextInt(currentCounter / currentSoundQty) + 1) * oneBeatDurationMs;
+//                short[] tibetanBaseSamples = tibetanSamplesCreator_.createHitSamples(currentFrequency, amplitude_);
+//                short[] totalSoundSamples = new short[tibetanBaseSamples.length + shift * (currentSoundQty - 1)];
+//                int currentShift = 0;
+//                for (int j = 0; j < currentSoundQty; ++j)
+//                {
+//                    if (j == 0)
+//                    {
+//                        System.arraycopy(tibetanBaseSamples, 0, totalSoundSamples, currentShift, tibetanBaseSamples.length);
+//                    }
+//                    else
+//                    {
+//                        for (int k = 0; k < tibetanBaseSamples.length - shift; ++k)
+//                        {
+//                            short previousValue = totalSoundSamples[k + currentShift];
+//                            short currentValue = tibetanBaseSamples[k];
+//                            totalSoundSamples[k + currentShift] = Util.getLimitedValue(previousValue + currentValue);
+//                        }
+//                        System.arraycopy(tibetanBaseSamples, tibetanBaseSamples.length - shift, totalSoundSamples, tibetanBaseSamples.length + currentShift - shift, shift);
+//                    }
+//                    currentShift += shift;
+//                }
+//                int expectedSoundDurationMs = currentCounter * oneBeatDurationMs;
+//                int currentSoundDurationMs = (int) (1000 * totalSoundSamples.length / Constants.SAMPLE_RATE);
+//                int tail = (int) ((Math.max(currentSoundDurationMs - expectedSoundDurationMs, 0) * Constants.SAMPLE_RATE) / 1000.0);
+//                samplesAndTailSizes.add(new Pair<>(totalSoundSamples, tail));
+//            }
+            Random random = new Random();
+            int index = random.nextInt(changeFactors.length);
+            int number = random.nextInt(changeFactors.length - 1) + 1;
+            for (int i = 0; i < number; ++i)
             {
-                Pair<Integer, Integer> changeFactor = changeFactors[startFrequencyChooserIndex + i];
+                Pair<Integer, Integer> changeFactor = changeFactors[startFrequencyChooserIndex + index];
                 double currentFrequency = 2 * (changeFactor.getFirst() * frequency_ / changeFactor.getSecond());
-                int currentCounter = beatsPerFrequency[i];
+                int currentCounter = beatsPerFrequency[index];
                 logger.info(String.format("currentCounter: %s", currentCounter));
                 int currentSoundQty = random_.nextInt(currentCounter) + 1;
                 int shift = (random_.nextInt(currentCounter / currentSoundQty) + 1) * oneBeatDurationMs;
@@ -181,7 +220,7 @@ public class MixedSoundCreator implements ISamplesCreator
                 }
                 int expectedSoundDurationMs = currentCounter * oneBeatDurationMs;
                 int currentSoundDurationMs = (int) (1000 * totalSoundSamples.length / Constants.SAMPLE_RATE);
-                int tail = Math.max(currentSoundDurationMs - expectedSoundDurationMs, 0);
+                int tail = (int) ((Math.max(currentSoundDurationMs - expectedSoundDurationMs, 0) * Constants.SAMPLE_RATE) / 1000.0);
                 samplesAndTailSizes.add(new Pair<>(totalSoundSamples, tail));
             }
             return samplesAndTailSizes;
