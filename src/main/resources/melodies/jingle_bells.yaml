@@ -1,0 +1,55 @@
+name: jingle-bells
+beatDurationMs: 2200
+loop: true
+notes:
+  # Jingle Bells chorus in scale degrees of a major scale (1 = tonic)
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 2
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 2
+  - degree: 3
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 1
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 3
+    beats: 2
+  - degree: 4
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 5
+    beats: 2

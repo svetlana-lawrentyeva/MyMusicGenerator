@@ -1,10 +1,10 @@
 package ivko.lana.neurotone.wave_generator;
 
 import ivko.lana.neurotone.audio_generator.AudioSaver;
+import ivko.lana.neurotone.wave_generator.ConfigFileNotesDistributor;
+import ivko.lana.neurotone.wave_generator.config.ConfiguredMelodyLoader;
 import ivko.lana.neurotone.wave_generator.melody.MelodyNotesDistributor;
 import ivko.lana.neurotone.wave_generator.solfege.SolfegeNotesDistributor;
-
-import java.util.function.Supplier;
 
 /**
  * @author Lana Ivko
@@ -12,7 +12,8 @@ import java.util.function.Supplier;
 public enum WaveType
 {
     MELODY(new MelodyNotesDistributor()),
-    SOLFEGE(new SolfegeNotesDistributor());
+    SOLFEGE(new SolfegeNotesDistributor()),
+    CONFIGURED(new ConfigFileNotesDistributor(new ConfiguredMelodyLoader().load()));
 
     public INotesDistributor getNoteDistributor()
     {
