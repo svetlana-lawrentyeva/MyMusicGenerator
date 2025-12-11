@@ -1,6 +1,7 @@
 package ivko.lana.neurotone.wave_generator.sounds.tibetan;
 
-import ivko.lana.neurotone.util.ShiftFactor;
+import ivko.lana.neurotone.util.IShiftFactor;
+import ivko.lana.neurotone.util.ShiftMultipleFactor;
 import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
 
 import java.util.Iterator;
@@ -12,12 +13,12 @@ import java.util.TreeMap;
  */
 public class TibetanOvertonesHelper implements IOvertoneHelper
 {
-    private static final ShiftFactor[] HARMONY_SHIFT_FACTORS =
+    private static final IShiftFactor[] HARMONY_SHIFT_FACTORS =
             {
-                    new ShiftFactor(1, 1, 1.5, 1),
-                    new ShiftFactor(10, 4, 0.025, 1.25),
-                    new ShiftFactor(9, 2, 0.0015, 1.5),
-                    new ShiftFactor(8, 1, 0.00225, 1.75)
+                    new ShiftMultipleFactor(1, 1, 1.5, 1),
+                    new ShiftMultipleFactor(10, 4, 0.055, 1.25),
+                    new ShiftMultipleFactor(9, 2, 0.025, 1.5),
+                    new ShiftMultipleFactor(8, 1, 0.0225, 1.75)
 
 
 //                    new ShiftFactor(1, 1, 1, 4),
@@ -25,22 +26,22 @@ public class TibetanOvertonesHelper implements IOvertoneHelper
 //                    new ShiftFactor(8, 2, 0.0015, 0.25),
 //                    new ShiftFactor(6, 1, 0.001, 0.125)
             };
-    private static final ShiftFactor[] HIT_SHIFT_FACTORS = generateHitShiftFactors();
+    private static final IShiftFactor[] HIT_SHIFT_FACTORS = generateHitShiftFactors();
 
-    private static ShiftFactor[] generateHitShiftFactors()
+    private static IShiftFactor[] generateHitShiftFactors()
     {
         Map<Integer, Integer> shiftByCounter = new TreeMap<>();
         shiftByCounter.put(3, 3);
         shiftByCounter.put(5, 3);
         shiftByCounter.put(6, 4);
         shiftByCounter.put(7, 4);
-        shiftByCounter.put(8, 5);
-        shiftByCounter.put(9, 5);
-        shiftByCounter.put(10, 6);
-        shiftByCounter.put(11, 7);
+//        shiftByCounter.put(8, 5);
+//        shiftByCounter.put(9, 5);
+//        shiftByCounter.put(10, 6);
+//        shiftByCounter.put(11, 7);
 
         int totalCounter = shiftByCounter.values().stream().mapToInt(i -> i).sum();
-        ShiftFactor[] shiftFactors = new ShiftFactor[totalCounter];
+        ShiftMultipleFactor[] shiftFactors = new ShiftMultipleFactor[totalCounter];
 
         int value = 10;
         Iterator<Map.Entry<Integer, Integer>> iterator = shiftByCounter.entrySet().iterator();
@@ -62,7 +63,7 @@ public class TibetanOvertonesHelper implements IOvertoneHelper
             counter = shiftToCounter.getValue();
             for (int i = 0; i < counter; ++i)
             {
-                shiftFactors[shiftFactorCounter++] = new ShiftFactor(value, divider, getAmplitude(shiftFactorCounter, maxValueIndex, maxAmplitude, sigma, i), getPhaseMultiplier(phaseWidth, value));
+                shiftFactors[shiftFactorCounter++] = new ShiftMultipleFactor(value, divider, getAmplitude(shiftFactorCounter, maxValueIndex, maxAmplitude, sigma, i), getPhaseMultiplier(phaseWidth, value));
                 value += shift;
             }
         }
@@ -88,16 +89,16 @@ public class TibetanOvertonesHelper implements IOvertoneHelper
 
     public static double getAmplitude(double value, double maxValue, double maxAmplitude, double sigma, int index)
     {
-        return (maxAmplitude * Math.exp(-Math.pow(value - maxValue, 1) / 100000.0)) * Math.pow(sigma, index );
+        return (maxAmplitude * Math.exp(-Math.pow(value - maxValue, 1) / 1000000.0)) * Math.pow(sigma, index );
     }
 
     @Override
-    public ShiftFactor[] getHarmonyShiftFactors()
+    public IShiftFactor[] getHarmonyShiftFactors()
     {
         return HARMONY_SHIFT_FACTORS;
     }
     @Override
-    public ShiftFactor[] getHitShiftFactors()
+    public IShiftFactor[] getHitShiftFactors()
     {
         return HIT_SHIFT_FACTORS;
     }

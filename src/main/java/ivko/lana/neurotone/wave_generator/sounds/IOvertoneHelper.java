@@ -1,14 +1,14 @@
 package ivko.lana.neurotone.wave_generator.sounds;
 
-import ivko.lana.neurotone.util.ShiftFactor;
+import ivko.lana.neurotone.util.IShiftFactor;
 
 /**
  * @author Lana Ivko
  */
 public interface IOvertoneHelper
 {
-    double GAIN_MULTIPLIER = 0.2;
+    double GAIN_MULTIPLIER = 0.5;
 
-    ShiftFactor[] getHarmonyShiftFactors();
-    ShiftFactor[] getHitShiftFactors();
+    IShiftFactor[] getHarmonyShiftFactors();
+    IShiftFactor[] getHitShiftFactors();
 }

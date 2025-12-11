@@ -30,6 +30,7 @@ public class SimpleSamplesCreator implements ISamplesCreator
         return clearSamplesCreator_;
     }
 
+    @Override
     public short[] createSamples(int durationMs, double frequency, double amplitude, boolean isLeft, double phaseMultiplier, int overtoneIndex)
     {
         return clearSamplesCreator_.createClearSamples(durationMs, frequency, amplitude);

@@ -16,6 +16,7 @@ public class MelodyNotesDistributor implements INotesDistributor
     private ITriadSequenceGenerator triadSequenceGenerator_;
     private Triad previousTriad_;
     private Random random_;
+    private Triad[] currentTriads_;
 
     private RhythmGenerator rhythmGenerator_;
     private Map<Integer, List<List<Integer>>> availableRhythmsByNoteNumber_ = new HashMap<>();
@@ -26,7 +27,12 @@ public class MelodyNotesDistributor implements INotesDistributor
         rhythmGenerator_ = new RhythmGenerator();
         triadSequenceGenerator_ = ITriadSequenceGenerator.getTriadSequenceGenerator();
         previousTriad_ = null;
+    }
 
+    @Override
+    public String generateFileName()
+    {
+        return Constants.BaseFrequency_ + ".wav";
     }
 
     private boolean validate(List<RhythmGenerator.Rhythm> rhythmPatterns, Triad[] triads)
@@ -39,6 +45,19 @@ public class MelodyNotesDistributor implements INotesDistributor
         int noteCounter = triads.length * Triad.TRIAD_SIZE;
 
         return rhythmPatternsCounter == noteCounter;
+    }
+
+    @Override
+    public double[][] getNotesForLeftChannel()
+    {
+        currentTriads_ = triadSequenceGenerator_.generateNext(previousTriad_);
+        return getNotesImpl(currentTriads_);
+    }
+
+    @Override
+    public double[][] getNotesForRightChannel()
+    {
+        return getNotesImpl(currentTriads_);
     }
 
     @Override
@@ -97,7 +116,32 @@ public class MelodyNotesDistributor implements INotesDistributor
         }
 
         previousTriad_ = triads[triads.length - 1];
-        return notes.toArray(new double[0][]);
+        List<double[]> result = notes;
+        if (!Constants.UsePause_)
+        {
+            result = removePauses(result);
+        }
+        return result.toArray(new double[0][]);
+    }
+
+    private List<double[]> removePauses(List<double[]> notes)
+    {
+        List<double[]> result = new ArrayList<>();
+        double accumulator = 0;
+        for (int i = notes.size() - 1; i >= 0; --i)
+        {
+            double[] currentNote = notes.get(i);
+            if (currentNote[0] == 0)
+            {
+                accumulator += currentNote[1];
+            }
+            else
+            {
+                result.add(new double[] {currentNote[0], currentNote[1] + accumulator});
+                accumulator = 0;
+            }
+        }
+        return result;
     }
 
     static List<List<Integer>> findCombinations(Set<Integer> numbers, int target)

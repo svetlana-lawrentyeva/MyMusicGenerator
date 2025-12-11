@@ -20,6 +20,8 @@ public class AudioSaver extends StereoSaver
 {
     private static final Logger logger = CustomLogger.getLogger(AudioSaver.class.getName());
 
+    public static final String OUTPUT_DIRECTORY = "";
+
     public static String FileName_ = "generated.wav";
     private AudioFormat format_;
     private long dataSize = 0; // отслеживание размера данных
@@ -53,6 +55,19 @@ public class AudioSaver extends StereoSaver
     @Override
     protected String getFileName()
     {
+        return OUTPUT_DIRECTORY + getFileNameImpl();
+    }
+
+    private String getFileNameImpl()
+    {
+        if (FileName_ == null)
+        {
+            FileName_ = Constants.WaveType_.generateFileName();
+        }
+        if (FileName_ == null)
+        {
+            FileName_ = "generated.wav";
+        }
         return FileName_;
     }
 
@@ -73,7 +88,7 @@ public class AudioSaver extends StereoSaver
     {
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
-        int totalSamples = leftChannel.length; // Предполагается, что длина обоих каналов одинакова
+        int totalSamples = Math.min(leftChannel.length, rightChannel.length);
         byte[] stereoByteArray = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
 
         for (int i = 0; i < totalSamples; i++)
@@ -124,42 +139,52 @@ public class AudioSaver extends StereoSaver
         header[1] = 'I';
         header[2] = 'F';
         header[3] = 'F';
+
         header[4] = (byte) (totalDataLen & 0xff);
         header[5] = (byte) ((totalDataLen >> 8) & 0xff);
         header[6] = (byte) ((totalDataLen >> 16) & 0xff);
         header[7] = (byte) ((totalDataLen >> 24) & 0xff);
+
         header[8] = 'W';
         header[9] = 'A';
         header[10] = 'V';
         header[11] = 'E';
+
         header[12] = 'f';  // 'fmt ' chunk
         header[13] = 'm';
         header[14] = 't';
         header[15] = ' ';
+
         header[16] = 16;  // 4 bytes: size of 'fmt ' chunk
         header[17] = 0;
         header[18] = 0;
         header[19] = 0;
+
         header[20] = 1;  // format = 1 (PCM)
         header[21] = 0;
         header[22] = (byte) channels;
         header[23] = 0;
+
         header[24] = (byte) ((int) format.getSampleRate() & 0xff);
         header[25] = (byte) (((int) format.getSampleRate() >> 8) & 0xff);
         header[26] = (byte) (((int) format.getSampleRate() >> 16) & 0xff);
         header[27] = (byte) (((int) format.getSampleRate() >> 24) & 0xff);
+
         header[28] = (byte) (byteRate & 0xff);
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
         header[31] = (byte) ((byteRate >> 24) & 0xff);
+
         header[32] = (byte) (blockAlign);
         header[33] = 0;
         header[34] = (byte) bitsPerSample;
         header[35] = 0;
+
         header[36] = 'd';
         header[37] = 'a';
         header[38] = 't';
         header[39] = 'a';
+
         header[40] = (byte) (dataSize & 0xff);
         header[41] = (byte) ((dataSize >> 8) & 0xff);
         header[42] = (byte) ((dataSize >> 16) & 0xff);

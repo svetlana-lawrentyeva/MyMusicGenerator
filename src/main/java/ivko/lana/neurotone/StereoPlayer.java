@@ -58,15 +58,16 @@ public abstract class StereoPlayer
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
         // Определяем длину новых массивов, которые будут меньше на fadeOutLength
-        int newLength = leftChannel.length - FADE_OUT_TAIL;
+        int newLeftLength = leftChannel.length - FADE_OUT_TAIL;
+        int newRightLength = rightChannel.length - FADE_OUT_TAIL;
 
         // Создаем массивы для новых хвостов звуковых фрагментов
         short[] newLeftFadeOutTail = new short[FADE_OUT_TAIL];
         short[] newRightFadeOutTail = new short[FADE_OUT_TAIL];
 
         // Создаем новые массивы для основного звука без хвоста
-        short[] newLeftChannel = new short[newLength];
-        short[] newRightChannel = new short[newLength];
+        short[] newLeftChannel = new short[newLeftLength];
+        short[] newRightChannel = new short[newRightLength];
 
         // Если в хвостах есть данные, добавляем их к началу новых массивов
 
@@ -79,19 +80,19 @@ public abstract class StereoPlayer
                 newRightChannel[i] = Util.getLimitedValue(RightTail_.getSamples()[i] + rightChannel[i]);
             }
             // Копируем оставшиеся значения из новых каналов
-            System.arraycopy(leftChannel, FADE_OUT_TAIL, newLeftChannel, FADE_OUT_TAIL, newLength - FADE_OUT_TAIL);
-            System.arraycopy(rightChannel, FADE_OUT_TAIL, newRightChannel, FADE_OUT_TAIL, newLength - FADE_OUT_TAIL);
+            System.arraycopy(leftChannel, FADE_OUT_TAIL, newLeftChannel, FADE_OUT_TAIL, newLeftLength - FADE_OUT_TAIL);
+            System.arraycopy(rightChannel, FADE_OUT_TAIL, newRightChannel, FADE_OUT_TAIL, newRightLength - FADE_OUT_TAIL);
         }
         else
         {
             // Копируем значения из новых каналов
-            System.arraycopy(leftChannel, 0, newLeftChannel, 0, newLength);
-            System.arraycopy(rightChannel, 0, newRightChannel, 0, newLength);
+            System.arraycopy(leftChannel, 0, newLeftChannel, 0, newLeftLength);
+            System.arraycopy(rightChannel, 0, newRightChannel, 0, newRightLength);
         }
 
         // Копируем хвосты звуковых фрагментов в массивы хвостов
-        System.arraycopy(leftChannel, newLength, newLeftFadeOutTail, 0, FADE_OUT_TAIL);
-        System.arraycopy(rightChannel, newLength, newRightFadeOutTail, 0, FADE_OUT_TAIL);
+        System.arraycopy(leftChannel, newLeftLength, newLeftFadeOutTail, 0, FADE_OUT_TAIL);
+        System.arraycopy(rightChannel, newRightLength, newRightFadeOutTail, 0, FADE_OUT_TAIL);
 
         // Обновляем хвосты
         LeftTail_.setSamples(newLeftFadeOutTail);

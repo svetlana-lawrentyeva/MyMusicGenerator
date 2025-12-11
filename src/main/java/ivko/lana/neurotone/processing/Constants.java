@@ -11,21 +11,25 @@ import ivko.lana.neurotone.wave_generator.sounds.SoundType;
 public class Constants
 {
 //    public static final SoundType SOUND_TYPE = SoundType.SIMPLE;
-    public static final SoundType SOUND_TYPE = SoundType.TIBETAN;
+    public static final SoundType SOUND_TYPE = SoundType.MIXED_SOUND;
+    public static final boolean NEED_ADDITIONAL_EFFECTS = true;
+    public static final String ADDITIONAL_EFFECTS_PATH = "F:/VIDEO/EFFECTS/";
     public static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
-    public static final int HIT_DURATION_MS = 8000; // Длительность затухания удара
+    public static final int HIT_DURATION_MS = 4000; // Длительность затухания удара
     public static final int PAUSE_DURATION_MS = (int) (1000 * 0.09317); // Длительность паузы
     public static final int SMALL_AMPLITUDES_DURATION_MS = (int) (1000 * (0.129545 - 0.09317)); // Длительность маленьких колебаний
     public static final int FADE_IN_DURATION_MS = 400; // Длительность нарастания
     public static final int BASE_PULSATION_SPEED = 3; // Базовая скорость пульсации
-    public static float PulsationDepth_ = 0.5f; // Параметр для управления пульсацией (от 0 до 1)
+    public static float PulsationDepth_ = 0.3f; // Параметр для управления пульсацией (от 0 до 1)
     public static float MinPanningGain_ = 0.5f; // Минимальный уровень громкости для противоположного уха
     public static float PulsationSpeedFactor_ = 1.0f; // Коэффициент для управления скоростью пульсации
     public static double FrequencyOffset_ = 0.0; // Коэффициент для управления скоростью пульсации
-    public static double BaseFrequency_ = 432;
+    public static double BaseFrequency_ = -1;
     public static double BeatDurationMs_ = 4000.0;
-    public static int FadeOutDurationMs_ = 10000; // Длительность затухания
-    public static boolean IsSeparated_ = false;
+    public static int FadeOutDurationMs_ = 6000; // Длительность затухания
+    public static boolean IsSeparatedChannels_ = false;
+    public static boolean IsSeparatedMelodies_ = false;
+    public static boolean UsePause_ = true;
     public static boolean OneTone_ = false;
 
     public static double UnitizationDividerFactor_ = 1;
@@ -35,7 +39,7 @@ public class Constants
 
     public static NoteGenerator.ScaleDegreeType ScaleDegreeType_ = NoteGenerator.ScaleDegreeType.MAJOR;
 
-    public static WaveType WaveType_ = WaveType.SOLFEGE;
+    public static WaveType WaveType_;
 
 
     // Метод для установки глубины пульсации
@@ -72,9 +76,19 @@ public class Constants
         UnitizationDividerFactor_ = unitizationDividerFactor;
     }
 
-    public static void setSeparation(boolean isSeparated)
+    public static void setSeparationChannels(boolean isSeparated)
     {
-        IsSeparated_ = isSeparated;
+        IsSeparatedChannels_ = isSeparated;
+    }
+
+    public static void setSeparationMelodies(boolean isSeparated)
+    {
+        IsSeparatedMelodies_ = isSeparated;
+    }
+
+    public static void setUsePause(boolean usePause)
+    {
+        UsePause_ = usePause;
     }
 
     public static void setOneTone(boolean oneTone)

@@ -4,6 +4,7 @@ package ivko.lana.neurotone;
  * @author Lana Ivko
  */
 
+import ivko.lana.neurotone.processing.Constants;
 import ivko.lana.neurotone.util.CustomLogger;
 
 import java.io.*;
@@ -16,6 +17,8 @@ public abstract class StereoSaver extends StereoPlayer
 
     private OutputStream outputStream_;
     protected final AtomicLong postedToQueueSize_ = new AtomicLong(0);
+    protected final AtomicLong totalPostedToQueueSize_ = new AtomicLong(0);
+
 
     public StereoSaver()
     {
@@ -47,6 +50,14 @@ public abstract class StereoSaver extends StereoPlayer
             outputStream_.write(data);
             outputStream_.flush();
             postedToQueueSize_.addAndGet(-data.length);
+            totalPostedToQueueSize_.addAndGet(data.length);
+
+            // Рассчитываем количество сэмплов и продолжительность
+            long totalSamples = totalPostedToQueueSize_.get() / 4; // 4 байта на стерео сэмпл (2 байта на канал)
+            long expectedDurationInSeconds = (long) (totalSamples / Constants.SAMPLE_RATE);
+
+            // Логирование
+            logger.info(String.format("StereoSaver wrote %s seconds", expectedDurationInSeconds));
         }
         catch (Exception e)
         {
@@ -59,6 +70,7 @@ public abstract class StereoSaver extends StereoPlayer
     {
         postedToQueueSize_.addAndGet(data.length);
         super.postToQueue(data);
+        logger.info(String.format("StereoSaver posted %s seconds", data.length / 4 / Constants.SAMPLE_RATE));
     }
 
     @Override
