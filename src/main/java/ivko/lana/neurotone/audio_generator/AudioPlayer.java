@@ -50,7 +50,13 @@ public class AudioPlayer extends StereoPlayer
     {
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
-        int totalSamples = leftChannel.length; // Предполагается, что длина обоих каналов одинакова
+        int totalSamples = Math.min(leftChannel.length, rightChannel.length);
+
+        if (leftChannel.length != rightChannel.length)
+        {
+            logger.warning(String.format("%s left/right sample length mismatch: %s vs %s. Truncating to %s samples.",
+                    getClass().getSimpleName(), leftChannel.length, rightChannel.length, totalSamples));
+        }
         byte[] stereoByteArray = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
 
         for (int i = 0; i < totalSamples; i++)

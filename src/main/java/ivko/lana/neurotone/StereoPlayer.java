@@ -57,48 +57,57 @@ public abstract class StereoPlayer
     {
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
-        // Определяем длину новых массивов, которые будут меньше на fadeOutLength
-        int newLength = leftChannel.length - FADE_OUT_TAIL;
 
-        // Создаем массивы для новых хвостов звуковых фрагментов
-        short[] newLeftFadeOutTail = new short[FADE_OUT_TAIL];
-        short[] newRightFadeOutTail = new short[FADE_OUT_TAIL];
-
-        // Создаем новые массивы для основного звука без хвоста
-        short[] newLeftChannel = new short[newLength];
-        short[] newRightChannel = new short[newLength];
-
-        // Если в хвостах есть данные, добавляем их к началу новых массивов
-
-        if (LeftTail_.getSamples() != null && RightTail_.getSamples() != null)
+        int rawLength = Math.min(leftChannel.length, rightChannel.length);
+        if (rawLength == 0)
         {
-            // Складываем значения хвостов с первыми элементами нового канала
-            for (int i = 0; i < FADE_OUT_TAIL; i++)
+            return;
+        }
+
+        int tailLength = Math.min(FADE_OUT_TAIL, rawLength);
+        int mainLength = rawLength - tailLength;
+
+        short[] newLeftFadeOutTail = new short[tailLength];
+        short[] newRightFadeOutTail = new short[tailLength];
+        short[] newLeftChannel = new short[mainLength];
+        short[] newRightChannel = new short[mainLength];
+
+        short[] previousLeftTail = LeftTail_.getSamples();
+        short[] previousRightTail = RightTail_.getSamples();
+        boolean hasPreviousTail = previousLeftTail != null && previousRightTail != null;
+
+        if (hasPreviousTail)
+        {
+            int overlap = Math.min(Math.min(previousLeftTail.length, previousRightTail.length), mainLength);
+            for (int i = 0; i < overlap; i++)
             {
-                newLeftChannel[i] = Util.getLimitedValue(LeftTail_.getSamples()[i] + leftChannel[i]);
-                newRightChannel[i] = Util.getLimitedValue(RightTail_.getSamples()[i] + rightChannel[i]);
+                newLeftChannel[i] = Util.getLimitedValue(previousLeftTail[i] + leftChannel[i]);
+                newRightChannel[i] = Util.getLimitedValue(previousRightTail[i] + rightChannel[i]);
             }
-            // Копируем оставшиеся значения из новых каналов
-            System.arraycopy(leftChannel, FADE_OUT_TAIL, newLeftChannel, FADE_OUT_TAIL, newLength - FADE_OUT_TAIL);
-            System.arraycopy(rightChannel, FADE_OUT_TAIL, newRightChannel, FADE_OUT_TAIL, newLength - FADE_OUT_TAIL);
+
+            if (mainLength > overlap)
+            {
+                System.arraycopy(leftChannel, overlap, newLeftChannel, overlap, mainLength - overlap);
+                System.arraycopy(rightChannel, overlap, newRightChannel, overlap, mainLength - overlap);
+            }
         }
-        else
+        else if (mainLength > 0)
         {
-            // Копируем значения из новых каналов
-            System.arraycopy(leftChannel, 0, newLeftChannel, 0, newLength);
-            System.arraycopy(rightChannel, 0, newRightChannel, 0, newLength);
+            System.arraycopy(leftChannel, 0, newLeftChannel, 0, mainLength);
+            System.arraycopy(rightChannel, 0, newRightChannel, 0, mainLength);
         }
 
-        // Копируем хвосты звуковых фрагментов в массивы хвостов
-        System.arraycopy(leftChannel, newLength, newLeftFadeOutTail, 0, FADE_OUT_TAIL);
-        System.arraycopy(rightChannel, newLength, newRightFadeOutTail, 0, FADE_OUT_TAIL);
+        System.arraycopy(leftChannel, rawLength - tailLength, newLeftFadeOutTail, 0, tailLength);
+        System.arraycopy(rightChannel, rawLength - tailLength, newRightFadeOutTail, 0, tailLength);
 
-        // Обновляем хвосты
         LeftTail_.setSamples(newLeftFadeOutTail);
         RightTail_.setSamples(newRightFadeOutTail);
 
-        post(new WaveDetail(leftChannelWave.getFrequencies(), leftChannelWave.getDurations(), newLeftChannel),
-                new WaveDetail(rightChannelWave.getFrequencies(), rightChannelWave.getDurations(), newRightChannel));
+        if (mainLength > 0)
+        {
+            post(new WaveDetail(leftChannelWave.getFrequencies(), leftChannelWave.getDurations(), newLeftChannel),
+                    new WaveDetail(rightChannelWave.getFrequencies(), rightChannelWave.getDurations(), newRightChannel));
+        }
     }
 
     public abstract void post(WaveDetail leftChannel, WaveDetail rightChannel);
