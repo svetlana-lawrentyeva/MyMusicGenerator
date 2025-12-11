@@ -50,26 +50,58 @@ public class AudioPlayer extends StereoPlayer
     {
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
+
+        if (leftChannel == null || rightChannel == null)
+        {
+            logger.warning(String.format("%s received null channel samples. Skipping post.", getClass().getSimpleName()));
+            return;
+        }
+
         int totalSamples = Math.min(leftChannel.length, rightChannel.length);
+        if (totalSamples <= 0)
+        {
+            logger.warning(String.format("%s received empty channel data. Skipping post.", getClass().getSimpleName()));
+            return;
+        }
 
         if (leftChannel.length != rightChannel.length)
         {
             logger.warning(String.format("%s left/right sample length mismatch: %s vs %s. Truncating to %s samples.",
                     getClass().getSimpleName(), leftChannel.length, rightChannel.length, totalSamples));
         }
-        byte[] stereoByteArray = new byte[totalSamples * 4]; // 4 байта на выборку (2 байта на канал)
+
+        long byteLength = (long) totalSamples * 4L;
+        if (byteLength > Integer.MAX_VALUE)
+        {
+            int cappedSamples = Integer.MAX_VALUE / 4;
+            logger.warning(String.format("%s sample count too large (%s). Capping to %s samples.",
+                    getClass().getSimpleName(), totalSamples, cappedSamples));
+            totalSamples = cappedSamples;
+            byteLength = (long) totalSamples * 4L;
+        }
+
+        byte[] stereoByteArray = new byte[(int) byteLength]; // 4 байта на выборку (2 байта на канал)
 
         for (int i = 0; i < totalSamples; i++)
         {
+            int byteIndex = i * 4;
+            if (byteIndex + 3 >= stereoByteArray.length)
+            {
+                logger.warning(String.format("%s byte buffer too short at index %s of %s. Stopping conversion.",
+                        getClass().getSimpleName(), byteIndex, stereoByteArray.length));
+                break;
+            }
+
             // Преобразование значений из leftChannel
-            stereoByteArray[i * 4] = (byte) (leftChannel[i] >> 8);      // Старший байт
-            stereoByteArray[i * 4 + 1] = (byte) (leftChannel[i]);       // Младший байт
+            stereoByteArray[byteIndex] = (byte) (leftChannel[i] >> 8);      // Старший байт
+            stereoByteArray[byteIndex + 1] = (byte) (leftChannel[i]);       // Младший байт
 
             // Преобразование значений из rightChannel
-            stereoByteArray[i * 4 + 2] = (byte) (rightChannel[i] >> 8); // Старший байт
-            stereoByteArray[i * 4 + 3] = (byte) (rightChannel[i]);      // Младший байт
+            stereoByteArray[byteIndex + 2] = (byte) (rightChannel[i] >> 8); // Старший байт
+            stereoByteArray[byteIndex + 3] = (byte) (rightChannel[i]);      // Младший байт
         }
-        logger.info(String.format("%s %s samples were converted into %s bytes", getClass().getSimpleName(), leftChannel.length, stereoByteArray.length));
+        logger.info(String.format("%s %s samples were converted into %s bytes", getClass().getSimpleName(), leftChannel.length,
+                stereoByteArray.length));
 
         postToQueue(stereoByteArray);
     }
