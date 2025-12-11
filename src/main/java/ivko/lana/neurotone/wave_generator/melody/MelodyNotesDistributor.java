@@ -5,8 +5,6 @@ import ivko.lana.neurotone.wave_generator.INotesDistributor;
 import ivko.lana.neurotone.wave_generator.RhythmGenerator;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Lana Ivko
@@ -94,9 +92,7 @@ public class MelodyNotesDistributor implements INotesDistributor
         List<RhythmGenerator.Rhythm> rhythmPatterns = rhythmGenerator_.getRhythmPatterns(rhythmsLengths);
         List<double[]> notes = new ArrayList<>();
 
-        List<Double> scaleDegrees = Stream.of(triads)
-                .flatMap(triad -> triad.getScaleDegrees().stream())
-                .collect(Collectors.toList());
+        List<Double> scaleDegrees = buildSmoothScaleDegrees(triads);
         Iterator<Double> scaleDegreesIterator = scaleDegrees.iterator();
         if (validate(rhythmPatterns, triads))
         {
@@ -122,6 +118,54 @@ public class MelodyNotesDistributor implements INotesDistributor
             result = removePauses(result);
         }
         return result.toArray(new double[0][]);
+    }
+
+    private List<Double> buildSmoothScaleDegrees(Triad[] triads)
+    {
+        List<Double> result = new ArrayList<>();
+        Double previousNote = null;
+
+        for (Triad triad : triads)
+        {
+            List<Double> triadDegrees = new ArrayList<>(triad.getScaleDegrees());
+            List<Double> orderedTriad = orderTriadDegrees(triadDegrees, previousNote);
+            result.addAll(orderedTriad);
+            previousNote = orderedTriad.get(orderedTriad.size() - 1);
+        }
+
+        return result;
+    }
+
+    private List<Double> orderTriadDegrees(List<Double> triadDegrees, Double previousNote)
+    {
+        List<Double> ordered = new ArrayList<>();
+        if (previousNote == null)
+        {
+            triadDegrees.sort(Comparator.naturalOrder());
+            Double startNote = triadDegrees.get(1);
+            ordered.add(startNote);
+            triadDegrees.remove(startNote);
+        }
+        else
+        {
+            Double closestToPrevious = triadDegrees.stream()
+                    .min(Comparator.comparingDouble(note -> scaleDistance(previousNote, note)))
+                    .orElse(triadDegrees.get(0));
+            ordered.add(closestToPrevious);
+            triadDegrees.remove(closestToPrevious);
+        }
+
+        Double lastAdded = ordered.get(ordered.size() - 1);
+        triadDegrees.sort(Comparator.comparingDouble(note -> scaleDistance(lastAdded, note)));
+        ordered.addAll(triadDegrees);
+
+        return ordered;
+    }
+
+    private double scaleDistance(double from, double to)
+    {
+        double distance = Math.abs(from - to);
+        return Math.min(distance, 7 - distance);
     }
 
     private List<double[]> removePauses(List<double[]> notes)
