@@ -289,7 +289,7 @@ public class TibetanGenerator
         return noteSequence;
     }
 
-    private static final int MINUTES = 60;
+    private static final int MINUTES = 1;
     private static final boolean IS_MOCK = false;
     public static void main(String[] args)
     {
@@ -308,7 +308,7 @@ public class TibetanGenerator
 //        Constants.setFrequencyOffset(3);
         Constants.setScaleDegreeType(NoteGenerator.ScaleDegreeType.MAJOR);
 
-        TibetanGenerator generator = new TibetanGenerator(GeneratorType.AUDIO, Mode.SAVE, () -> getWaveGenerator(IS_MOCK));
+        TibetanGenerator generator = new TibetanGenerator(GeneratorType.AUDIO, Mode.PLAY, () -> getWaveGenerator(IS_MOCK));
         try
         {
             generator.start();

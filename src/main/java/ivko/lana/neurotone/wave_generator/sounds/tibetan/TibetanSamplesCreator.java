@@ -177,8 +177,10 @@ public class TibetanSamplesCreator extends SimpleSamplesCreator
             // Дополнительно усиливаем амплитуду в точках перехода
             double transitionEnhancement = 1.0 + 0.2 * Math.abs(Math.sin(Math.PI * panning)); // Увеличение на 20% в точках перехода
 
-            // Применение сглаженной пульсации с утолщением переходов
-            channel[i] = (short) (samples[i] * (1.0 - enhancedPanning) * transitionEnhancement);
+            // Применение сглаженной пульсации с утолщением переходов,
+            // при этом канал в противофазе не затихает полностью благодаря MinPanningGain_.
+            double panningGain = Constants.MinPanningGain_ + (1.0 - Constants.MinPanningGain_) * (1.0 - enhancedPanning);
+            channel[i] = (short) (samples[i] * panningGain * transitionEnhancement);
 
             // Ограничение значений
             channel[i] = Util.getLimitedValue(channel[i]);

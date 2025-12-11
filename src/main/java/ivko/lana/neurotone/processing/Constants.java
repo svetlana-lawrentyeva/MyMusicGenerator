@@ -19,6 +19,7 @@ public class Constants
     public static final int FADE_IN_DURATION_MS = 400; // Длительность нарастания
     public static final int BASE_PULSATION_SPEED = 3; // Базовая скорость пульсации
     public static float PulsationDepth_ = 0.5f; // Параметр для управления пульсацией (от 0 до 1)
+    public static float MinPanningGain_ = 0.5f; // Минимальный уровень громкости для противоположного уха
     public static float PulsationSpeedFactor_ = 1.0f; // Коэффициент для управления скоростью пульсации
     public static double FrequencyOffset_ = 0.0; // Коэффициент для управления скоростью пульсации
     public static double BaseFrequency_ = 432;
@@ -50,6 +51,15 @@ public class Constants
         if (depth < 0.0f) depth = 0.0f;
         if (depth > 1.0f) depth = 1.0f;
         PulsationDepth_ = depth;
+    }
+
+    // Устанавливает минимальную громкость для канала, который находится в противоположной фазе пульсации,
+    // чтобы одно ухо не затихало полностью при сильном панорамировании.
+    public static void setMinPanningGain(float minPanningGain)
+    {
+        if (minPanningGain < 0.0f) minPanningGain = 0.0f;
+        if (minPanningGain > 1.0f) minPanningGain = 1.0f;
+        MinPanningGain_ = minPanningGain;
     }
 
     public static void setWaveType(WaveType waveType)
