@@ -9,6 +9,7 @@ import ivko.lana.neurotone.wave_generator.WaveGenerator;
 import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.FrequencyConverter;
+import ivko.lana.neurotone.wave_generator.sounds.SoundType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -323,10 +324,10 @@ public class TibetanGenerator
     public static void main(String[] args)
     {
         String minutesProperty = System.getProperty("minutes", "1");
-        String baseFrequencyProperty = System.getProperty("baseFrequency", "75");
+        String baseFrequencyProperty = System.getProperty("baseFrequency", "300");
 //        String baseFrequencyProperty = System.getProperty("baseFrequency", "963");
 //        String baseFrequencyProperty = System.getProperty("baseFrequency", "741");
-        String offsetProperty = System.getProperty("offset", "0");
+        String offsetProperty = System.getProperty("offset", "5");
 
         Minutes_ = Integer.parseInt(minutesProperty);
         double baseFrequency = Double.parseDouble(baseFrequencyProperty);
@@ -339,10 +340,11 @@ public class TibetanGenerator
         Constants.setVibrationFactor(1);
         Constants.setBeatDurationMs(6000);
         Constants.setSeparationChannels(false);
-        Constants.setSeparationMelodies(true);
+        Constants.setSeparationMelodies(false);
         Constants.setUsePause(false);
         Constants.setBaseFrequency(baseFrequency);
-        Constants.setWaveType(WaveType.MELODY);
+        Constants.setWaveType(WaveType.SOLFEGE);
+        Constants.setSoundType(SoundType.MIXED_SOUND);
 //        Constants.setUnitizationDividerFactor(0.5);
 //        Constants.setFadeOutDurationMs(6000);
         Constants.setFrequencyOffset(offset);

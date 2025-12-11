@@ -11,7 +11,7 @@ import ivko.lana.neurotone.wave_generator.sounds.SoundType;
 public class Constants
 {
 //    public static final SoundType SOUND_TYPE = SoundType.SIMPLE;
-    public static final SoundType SOUND_TYPE = SoundType.MIXED_SOUND;
+    public static SoundType SOUND_TYPE = SoundType.TIBETAN;
     public static final boolean NEED_ADDITIONAL_EFFECTS = true;
     public static final String ADDITIONAL_EFFECTS_PATH = "F:/VIDEO/EFFECTS/";
     public static final float SAMPLE_RATE = 44100.0f; // Частота дискретизации
@@ -69,6 +69,11 @@ public class Constants
     public static void setWaveType(WaveType waveType)
     {
         WaveType_ = waveType;
+    }
+
+    public static void setSoundType(SoundType soundType)
+    {
+        SOUND_TYPE = soundType;
     }
 
     public static void setUnitizationDividerFactor(double unitizationDividerFactor)

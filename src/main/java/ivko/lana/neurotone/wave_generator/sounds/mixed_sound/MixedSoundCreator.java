@@ -10,7 +10,6 @@ import ivko.lana.neurotone.wave_generator.sounds.violin.Chord;
 import ivko.lana.neurotone.wave_generator.sounds.violin.ChordDetail;
 import ivko.lana.neurotone.wave_generator.sounds.violin.ViolinSamplesCreator;
 import ivko.lana.util.Pair;
-import org.bytedeco.javacpp.annotation.Const;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -186,14 +185,14 @@ public class MixedSoundCreator implements ISamplesCreator
 //                int tail = (int) ((Math.max(currentSoundDurationMs - expectedSoundDurationMs, 0) * Constants.SAMPLE_RATE) / 1000.0);
 //                samplesAndTailSizes.add(new Pair<>(totalSoundSamples, tail));
 //            }
-            Random random = new Random();
-            int index = random.nextInt(changeFactors.length);
-            int number = random.nextInt(changeFactors.length - 1) + 1;
-            for (int i = 0; i < number; ++i)
+            int startIndex = Math.min(startFrequencyChooserIndex, changeFactors.length - 1);
+            int frequenciesCount = Math.min(tibetanFrequenciesCounter, changeFactors.length - startIndex);
+            for (int i = 0; i < frequenciesCount; ++i)
             {
-                Pair<Integer, Integer> changeFactor = changeFactors[startFrequencyChooserIndex + index];
+                int beatsPerSound = beatsPerFrequency[Math.min(i, beatsPerFrequency.length - 1)];
+                Pair<Integer, Integer> changeFactor = changeFactors[startIndex + i];
                 double currentFrequency = 2 * (changeFactor.getFirst() * frequency_ / changeFactor.getSecond());
-                int currentCounter = beatsPerFrequency[index];
+                int currentCounter = Math.max(beatsPerSound, 1);
                 logger.info(String.format("currentCounter: %s", currentCounter));
                 int currentSoundQty = random_.nextInt(currentCounter) + 1;
                 int shift = (random_.nextInt(currentCounter / currentSoundQty) + 1) * oneBeatDurationMs;
