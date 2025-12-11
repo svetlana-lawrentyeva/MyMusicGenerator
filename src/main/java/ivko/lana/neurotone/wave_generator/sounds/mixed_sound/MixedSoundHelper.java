@@ -1,6 +1,5 @@
 package ivko.lana.neurotone.wave_generator.sounds.mixed_sound;
 
-import ivko.lana.neurotone.util.ShiftFactor;
 import ivko.lana.neurotone.util.ShiftMultipleFactor;
 import ivko.lana.neurotone.wave_generator.sounds.IOvertoneHelper;
 
