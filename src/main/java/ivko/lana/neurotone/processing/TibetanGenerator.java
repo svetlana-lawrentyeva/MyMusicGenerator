@@ -54,13 +54,24 @@ public class TibetanGenerator
             logger.info(String.format("Before generating we have %s (%s s, %s min) ms left", leftMs, leftMs / 1000, leftMs / 1000 / 60));
             do
             {
-                waveGenerator_.generateMusic();
+                boolean hasNext = waveGenerator_.generateMusic();
+                if (!hasNext)
+                {
+                    logger.warning("Wave generator returned no data; stopping generation loop to avoid null audio buffers.");
+                    break;
+                }
                 // Создаем новый CountDownLatch с количеством стереоплееров
                 CountDownLatch latch = new CountDownLatch(stereoPlayers_.size());
                 CountDownLatch startSignal = new CountDownLatch(1); // Для одновременного запуска потоков
 
                 WaveDetail leftChannel = waveGenerator_.getLeftChannel();
                 WaveDetail rightChannel = waveGenerator_.getRightChannel();
+
+                if (leftChannel == null || rightChannel == null)
+                {
+                    logger.severe("Wave channels are not initialized after generation; stopping to avoid NullPointerException.");
+                    break;
+                }
 
                 for (StereoPlayer player : stereoPlayers_)
                 {

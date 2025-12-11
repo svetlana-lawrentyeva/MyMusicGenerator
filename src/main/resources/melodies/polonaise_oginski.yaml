@@ -1,0 +1,135 @@
+name: polonaise-oginski
+beatDurationMs: 720
+loop: false
+notes:
+  # Intro pickup
+  - degree: 5
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 7
+    beats: 1
+
+  # Phrase A (Farewell to the Homeland main theme)
+  - degree: 1
+    beats: 2
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 2
+
+  # Answer
+  - degree: 2
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 3
+
+  # Middle ascent
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 7
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 2
+  - pause: true
+    beats: 1
+
+  # Reprise-like closing of section
+  - degree: 1
+    beats: 2
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 6
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 2
+
+  # Cadential descent
+  - degree: 2
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 1
+  - pause: true
+    beats: 1
+  - degree: 5
+    beats: 1
+  - degree: 4
+    beats: 1
+  - degree: 3
+    beats: 1
+  - degree: 2
+    beats: 1
+  - degree: 1
+    beats: 2

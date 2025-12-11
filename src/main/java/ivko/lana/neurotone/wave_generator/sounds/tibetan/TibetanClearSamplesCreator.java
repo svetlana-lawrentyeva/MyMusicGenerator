@@ -1,15 +1,20 @@
 package ivko.lana.neurotone.wave_generator.sounds.tibetan;
 
 import ivko.lana.neurotone.processing.Constants;
+import ivko.lana.neurotone.util.CustomLogger;
 import ivko.lana.neurotone.util.Util;
 import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleClearSamplesCreator;
 import ivko.lana.neurotone.wave_generator.sounds.simple.SimpleSamplesCreator;
+
+import java.util.logging.Logger;
 
 /**
  * @author Lana Ivko
  */
 public class TibetanClearSamplesCreator extends SimpleClearSamplesCreator
 {
+    private static final Logger logger = CustomLogger.getLogger(TibetanClearSamplesCreator.class.getName());
+
     private double durationFadeInFactor_;
     private double durationFadeOutFactor_;
     TibetanClearSamplesCreator()
@@ -29,10 +34,13 @@ public class TibetanClearSamplesCreator extends SimpleClearSamplesCreator
 
     public short[] createClearSamples(int durationMs, double frequency, double amplitude, double phaseShift, boolean isLined)
     {
+        int totalSamples = Util.convertMsToSampleLength(durationMs);
         int pauseLength = Util.convertMsToSampleLength(Constants.PAUSE_DURATION_MS);
         int smallAmplitudesLength = Util.convertMsToSampleLength(Constants.SMALL_AMPLITUDES_DURATION_MS);
         int introSamplesLength = pauseLength + smallAmplitudesLength;
-        int fadeInSamplesLength = (int) ((Util.convertMsToSampleLength(Constants.FADE_IN_DURATION_MS) - introSamplesLength) * durationFadeInFactor_);
+        int requestedFadeInLength = (int) ((Util.convertMsToSampleLength(Constants.FADE_IN_DURATION_MS) - introSamplesLength) * durationFadeInFactor_);
+        int availableAfterIntro = Math.max(0, totalSamples - introSamplesLength);
+        int fadeInSamplesLength = Math.min(Math.max(requestedFadeInLength, 0), availableAfterIntro);
         int fadeOutSamplesLength = (int) (Util.convertMsToSampleLength(Constants.FadeOutDurationMs_) * durationFadeOutFactor_);
 
         // Создаем интро
@@ -40,18 +48,17 @@ public class TibetanClearSamplesCreator extends SimpleClearSamplesCreator
         // Создаем нарастание
         short[] fadeInWave = createFadeInWave(frequency, amplitude, fadeInSamplesLength);
 
-        int constantSamplesLength = Util.convertMsToSampleLength(durationMs) - introSamplesLength - fadeInSamplesLength;
+        int constantSamplesLength = Math.max(0, totalSamples - introSamplesLength - fadeInSamplesLength);
 
-        if (constantSamplesLength < 0)
+        if (requestedFadeInLength > fadeInSamplesLength)
         {
-            throw new IllegalArgumentException(
-                    String.format("Суммарная длительность паузы (%s), малой амплитуды (%s) и нарастающей части (%s) [%s] превышает общую длительность ноты (%s).",
-                            pauseLength,
-                            smallAmplitudesLength,
-                            fadeInSamplesLength,
-                            pauseLength + smallAmplitudesLength + fadeInSamplesLength,
-                            Util.convertMsToSampleLength(durationMs)
-                    ));
+            logger.warning(String.format(
+                    "Суммарная длительность паузы (%s), малой амплитуды (%s) и нарастающей части (%s) превышает длительность ноты (%s). Нарастание будет сокращено до %s.",
+                    pauseLength,
+                    smallAmplitudesLength,
+                    requestedFadeInLength,
+                    totalSamples,
+                    fadeInSamplesLength));
         }
         // Создаем основную часть
         short[] constantWave = createConstantWave(frequency, constantSamplesLength, amplitude);
