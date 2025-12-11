@@ -55,12 +55,25 @@ public abstract class StereoPlayer
 
     public void processData(WaveDetail leftChannelWave, WaveDetail rightChannelWave)
     {
+        if (leftChannelWave == null || rightChannelWave == null)
+        {
+            logger.warning(String.format("%s received null WaveDetail. Skipping processing.", getClass().getSimpleName()));
+            return;
+        }
+
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
+
+        if (leftChannel == null || rightChannel == null)
+        {
+            logger.warning(String.format("%s received null channel samples. Skipping processing.", getClass().getSimpleName()));
+            return;
+        }
 
         int rawLength = Math.min(leftChannel.length, rightChannel.length);
         if (rawLength == 0)
         {
+            logger.warning(String.format("%s received empty channel data. Skipping processing.", getClass().getSimpleName()));
             return;
         }
 

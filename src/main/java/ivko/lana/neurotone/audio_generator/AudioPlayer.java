@@ -48,6 +48,12 @@ public class AudioPlayer extends StereoPlayer
 
     public void post(WaveDetail leftChannelWave, WaveDetail rightChannelWave)
     {
+        if (leftChannelWave == null || rightChannelWave == null)
+        {
+            logger.warning(String.format("%s received null WaveDetail. Skipping post.", getClass().getSimpleName()));
+            return;
+        }
+
         short[] leftChannel = leftChannelWave.getSamples();
         short[] rightChannel = rightChannelWave.getSamples();
 
